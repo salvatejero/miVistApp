@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Aviso de salida</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'Manrope',system-ui,sans-serif}
+</style>
+</helmet>
+<div style="width: 1280px; height: 560px; box-sizing: border-box; padding: 36px 40px; background: #101519; color: #F2EFE8; font-family: 'Manrope', system-ui, sans-serif; display: flex; flex-direction: column; gap: 28px">
+
+<div>
+<div style="font-size: 32px; font-weight: 800">Aviso de salida · 3 estados</div>
+<div style="font-size: 20px; color: #A9B4BC; margin-top: 6px">Hora de salir = inicio del evento − trayecto con tráfico − colchón</div>
+</div>
+
+<div style="flex: 1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px">
+
+<div style="display: flex; flex-direction: column; gap: 14px; min-width: 0">
+<div style="font-size: 20px; font-weight: 600; color: #A9B4BC">1 · Aparece (unos 30 min antes de salir)</div>
+<div style="flex: 1; display: flex; flex-direction: column; justify-content: space-between; padding: 22px 24px; border-radius: 24px; background: #1F2931; border: 2px solid #F2A33A">
+<div style="display: flex; align-items: center; gap: 12px"><span style="font-size: 20px; font-weight: 800; color: #F2A33A">[Hora]</span><span style="font-size: 24px">[Evento]</span></div>
+<div style="display: flex; align-items: center; gap: 10px; font-size: 20px; color: #A9B4BC"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#A9B4BC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><path d="M5 16l1.5-5h11L19 16M4 16h16v3H4zM7.5 13.5h.01M16.5 13.5h.01"/></svg><span>[Lugar] · [nn] min de trayecto</span></div>
+<div>
+<div style="font-size: 44px; font-weight: 800; line-height: 1.05">Sal a las [hh:mm]</div>
+<div style="font-size: 20px; color: #A9B4BC; margin-top: 6px">Faltan [nn] min para salir</div>
+</div>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 14px; min-width: 0">
+<div style="font-size: 20px; font-weight: 600; color: #A9B4BC">2 · Falta poco</div>
+<div style="flex: 1; display: flex; flex-direction: column; justify-content: space-between; padding: 22px 24px; border-radius: 24px; background: #2A2113; border: 4px solid #F2A33A">
+<div style="display: flex; align-items: center; gap: 12px"><span style="font-size: 20px; font-weight: 800; color: #F2A33A">[Hora]</span><span style="font-size: 24px">[Evento]</span></div>
+<div style="display: flex; align-items: center; gap: 10px; font-size: 20px; color: #F2EFE8"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F2A33A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><path d="M5 16l1.5-5h11L19 16M4 16h16v3H4zM7.5 13.5h.01M16.5 13.5h.01"/></svg><span>[Lugar] · [nn] min · [Estado del tráfico]</span></div>
+<div>
+<div style="font-size: 64px; font-weight: 800; line-height: 1; color: #F2A33A">[nn] min</div>
+<div style="font-size: 22px; margin-top: 6px">para salir · [hh:mm]</div>
+</div>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 14px; min-width: 0">
+<div style="font-size: 20px; font-weight: 600; color: #A9B4BC">3 · Sal ya</div>
+<div style="flex: 1; display: flex; flex-direction: column; justify-content: space-between; padding: 22px 24px; border-radius: 24px; background: #F2A33A; color: #1A1206">
+<div style="display: flex; align-items: center; gap: 12px"><span style="font-size: 20px; font-weight: 800">[Hora]</span><span style="font-size: 24px; font-weight: 600">[Evento]</span></div>
+<div style="display: flex; align-items: center; gap: 10px; font-size: 20px; font-weight: 600"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1A1206" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><path d="M5 16l1.5-5h11L19 16M4 16h16v3H4zM7.5 13.5h.01M16.5 13.5h.01"/></svg><span>[Lugar] · [nn] min de trayecto</span></div>
+<div>
+<div style="font-size: 72px; font-weight: 800; line-height: 1">¡Sal ya!</div>
+<div style="font-size: 22px; font-weight: 600; margin-top: 6px">Llegas a las [hh:mm]</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":560}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>
