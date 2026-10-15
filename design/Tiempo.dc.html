@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Tiempo de la semana</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'Manrope',system-ui,sans-serif}
+button{font-family:inherit;cursor:pointer}
+</style>
+</helmet>
+<div style="width: 1280px; height: 800px; background: #101519; color: #F2EFE8; font-family: 'Manrope', system-ui, sans-serif; display: flex">
+<nav aria-label="Menú" style="width: 120px; flex: none; box-sizing: border-box; padding: 28px 12px; background: #0B0F12; border-right: 1px solid #1F2931; display: flex; flex-direction: column; gap: 12px">
+<button type="button" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; height: 104px; border: none; border-radius: 20px; background: transparent; color: #A9B4BC; font-size: 16px; font-weight: 600"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"/></svg>Inicio</button>
+<button type="button" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; height: 104px; border: none; border-radius: 20px; background: transparent; color: #A9B4BC; font-size: 16px; font-weight: 600"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 5h14v15H5zM5 9h14M9 3v4M15 3v4"/></svg>Calendario</button>
+<button type="button" aria-current="page" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; height: 104px; border: none; border-radius: 20px; background: #2A2113; color: #F2A33A; font-size: 16px; font-weight: 600"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 18a4 4 0 0 1-.5-7.9A5.5 5.5 0 0 1 17 11a3.5 3.5 0 0 1 0 7H7z"/></svg>Tiempo</button>
+<button type="button" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; height: 104px; border: none; border-radius: 20px; background: transparent; color: #A9B4BC; font-size: 16px; font-weight: 600"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10l8-6 8 6v10H4zM10 20v-6h4v6"/></svg>Casa</button>
+</nav>
+
+<div style="flex: 1; min-width: 0; box-sizing: border-box; padding: 36px 40px; display: flex; flex-direction: column; gap: 20px">
+
+<div style="display: flex; align-items: baseline; justify-content: space-between">
+<div style="font-size: 48px; font-weight: 800; letter-spacing: -1px">Tiempo de la semana</div>
+<div style="font-size: 24px; color: #A9B4BC">[Ciudad]</div>
+</div>
+
+<div style="flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 12px">
+<sc-for list="{{days}}" as="d" hint-placeholder-count="7">
+<div style="display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 18px 8px; border-radius: 24px; background: #182027; border: 2px solid {{d.bd}}; min-width: 0">
+<div style="text-align: center">
+<div style="font-size: 24px; font-weight: 800; color: {{d.nameColor}}">{{d.name}}</div>
+<div style="font-size: 16px; color: #A9B4BC; margin-top: 2px">{{d.date}}</div>
+</div>
+<svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="{{d.iconColor}}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{d.icon}}"/></svg>
+<div style="text-align: center">
+<div style="font-size: 34px; font-weight: 800; line-height: 1">[--°]</div>
+<div style="font-size: 20px; color: #A9B4BC; margin-top: 4px">[--°]</div>
+</div>
+<div style="width: 100%; padding: 0 8px; box-sizing: border-box">
+<div style="height: 10px; border-radius: 5px; background: #2B3640; overflow: hidden"><div style="height: 100%; width: {{d.rain}}; background: #6CC4EA"></div></div>
+<div style="font-size: 16px; color: #8FD3F2; text-align: center; margin-top: 6px">[--%] lluvia</div>
+</div>
+</div>
+</sc-for>
+</div>
+
+<section style="background: #182027; border-radius: 24px; padding: 18px 24px; display: flex; flex-direction: column; gap: 8px; height: 190px; box-sizing: border-box">
+<div style="display: flex; justify-content: space-between; align-items: baseline">
+<h2 style="margin: 0; font-size: 22px; font-weight: 600; color: #A9B4BC">Lluvia hoy por horas</h2>
+<span style="font-size: 20px">[Resumen: cuándo empieza y cuánto dura]</span>
+</div>
+<div style="flex: 1; min-height: 0; display: flex; align-items: flex-end; gap: 8px">
+<sc-for list="{{hours}}" as="h" hint-placeholder-count="12">
+<div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 4px; height: 100%">
+<div style="width: 100%; border-radius: 6px 6px 3px 3px; background: #6CC4EA; height: {{h.h}}"></div>
+<div style="font-size: 14px; color: #A9B4BC">{{h.l}}</div>
+</div>
+</sc-for>
+</div>
+</section>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":800}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const sun = 'M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4';
+    const cloud = 'M7 18a4 4 0 0 1-.5-7.9A5.5 5.5 0 0 1 17 11a3.5 3.5 0 0 1 0 7H7z';
+    const rain = 'M7 15a4 4 0 0 1-.5-7.9A5.5 5.5 0 0 1 17 8a3.5 3.5 0 0 1 0 7H7zM8 19l-1 2M12 19l-1 2M16 19l-1 2';
+    const defs = [
+      { name: 'Hoy', date: 'Jue 15', icon: cloud, rain: '30%' },
+      { name: 'Vie', date: '16', icon: rain, rain: '80%' },
+      { name: 'Sáb', date: '17', icon: rain, rain: '60%' },
+      { name: 'Dom', date: '18', icon: cloud, rain: '25%' },
+      { name: 'Lun', date: '19', icon: sun, rain: '5%' },
+      { name: 'Mar', date: '20', icon: sun, rain: '5%' },
+      { name: 'Mié', date: '21', icon: cloud, rain: '20%' }
+    ];
+    const days = defs.map((d, i) => ({
+      ...d,
+      bd: i === 0 ? '#F2A33A' : '#182027',
+      nameColor: i === 0 ? '#F2A33A' : '#F2EFE8',
+      iconColor: d.icon === rain ? '#6CC4EA' : d.icon === sun ? '#F2A33A' : '#C9D2D8'
+    }));
+    const hs = [10, 14, 30, 55, 85, 70, 45, 25, 12, 8, 6, 4];
+    const hours = hs.map((v, i) => ({ h: v + '%', l: i === 0 ? 'Ahora' : '+' + i + 'h' }));
+    return { days, hours };
+  }
+}
+</script>
+</body>
+</html>

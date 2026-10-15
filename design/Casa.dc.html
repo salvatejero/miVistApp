@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Casa</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'Manrope',system-ui,sans-serif}
+button{font-family:inherit;cursor:pointer}
+</style>
+</helmet>
+<div style="width: 1280px; height: 800px; background: #101519; color: #F2EFE8; font-family: 'Manrope', system-ui, sans-serif; display: flex">
+<nav aria-label="Menú" style="width: 120px; flex: none; box-sizing: border-box; padding: 28px 12px; background: #0B0F12; border-right: 1px solid #1F2931; display: flex; flex-direction: column; gap: 12px">
+<button type="button" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; height: 104px; border: none; border-radius: 20px; background: transparent; color: #A9B4BC; font-size: 16px; font-weight: 600"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"/></svg>Inicio</button>
+<button type="button" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; height: 104px; border: none; border-radius: 20px; background: transparent; color: #A9B4BC; font-size: 16px; font-weight: 600"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 5h14v15H5zM5 9h14M9 3v4M15 3v4"/></svg>Calendario</button>
+<button type="button" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; height: 104px; border: none; border-radius: 20px; background: transparent; color: #A9B4BC; font-size: 16px; font-weight: 600"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 18a4 4 0 0 1-.5-7.9A5.5 5.5 0 0 1 17 11a3.5 3.5 0 0 1 0 7H7z"/></svg>Tiempo</button>
+<button type="button" aria-current="page" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; height: 104px; border: none; border-radius: 20px; background: #2A2113; color: #F2A33A; font-size: 16px; font-weight: 600"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10l8-6 8 6v10H4zM10 20v-6h4v6"/></svg>Casa</button>
+</nav>
+
+<div style="flex: 1; min-width: 0; box-sizing: border-box; padding: 36px 40px; display: flex; flex-direction: column; gap: 20px">
+
+<div style="display: flex; align-items: center; justify-content: space-between">
+<div>
+<div style="font-size: 48px; font-weight: 800; letter-spacing: -1px">Casa</div>
+<div style="font-size: 22px; color: #A9B4BC; margin-top: 2px">{{summary}}</div>
+</div>
+<button type="button" onClick="{{allOff}}" style="height: 60px; padding: 0 28px; border-radius: 30px; border: 2px solid #2B3640; background: #182027; color: #F2EFE8; font-size: 20px; font-weight: 800">Apagar todo</button>
+</div>
+
+<div style="flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-template-rows: repeat(2, minmax(0, 1fr)); gap: 16px">
+<sc-for list="{{tiles}}" as="tile" hint-placeholder-count="8">
+<button type="button" onClick="{{tile.toggle}}" aria-pressed="{{tile.pressed}}" style="display: flex; flex-direction: column; align-items: flex-start; justify-content: space-between; padding: 22px 22px; border-radius: 24px; text-align: left; color: {{tile.fg}}; background: {{tile.bg}}; border: 2px solid {{tile.bd}}; min-width: 0">
+<svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="{{tile.fg}}" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{tile.icon}}"/></svg>
+<span style="display: flex; flex-direction: column; gap: 4px">
+<span style="font-size: 26px; font-weight: 800">{{tile.name}}</span>
+<span style="font-size: 18px; font-weight: 600; opacity: 0.8">{{tile.state}}</span>
+</span>
+</button>
+</sc-for>
+</div>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":800}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { on: { salon: true, cocina: false, dormitorio: false, pasillo: false, escritorio: true, enchufe2: false, persiana1: false, persiana2: false } };
+  }
+  renderVals() {
+    const bulb = 'M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z';
+    const plug = 'M9 3v5M15 3v5M7 8h10v3a5 5 0 0 1-10 0V8zM12 16v5';
+    const blind = 'M4 4h16M4 8h16M4 12h16M12 12v7M10 19h4';
+    const defs = [
+      { id: 'salon', name: 'Luz salón', icon: bulb },
+      { id: 'cocina', name: 'Luz cocina', icon: bulb },
+      { id: 'dormitorio', name: 'Luz dormitorio', icon: bulb },
+      { id: 'pasillo', name: 'Luz pasillo', icon: bulb },
+      { id: 'escritorio', name: 'Enchufe escritorio', icon: plug },
+      { id: 'enchufe2', name: 'Enchufe 2', icon: plug },
+      { id: 'persiana1', name: 'Persiana salón', icon: blind },
+      { id: 'persiana2', name: 'Persiana dormitorio', icon: blind }
+    ];
+    const tiles = defs.map((d) => {
+      const on = !!this.state.on[d.id];
+      return {
+        name: d.name,
+        icon: d.icon,
+        state: on ? 'Encendido' : 'Apagado',
+        pressed: on ? 'true' : 'false',
+        bg: on ? '#F2A33A' : '#182027',
+        fg: on ? '#1A1206' : '#F2EFE8',
+        bd: on ? '#F2A33A' : '#2B3640',
+        toggle: () => this.setState({ on: { ...this.state.on, [d.id]: !on } })
+      };
+    });
+    const count = Object.values(this.state.on).filter(Boolean).length;
+    const summary = count + ' de ' + defs.length + ' encendidos';
+    const allOff = () => {
+      const off = {};
+      defs.forEach((d) => { off[d.id] = false; });
+      this.setState({ on: off });
+    };
+    return { tiles, summary, allOff };
+  }
+}
+</script>
+</body>
+</html>

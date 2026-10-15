@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Dashboard Echo Show</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'Manrope',system-ui,sans-serif}
+button{font-family:inherit;cursor:pointer}
+</style>
+</helmet>
+<div style="width: 1280px; height: 800px; background: #101519; color: #F2EFE8; font-family: 'Manrope', system-ui, sans-serif; display: flex">
+<nav aria-label="Menú" style="width: 120px; flex: none; box-sizing: border-box; padding: 28px 12px; background: #0B0F12; border-right: 1px solid #1F2931; display: flex; flex-direction: column; gap: 12px">
+<button type="button" aria-current="page" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; height: 104px; border: none; border-radius: 20px; background: #2A2113; color: #F2A33A; font-size: 16px; font-weight: 600"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"/></svg>Inicio</button>
+<button type="button" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; height: 104px; border: none; border-radius: 20px; background: transparent; color: #A9B4BC; font-size: 16px; font-weight: 600"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 5h14v15H5zM5 9h14M9 3v4M15 3v4"/></svg>Calendario</button>
+<button type="button" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; height: 104px; border: none; border-radius: 20px; background: transparent; color: #A9B4BC; font-size: 16px; font-weight: 600"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 18a4 4 0 0 1-.5-7.9A5.5 5.5 0 0 1 17 11a3.5 3.5 0 0 1 0 7H7z"/></svg>Tiempo</button>
+<button type="button" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; height: 104px; border: none; border-radius: 20px; background: transparent; color: #A9B4BC; font-size: 16px; font-weight: 600"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10l8-6 8 6v10H4zM10 20v-6h4v6"/></svg>Casa</button>
+</nav>
+<div style="flex: 1; min-width: 0; box-sizing: border-box; padding: 36px 40px; display: flex; flex-direction: column; gap: 24px">
+
+<div style="display: flex; justify-content: space-between; align-items: flex-end">
+<div>
+<div style="font-size: 104px; font-weight: 800; line-height: 1; letter-spacing: -2px">08:30</div>
+<div style="font-size: 26px; color: #A9B4BC; margin-top: 8px">Jueves, 15 de octubre</div>
+</div>
+<div style="display: flex; align-items: center; gap: 28px">
+<div style="text-align: right">
+<div style="font-size: 64px; font-weight: 800; line-height: 1">[--°]</div>
+<div style="font-size: 22px; color: #A9B4BC; margin-top: 6px">[Ciudad] · [Estado del cielo]</div>
+</div>
+<div style="display: flex; align-items: center; gap: 10px; padding: 12px 20px; border-radius: 999px; background: #17303D; color: #8FD3F2; font-size: 20px; font-weight: 600">
+<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#8FD3F2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 15a4 4 0 0 1-.5-7.9A5.5 5.5 0 0 1 17 8a3.5 3.5 0 0 1 0 7H7zM8 19l-1 2M12 19l-1 2M16 19l-1 2"/></svg>
+Aviso de lluvia · [hora]
+</div>
+</div>
+</div>
+
+<div style="flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); gap: 24px">
+
+<div style="display: flex; flex-direction: column; gap: 24px; min-height: 0">
+<section style="background: #182027; border-radius: 24px; padding: 24px 28px; display: flex; flex-direction: column; flex: 1; min-height: 0">
+<h2 style="margin: 0 0 4px; font-size: 22px; font-weight: 600; color: #A9B4BC">Lluvia próximas horas</h2>
+<div style="font-size: 20px; color: #F2EFE8; margin-bottom: 14px">[Resumen: cuándo empieza y cuánto dura]</div>
+<div style="flex: 1; display: flex; align-items: flex-end; gap: 10px; padding-top: 8px">
+<sc-for list="{{rain}}" as="bar" hint-placeholder-count="8">
+<div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px; justify-content: flex-end; height: 100%">
+<div style="width: 100%; border-radius: 8px 8px 4px 4px; background: #6CC4EA; height: {{bar.h}}"></div>
+<div style="font-size: 16px; color: #A9B4BC">{{bar.l}}</div>
+</div>
+</sc-for>
+</div>
+</section>
+<section style="background: #182027; border-radius: 24px; padding: 18px 28px; display: flex; align-items: center; justify-content: space-between; gap: 16px">
+<div style="min-width: 0">
+<div style="font-size: 22px; font-weight: 600; color: #A9B4BC">Tráfico al trabajo</div>
+<div style="font-size: 18px; margin-top: 4px">[Ruta] · [Estado del tráfico]</div>
+</div>
+<div style="text-align: right; flex: none">
+<div style="font-size: 40px; font-weight: 800; line-height: 1; color: #F2A33A">[nn] min</div>
+<div style="font-size: 18px; color: #A9B4BC; margin-top: 4px">Sal a las [hh:mm]</div>
+</div>
+</section>
+</div>
+
+<section style="background: #182027; border-radius: 24px; padding: 24px 28px; display: flex; flex-direction: column; gap: 14px">
+<h2 style="margin: 0; font-size: 22px; font-weight: 600; color: #A9B4BC">Agenda</h2>
+<div style="flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px">
+<div style="display: flex; flex-direction: column; gap: 8px; min-width: 0">
+<div style="display: flex; align-items: baseline; gap: 10px; padding-bottom: 8px; border-bottom: 2px solid #F2A33A"><span style="font-size: 30px; font-weight: 800">Hoy</span><span style="font-size: 18px; color: #A9B4BC">Jue 15 oct</span></div>
+<div style="display: flex; flex-direction: column; gap: 4px; padding: 8px 12px; border-radius: 14px; background: #1F2931; border: 2px solid #F2A33A">
+<div style="display: flex; align-items: center; gap: 12px"><span style="font-size: 18px; font-weight: 800; color: #F2A33A; width: 56px; flex: none">[Hora]</span><span style="font-size: 20px; min-width: 0">[Evento]</span></div>
+<div style="display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 600; color: #F2A33A"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F2A33A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><path d="M5 16l1.5-5h11L19 16M4 16h16v3H4zM7.5 13.5h.01M16.5 13.5h.01"/></svg><span>[Lugar] · [nn] min · Sal [hh:mm]</span></div>
+</div>
+<div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 14px; background: #1F2931"><span style="font-size: 18px; font-weight: 800; color: #F2A33A; width: 56px; flex: none">[Hora]</span><span style="font-size: 20px; min-width: 0">[Evento]</span></div>
+<div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 14px; background: #1F2931"><span style="font-size: 18px; font-weight: 800; color: #F2A33A; width: 56px; flex: none">[Hora]</span><span style="font-size: 20px; min-width: 0">[Evento]</span></div>
+<div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 14px; border: 2px dashed #2B3640"><span style="width: 20px; height: 20px; border-radius: 50%; border: 3px solid #F2A33A; box-sizing: border-box; flex: none"></span><span style="font-size: 20px; min-width: 0">[Recordatorio]</span></div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px; min-width: 0">
+<div style="display: flex; align-items: baseline; gap: 10px; padding-bottom: 8px; border-bottom: 2px solid #2B3640"><span style="font-size: 30px; font-weight: 800">Mañana</span><span style="font-size: 18px; color: #A9B4BC">Vie 16 oct</span></div>
+<div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 14px; background: #1F2931"><span style="font-size: 18px; font-weight: 800; color: #F2A33A; width: 56px; flex: none">[Hora]</span><span style="font-size: 20px; min-width: 0">[Evento]</span></div>
+<div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 14px; background: #1F2931"><span style="font-size: 18px; font-weight: 800; color: #F2A33A; width: 56px; flex: none">[Hora]</span><span style="font-size: 20px; min-width: 0">[Evento]</span></div>
+<div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 14px; background: #1F2931"><span style="font-size: 18px; font-weight: 800; color: #F2A33A; width: 56px; flex: none">[Hora]</span><span style="font-size: 20px; min-width: 0">[Evento]</span></div>
+<div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 14px; border: 2px dashed #2B3640"><span style="width: 20px; height: 20px; border-radius: 50%; border: 3px solid #F2A33A; box-sizing: border-box; flex: none"></span><span style="font-size: 20px; min-width: 0">[Recordatorio]</span></div>
+</div>
+</div>
+</section>
+
+
+
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px">
+<sc-for list="{{tiles}}" as="tile" hint-placeholder-count="4">
+<button type="button" onClick="{{tile.toggle}}" aria-pressed="{{tile.pressed}}" style="display: flex; align-items: center; gap: 14px; height: 112px; padding: 0 18px; border-radius: 24px; text-align: left; color: {{tile.fg}}; background: {{tile.bg}}; border: 2px solid {{tile.bd}}">
+<svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="{{tile.fg}}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{tile.icon}}"/></svg>
+<span style="display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 22px; font-weight: 800">{{tile.name}}</span>
+<span style="font-size: 18px; font-weight: 600; opacity: 0.8">{{tile.state}}</span>
+</span>
+</button>
+</sc-for>
+</div>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":800}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { on: { salon: true, cocina: false, escritorio: true, persiana: false } };
+  }
+  renderVals() {
+    const defs = [
+      { id: 'salon', name: 'Luz salón', icon: 'M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z' },
+      { id: 'cocina', name: 'Luz cocina', icon: 'M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z' },
+      { id: 'escritorio', name: 'Enchufe escritorio', icon: 'M9 3v5M15 3v5M7 8h10v3a5 5 0 0 1-10 0V8zM12 16v5' },
+      { id: 'persiana', name: 'Persiana', icon: 'M4 4h16M4 8h16M4 12h16M12 12v7M10 19h4' }
+    ];
+    const tiles = defs.map((d) => {
+      const on = !!this.state.on[d.id];
+      return {
+        name: d.name,
+        icon: d.icon,
+        state: on ? 'Encendido' : 'Apagado',
+        pressed: on ? 'true' : 'false',
+        bg: on ? '#F2A33A' : '#182027',
+        fg: on ? '#1A1206' : '#F2EFE8',
+        bd: on ? '#F2A33A' : '#2B3640',
+        toggle: () => this.setState({ on: { ...this.state.on, [d.id]: !on } })
+      };
+    });
+    const rain = [
+      { l: 'Ahora', h: '18%' }, { l: '+1h', h: '30%' }, { l: '+2h', h: '62%' }, { l: '+3h', h: '90%' },
+      { l: '+4h', h: '70%' }, { l: '+5h', h: '40%' }, { l: '+6h', h: '22%' }, { l: '+7h', h: '10%' }
+    ];
+    return { tiles, rain };
+  }
+}
+</script>
+</body>
+</html>
