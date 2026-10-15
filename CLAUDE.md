@@ -16,4 +16,12 @@ Skill de Alexa (APL) con un dashboard siempre visible para Echo Show. Plan compl
 - Todo dato que muestre una pantalla pasa por el contrato de `contracts/` (skill `data-contracts`).
 
 ## Decisiones tomadas
-<!-- Rellenar aquí las respuestas a §2 de PLAN.md -->
+<!-- Respuestas a §2 de PLAN.md -->
+- **Dispositivos:** Echo Show 8/10 (1280×800) y Echo Show 15 (1920×1080). Los APL se adaptan por perfil de viewport; el diseño de `design/` es la referencia a 1280×800.
+- **Publicación:** la skill se publicará en la tienda de Alexa (cambia la Fase 6 de `PLAN.md`). Consecuencias: varios usuarios, nada personal fijo en el código (direcciones y preferencias por usuario), política de privacidad y certificación de Amazon.
+- **Idioma:** es-ES.
+- **Backend:** TypeScript (Node.js).
+- **Tiempo y lluvia:** Open-Meteo.
+- **Calendario:** Google Calendar, Outlook / Microsoft 365 (Microsoft Graph) y Apple (iCloud, CalDAV).
+- **Tráfico y rutas:** TomTom Routing API.
+- **Domótica:** solo dispositivos vinculados a Alexa. Pendiente de investigar si una skill propia puede controlarlos (ver `PLAN.md` §6).
