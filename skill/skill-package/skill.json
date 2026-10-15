@@ -1,0 +1,33 @@
+{
+  "manifest": {
+    "manifestVersion": "1.0",
+    "publishingInformation": {
+      "locales": {
+        "es-ES": {
+          "name": "Mi VistApp",
+          "summary": "Tu día de un vistazo en el Echo Show: hora, tiempo, agenda y tráfico.",
+          "description": "Mi VistApp convierte tu Echo Show en un panel siempre visible con la hora, el tiempo, la lluvia de las próximas horas, tu agenda de hoy y mañana y el tráfico al trabajo, con un aviso de cuándo salir hacia tus citas.",
+          "examplePhrases": ["Alexa, abre mi vistapp"],
+          "keywords": ["panel", "agenda", "tiempo", "tráfico", "echo show"]
+        }
+      },
+      "isAvailableWorldwide": false,
+      "distributionCountries": ["ES"],
+      "testingInstructions": "Requiere un dispositivo con pantalla (Echo Show 8, 10 o 15).",
+      "category": "PRODUCTIVITY"
+    },
+    "apis": {
+      "custom": {
+        "interfaces": [
+          {
+            "type": "ALEXA_PRESENTATION_APL",
+            "supportedViewports": [
+              { "mode": "HUB", "shape": "RECTANGLE", "minWidth": 1280, "maxWidth": 1280, "minHeight": 800, "maxHeight": 800 },
+              { "mode": "HUB", "shape": "RECTANGLE", "minWidth": 1920, "maxWidth": 1920, "minHeight": 1080, "maxHeight": 1080 }
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,71 @@
+{
+  "description": "Tema de Mi VistApp (design/README.md). Medidas a 1280x800 (Echo Show 8/10) y versión ampliada para 1920x1080 (Echo Show 15).",
+  "resources": [
+    {
+      "description": "Colores del diseño",
+      "colors": {
+        "colorBackground": "#101519",
+        "colorMenu": "#0B0F12",
+        "colorMenuBorder": "#1F2931",
+        "colorCard": "#182027",
+        "colorItem": "#1F2931",
+        "colorBorder": "#2B3640",
+        "colorText": "#F2EFE8",
+        "colorTextSecondary": "#A9B4BC",
+        "colorTextMuted": "#5C6872",
+        "colorAccent": "#F2A33A",
+        "colorAccentBackground": "#2A2113",
+        "colorOnAccent": "#1A1206",
+        "colorRain": "#6CC4EA",
+        "colorRainText": "#8FD3F2",
+        "colorRainBackground": "#17303D"
+      },
+      "strings": {
+        "fontFamily": "Amazon Ember Display"
+      }
+    },
+    {
+      "description": "Medidas para 1280x800",
+      "dimensions": {
+        "menuWidth": "120dp",
+        "menuButtonHeight": "104dp",
+        "screenPaddingX": "40dp",
+        "screenPaddingY": "36dp",
+        "gap": "24dp",
+        "radiusCard": "24dp",
+        "radiusItem": "14dp",
+        "textClock": "104dp",
+        "textTemperature": "64dp",
+        "textScreenTitle": "48dp",
+        "textDayTitle": "30dp",
+        "textDate": "26dp",
+        "textCardTitle": "22dp",
+        "textBody": "20dp",
+        "textSmall": "18dp",
+        "textMenu": "16dp"
+      }
+    },
+    {
+      "description": "Medidas para Echo Show 15 (1920x1080)",
+      "when": "${viewport.width >= 1920}",
+      "dimensions": {
+        "menuWidth": "160dp",
+        "menuButtonHeight": "136dp",
+        "screenPaddingX": "56dp",
+        "screenPaddingY": "44dp",
+        "gap": "32dp",
+        "radiusCard": "32dp",
+        "radiusItem": "18dp",
+        "textClock": "140dp",
+        "textTemperature": "86dp",
+        "textScreenTitle": "64dp",
+        "textDayTitle": "40dp",
+        "textDate": "34dp",
+        "textCardTitle": "30dp",
+        "textBody": "27dp",
+        "textSmall": "24dp",
+        "textMenu": "21dp"
+      }
+    }
+  ]
+}
