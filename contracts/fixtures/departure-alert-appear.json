@@ -1,0 +1,12 @@
+{
+  "eventId": "ev-1",
+  "state": "appear",
+  "eventTimeLabel": "10:00",
+  "title": "Revisión médica",
+  "placeLabel": "Centro de salud",
+  "travelMinutes": 18,
+  "trafficLabel": "Tráfico fluido",
+  "leaveAt": "09:32",
+  "minutesToLeave": 28,
+  "arriveAt": "09:50"
+}

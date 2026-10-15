@@ -1,0 +1,6 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mivistapp.local/contracts/departure-alert.schema.json",
+  "title": "Tarjeta de aviso de salida",
+  "$ref": "common.schema.json#/$defs/departureAlert"
+}

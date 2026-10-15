@@ -1,0 +1,123 @@
+{
+  "status": "ok",
+  "city": "Ciudad de ejemplo",
+  "days": [
+    {
+      "name": "Hoy",
+      "dateLabel": "Jue 15",
+      "isToday": true,
+      "icon": "cloud",
+      "maxTemp": 21,
+      "minTemp": 13,
+      "rainProbability": 30
+    },
+    {
+      "name": "Vie",
+      "dateLabel": "16",
+      "isToday": false,
+      "icon": "rain",
+      "maxTemp": 18,
+      "minTemp": 12,
+      "rainProbability": 80
+    },
+    {
+      "name": "Sáb",
+      "dateLabel": "17",
+      "isToday": false,
+      "icon": "rain",
+      "maxTemp": 17,
+      "minTemp": 11,
+      "rainProbability": 60
+    },
+    {
+      "name": "Dom",
+      "dateLabel": "18",
+      "isToday": false,
+      "icon": "partly-cloudy",
+      "maxTemp": 20,
+      "minTemp": 12,
+      "rainProbability": 25
+    },
+    {
+      "name": "Lun",
+      "dateLabel": "19",
+      "isToday": false,
+      "icon": "sun",
+      "maxTemp": 23,
+      "minTemp": 13,
+      "rainProbability": 5
+    },
+    {
+      "name": "Mar",
+      "dateLabel": "20",
+      "isToday": false,
+      "icon": "sun",
+      "maxTemp": 24,
+      "minTemp": 14,
+      "rainProbability": 5
+    },
+    {
+      "name": "Mié",
+      "dateLabel": "21",
+      "isToday": false,
+      "icon": "cloud",
+      "maxTemp": 22,
+      "minTemp": 14,
+      "rainProbability": 20
+    }
+  ],
+  "hourlyRain": {
+    "status": "ok",
+    "summary": "Lluvia desde las 10:00 durante unas 4 horas",
+    "bars": [
+      {
+        "label": "Ahora",
+        "intensity": 0.1
+      },
+      {
+        "label": "+1h",
+        "intensity": 0.14
+      },
+      {
+        "label": "+2h",
+        "intensity": 0.3
+      },
+      {
+        "label": "+3h",
+        "intensity": 0.55
+      },
+      {
+        "label": "+4h",
+        "intensity": 0.85
+      },
+      {
+        "label": "+5h",
+        "intensity": 0.7
+      },
+      {
+        "label": "+6h",
+        "intensity": 0.45
+      },
+      {
+        "label": "+7h",
+        "intensity": 0.25
+      },
+      {
+        "label": "+8h",
+        "intensity": 0.12
+      },
+      {
+        "label": "+9h",
+        "intensity": 0.08
+      },
+      {
+        "label": "+10h",
+        "intensity": 0.06
+      },
+      {
+        "label": "+11h",
+        "intensity": 0.04
+      }
+    ]
+  }
+}

@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mivistapp.local/contracts/calendar.schema.json",
+  "title": "Pantalla Calendario (datasource `calendar`)",
+  "type": "object",
+  "allOf": [
+    {
+      "$ref": "common.schema.json#/$defs/section"
+    }
+  ],
+  "properties": {
+    "status": true,
+    "message": true,
+    "monthLabel": {
+      "type": "string",
+      "description": "Octubre 2026"
+    },
+    "weekdayLabels": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 7,
+      "maxItems": 7
+    },
+    "cells": {
+      "description": "Semanas completas de lunes a domingo (35 o 42 celdas).",
+      "type": "array",
+      "minItems": 28,
+      "maxItems": 42,
+      "items": {
+        "type": "object",
+        "required": [
+          "day",
+          "inMonth",
+          "isToday",
+          "hasEvents"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "day": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 31
+          },
+          "inMonth": {
+            "type": "boolean"
+          },
+          "isToday": {
+            "type": "boolean"
+          },
+          "hasEvents": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "selectedDay": {
+      "$ref": "common.schema.json#/$defs/agendaDay"
+    }
+  },
+  "if": {
+    "type": "object",
+    "properties": {
+      "status": {
+        "const": "ok"
+      }
+    }
+  },
+  "then": {
+    "required": [
+      "monthLabel",
+      "weekdayLabels",
+      "cells",
+      "selectedDay"
+    ]
+  },
+  "unevaluatedProperties": false
+}
