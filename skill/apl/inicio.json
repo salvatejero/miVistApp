@@ -1,0 +1,102 @@
+{
+  "type": "APL",
+  "version": "2023.3",
+  "theme": "dark",
+  "description": "Inicio mínimo de la Fase 1: menú, reloj, fecha y texto fijo. La pantalla completa llega en la Fase 2.",
+  "mainTemplate": {
+    "parameters": ["home"],
+    "items": [
+      {
+        "type": "Container",
+        "width": "100vw",
+        "height": "100vh",
+        "direction": "row",
+        "bind": [{ "name": "menuItems", "value": ["Inicio", "Calendario", "Tiempo", "Casa"] }],
+        "items": [
+          {
+            "type": "Frame",
+            "width": "@menuWidth",
+            "height": "100%",
+            "backgroundColor": "@colorMenu",
+            "borderColor": "@colorMenuBorder",
+            "borderWidth": "1dp",
+            "item": {
+              "type": "Container",
+              "paddingTop": "28dp",
+              "paddingLeft": "12dp",
+              "paddingRight": "12dp",
+              "data": "${menuItems}",
+              "items": [
+                {
+                  "type": "Frame",
+                  "height": "@menuButtonHeight",
+                  "spacing": "12dp",
+                  "borderRadius": "20dp",
+                  "backgroundColor": "${index == 0 ? @colorAccentBackground : 'transparent'}",
+                  "item": {
+                    "type": "Text",
+                    "width": "100%",
+                    "height": "100%",
+                    "text": "${data}",
+                    "textAlign": "center",
+                    "textAlignVertical": "center",
+                    "fontFamily": "@fontFamily",
+                    "fontSize": "@textMenu",
+                    "fontWeight": "600",
+                    "color": "${index == 0 ? @colorAccent : @colorTextSecondary}"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "type": "Container",
+            "grow": 1,
+            "height": "100%",
+            "backgroundColor": "@colorBackground",
+            "paddingLeft": "@screenPaddingX",
+            "paddingRight": "@screenPaddingX",
+            "paddingTop": "@screenPaddingY",
+            "paddingBottom": "@screenPaddingY",
+            "items": [
+              {
+                "type": "Text",
+                "id": "clock",
+                "text": "${Time.format('HH:mm', localTime)}",
+                "fontFamily": "@fontFamily",
+                "fontSize": "@textClock",
+                "fontWeight": "800",
+                "color": "@colorText"
+              },
+              {
+                "type": "Text",
+                "text": "${home.header.dateLabel}",
+                "fontFamily": "@fontFamily",
+                "fontSize": "@textDate",
+                "color": "@colorTextSecondary",
+                "spacing": "8dp"
+              },
+              {
+                "type": "Frame",
+                "spacing": "@gap",
+                "backgroundColor": "@colorCard",
+                "borderRadius": "@radiusCard",
+                "paddingLeft": "28dp",
+                "paddingRight": "28dp",
+                "paddingTop": "24dp",
+                "paddingBottom": "24dp",
+                "item": {
+                  "type": "Text",
+                  "text": "Mi VistApp está en marcha. Las tarjetas de tiempo, agenda, tráfico y casa llegan en la Fase 2.",
+                  "fontFamily": "@fontFamily",
+                  "fontSize": "@textBody",
+                  "color": "@colorText"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
