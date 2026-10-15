@@ -1,0 +1,498 @@
+{
+  "description": "Iconos de trazo del diseño (viewBox 24x24). Parámetros: color y strokeWidth.",
+  "graphics": {
+    "iconInicio": {
+      "type": "AVG",
+      "version": "1.2",
+      "width": 24,
+      "height": 24,
+      "parameters": [
+        {
+          "name": "color",
+          "type": "color",
+          "default": "#F2EFE8"
+        },
+        {
+          "name": "strokeWidth",
+          "type": "number",
+          "default": 1.8
+        }
+      ],
+      "items": [
+        {
+          "type": "path",
+          "pathData": "M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z",
+          "fill": "transparent",
+          "stroke": "${color}",
+          "strokeWidth": "${strokeWidth}",
+          "strokeLineCap": "round",
+          "strokeLineJoin": "round"
+        }
+      ]
+    },
+    "iconCalendario": {
+      "type": "AVG",
+      "version": "1.2",
+      "width": 24,
+      "height": 24,
+      "parameters": [
+        {
+          "name": "color",
+          "type": "color",
+          "default": "#F2EFE8"
+        },
+        {
+          "name": "strokeWidth",
+          "type": "number",
+          "default": 1.8
+        }
+      ],
+      "items": [
+        {
+          "type": "path",
+          "pathData": "M5 5h14v15H5zM5 9h14M9 3v4M15 3v4",
+          "fill": "transparent",
+          "stroke": "${color}",
+          "strokeWidth": "${strokeWidth}",
+          "strokeLineCap": "round",
+          "strokeLineJoin": "round"
+        }
+      ]
+    },
+    "iconTiempo": {
+      "type": "AVG",
+      "version": "1.2",
+      "width": 24,
+      "height": 24,
+      "parameters": [
+        {
+          "name": "color",
+          "type": "color",
+          "default": "#F2EFE8"
+        },
+        {
+          "name": "strokeWidth",
+          "type": "number",
+          "default": 1.8
+        }
+      ],
+      "items": [
+        {
+          "type": "path",
+          "pathData": "M7 18a4 4 0 0 1-.5-7.9A5.5 5.5 0 0 1 17 11a3.5 3.5 0 0 1 0 7H7z",
+          "fill": "transparent",
+          "stroke": "${color}",
+          "strokeWidth": "${strokeWidth}",
+          "strokeLineCap": "round",
+          "strokeLineJoin": "round"
+        }
+      ]
+    },
+    "iconCasa": {
+      "type": "AVG",
+      "version": "1.2",
+      "width": 24,
+      "height": 24,
+      "parameters": [
+        {
+          "name": "color",
+          "type": "color",
+          "default": "#F2EFE8"
+        },
+        {
+          "name": "strokeWidth",
+          "type": "number",
+          "default": 1.8
+        }
+      ],
+      "items": [
+        {
+          "type": "path",
+          "pathData": "M4 10l8-6 8 6v10H4zM10 20v-6h4v6",
+          "fill": "transparent",
+          "stroke": "${color}",
+          "strokeWidth": "${strokeWidth}",
+          "strokeLineCap": "round",
+          "strokeLineJoin": "round"
+        }
+      ]
+    },
+    "iconLight": {
+      "type": "AVG",
+      "version": "1.2",
+      "width": 24,
+      "height": 24,
+      "parameters": [
+        {
+          "name": "color",
+          "type": "color",
+          "default": "#F2EFE8"
+        },
+        {
+          "name": "strokeWidth",
+          "type": "number",
+          "default": 1.8
+        }
+      ],
+      "items": [
+        {
+          "type": "path",
+          "pathData": "M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z",
+          "fill": "transparent",
+          "stroke": "${color}",
+          "strokeWidth": "${strokeWidth}",
+          "strokeLineCap": "round",
+          "strokeLineJoin": "round"
+        }
+      ]
+    },
+    "iconPlug": {
+      "type": "AVG",
+      "version": "1.2",
+      "width": 24,
+      "height": 24,
+      "parameters": [
+        {
+          "name": "color",
+          "type": "color",
+          "default": "#F2EFE8"
+        },
+        {
+          "name": "strokeWidth",
+          "type": "number",
+          "default": 1.8
+        }
+      ],
+      "items": [
+        {
+          "type": "path",
+          "pathData": "M9 3v5M15 3v5M7 8h10v3a5 5 0 0 1-10 0V8zM12 16v5",
+          "fill": "transparent",
+          "stroke": "${color}",
+          "strokeWidth": "${strokeWidth}",
+          "strokeLineCap": "round",
+          "strokeLineJoin": "round"
+        }
+      ]
+    },
+    "iconBlind": {
+      "type": "AVG",
+      "version": "1.2",
+      "width": 24,
+      "height": 24,
+      "parameters": [
+        {
+          "name": "color",
+          "type": "color",
+          "default": "#F2EFE8"
+        },
+        {
+          "name": "strokeWidth",
+          "type": "number",
+          "default": 1.8
+        }
+      ],
+      "items": [
+        {
+          "type": "path",
+          "pathData": "M4 4h16M4 8h16M4 12h16M12 12v7M10 19h4",
+          "fill": "transparent",
+          "stroke": "${color}",
+          "strokeWidth": "${strokeWidth}",
+          "strokeLineCap": "round",
+          "strokeLineJoin": "round"
+        }
+      ]
+    },
+    "iconCar": {
+      "type": "AVG",
+      "version": "1.2",
+      "width": 24,
+      "height": 24,
+      "parameters": [
+        {
+          "name": "color",
+          "type": "color",
+          "default": "#F2EFE8"
+        },
+        {
+          "name": "strokeWidth",
+          "type": "number",
+          "default": 1.8
+        }
+      ],
+      "items": [
+        {
+          "type": "path",
+          "pathData": "M5 16l1.5-5h11L19 16M4 16h16v3H4zM7.5 13.5h.01M16.5 13.5h.01",
+          "fill": "transparent",
+          "stroke": "${color}",
+          "strokeWidth": "${strokeWidth}",
+          "strokeLineCap": "round",
+          "strokeLineJoin": "round"
+        }
+      ]
+    },
+    "iconChevronLeft": {
+      "type": "AVG",
+      "version": "1.2",
+      "width": 24,
+      "height": 24,
+      "parameters": [
+        {
+          "name": "color",
+          "type": "color",
+          "default": "#F2EFE8"
+        },
+        {
+          "name": "strokeWidth",
+          "type": "number",
+          "default": 1.8
+        }
+      ],
+      "items": [
+        {
+          "type": "path",
+          "pathData": "M15 5l-7 7 7 7",
+          "fill": "transparent",
+          "stroke": "${color}",
+          "strokeWidth": "${strokeWidth}",
+          "strokeLineCap": "round",
+          "strokeLineJoin": "round"
+        }
+      ]
+    },
+    "iconChevronRight": {
+      "type": "AVG",
+      "version": "1.2",
+      "width": 24,
+      "height": 24,
+      "parameters": [
+        {
+          "name": "color",
+          "type": "color",
+          "default": "#F2EFE8"
+        },
+        {
+          "name": "strokeWidth",
+          "type": "number",
+          "default": 1.8
+        }
+      ],
+      "items": [
+        {
+          "type": "path",
+          "pathData": "M9 5l7 7-7 7",
+          "fill": "transparent",
+          "stroke": "${color}",
+          "strokeWidth": "${strokeWidth}",
+          "strokeLineCap": "round",
+          "strokeLineJoin": "round"
+        }
+      ]
+    },
+    "weather-sun": {
+      "type": "AVG",
+      "version": "1.2",
+      "width": 24,
+      "height": 24,
+      "parameters": [
+        {
+          "name": "color",
+          "type": "color",
+          "default": "#F2EFE8"
+        },
+        {
+          "name": "strokeWidth",
+          "type": "number",
+          "default": 1.8
+        }
+      ],
+      "items": [
+        {
+          "type": "path",
+          "pathData": "M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4",
+          "fill": "transparent",
+          "stroke": "${color}",
+          "strokeWidth": "${strokeWidth}",
+          "strokeLineCap": "round",
+          "strokeLineJoin": "round"
+        }
+      ]
+    },
+    "weather-partly-cloudy": {
+      "type": "AVG",
+      "version": "1.2",
+      "width": 24,
+      "height": 24,
+      "parameters": [
+        {
+          "name": "color",
+          "type": "color",
+          "default": "#F2EFE8"
+        },
+        {
+          "name": "strokeWidth",
+          "type": "number",
+          "default": 1.8
+        }
+      ],
+      "items": [
+        {
+          "type": "path",
+          "pathData": "M8 2.5v1.5M3 7.5h1.5M4.5 4l1 1M11.5 4l-1 1M5.3 10.2a3 3 0 0 1 5-3.4M9 20a3.5 3.5 0 0 1-.4-7A5 5 0 0 1 18 13.5a3.2 3.2 0 0 1 0 6.5H9z",
+          "fill": "transparent",
+          "stroke": "${color}",
+          "strokeWidth": "${strokeWidth}",
+          "strokeLineCap": "round",
+          "strokeLineJoin": "round"
+        }
+      ]
+    },
+    "weather-cloud": {
+      "type": "AVG",
+      "version": "1.2",
+      "width": 24,
+      "height": 24,
+      "parameters": [
+        {
+          "name": "color",
+          "type": "color",
+          "default": "#F2EFE8"
+        },
+        {
+          "name": "strokeWidth",
+          "type": "number",
+          "default": 1.8
+        }
+      ],
+      "items": [
+        {
+          "type": "path",
+          "pathData": "M7 18a4 4 0 0 1-.5-7.9A5.5 5.5 0 0 1 17 11a3.5 3.5 0 0 1 0 7H7z",
+          "fill": "transparent",
+          "stroke": "${color}",
+          "strokeWidth": "${strokeWidth}",
+          "strokeLineCap": "round",
+          "strokeLineJoin": "round"
+        }
+      ]
+    },
+    "weather-rain": {
+      "type": "AVG",
+      "version": "1.2",
+      "width": 24,
+      "height": 24,
+      "parameters": [
+        {
+          "name": "color",
+          "type": "color",
+          "default": "#F2EFE8"
+        },
+        {
+          "name": "strokeWidth",
+          "type": "number",
+          "default": 1.8
+        }
+      ],
+      "items": [
+        {
+          "type": "path",
+          "pathData": "M7 15a4 4 0 0 1-.5-7.9A5.5 5.5 0 0 1 17 8a3.5 3.5 0 0 1 0 7H7zM8 19l-1 2M12 19l-1 2M16 19l-1 2",
+          "fill": "transparent",
+          "stroke": "${color}",
+          "strokeWidth": "${strokeWidth}",
+          "strokeLineCap": "round",
+          "strokeLineJoin": "round"
+        }
+      ]
+    },
+    "weather-storm": {
+      "type": "AVG",
+      "version": "1.2",
+      "width": 24,
+      "height": 24,
+      "parameters": [
+        {
+          "name": "color",
+          "type": "color",
+          "default": "#F2EFE8"
+        },
+        {
+          "name": "strokeWidth",
+          "type": "number",
+          "default": 1.8
+        }
+      ],
+      "items": [
+        {
+          "type": "path",
+          "pathData": "M7 15a4 4 0 0 1-.5-7.9A5.5 5.5 0 0 1 17 8a3.5 3.5 0 0 1 0 7M12.5 12l-2.5 4.5h4L11.5 21",
+          "fill": "transparent",
+          "stroke": "${color}",
+          "strokeWidth": "${strokeWidth}",
+          "strokeLineCap": "round",
+          "strokeLineJoin": "round"
+        }
+      ]
+    },
+    "weather-snow": {
+      "type": "AVG",
+      "version": "1.2",
+      "width": 24,
+      "height": 24,
+      "parameters": [
+        {
+          "name": "color",
+          "type": "color",
+          "default": "#F2EFE8"
+        },
+        {
+          "name": "strokeWidth",
+          "type": "number",
+          "default": 1.8
+        }
+      ],
+      "items": [
+        {
+          "type": "path",
+          "pathData": "M7 15a4 4 0 0 1-.5-7.9A5.5 5.5 0 0 1 17 8a3.5 3.5 0 0 1 0 7H7zM8 18.5h.01M12 18.5h.01M16 18.5h.01M10 21.5h.01M14 21.5h.01",
+          "fill": "transparent",
+          "stroke": "${color}",
+          "strokeWidth": "${strokeWidth}",
+          "strokeLineCap": "round",
+          "strokeLineJoin": "round"
+        }
+      ]
+    },
+    "weather-fog": {
+      "type": "AVG",
+      "version": "1.2",
+      "width": 24,
+      "height": 24,
+      "parameters": [
+        {
+          "name": "color",
+          "type": "color",
+          "default": "#F2EFE8"
+        },
+        {
+          "name": "strokeWidth",
+          "type": "number",
+          "default": 1.8
+        }
+      ],
+      "items": [
+        {
+          "type": "path",
+          "pathData": "M5 7h14M3 11h18M5 15h14M8 19h8",
+          "fill": "transparent",
+          "stroke": "${color}",
+          "strokeWidth": "${strokeWidth}",
+          "strokeLineCap": "round",
+          "strokeLineJoin": "round"
+        }
+      ]
+    }
+  }
+}

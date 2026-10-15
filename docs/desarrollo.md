@@ -19,7 +19,7 @@ Mientras no esté desplegada (Fase 6), se puede ver una pantalla en la herramien
 2. En la consola de Alexa, abre la skill → **Multimodal Responses** → **Visual** → crear desde cero.
 3. Pega el documento que genera la skill. Para obtenerlo:
    ```bash
-   node -e 'require("./build/hosted/lambda/index.js").handler(require("./skill/lambda/test/launch-request.json"),{}).then(r=>console.log(JSON.stringify(r.response.directives[0].document,null,2)))'
+   node -e 'require("./build/hosted/lambda/index.js").handler(require("./skill/lambda/tests/launch-request.json"),{}).then(r=>console.log(JSON.stringify(r.response.directives[0].document,null,2)))'
    ```
    y en **Data** pega el contenido de `contracts/fixtures/home.json` dentro de `{"home": …}`.
 4. Cambia el viewport entre *Echo Show 8* y *Echo Show 15* para comprobar los dos tamaños.
