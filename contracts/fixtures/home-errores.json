@@ -1,0 +1,10 @@
+{
+  "generatedAt": "2026-10-15T08:30:00+02:00",
+  "header": { "dateLabel": "Jueves, 15 de octubre" },
+  "weather": { "status": "error", "message": "No se pudo cargar el tiempo" },
+  "rainForecast": { "status": "error", "message": "No se pudo cargar la lluvia" },
+  "commute": { "status": "error", "message": "Tráfico no disponible" },
+  "agenda": { "status": "empty", "message": "Sin eventos hoy ni mañana" },
+  "house": { "status": "empty", "message": "No hay dispositivos configurados" },
+  "departureAlert": null
+}

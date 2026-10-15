@@ -1,0 +1,203 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mivistapp.local/contracts/home.schema.json",
+  "title": "Pantalla Inicio (datasource `home`)",
+  "type": "object",
+  "required": [
+    "generatedAt",
+    "header",
+    "weather",
+    "rainForecast",
+    "commute",
+    "agenda",
+    "house",
+    "departureAlert"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "generatedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "header": {
+      "type": "object",
+      "required": [
+        "dateLabel"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "dateLabel": {
+          "type": "string",
+          "description": "Jueves, 15 de octubre. La hora la pinta el dispositivo."
+        }
+      }
+    },
+    "weather": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "common.schema.json#/$defs/section"
+        }
+      ],
+      "properties": {
+        "status": true,
+        "message": true,
+        "city": {
+          "type": "string"
+        },
+        "temperature": {
+          "type": "number"
+        },
+        "conditionLabel": {
+          "type": "string"
+        },
+        "icon": {
+          "$ref": "common.schema.json#/$defs/weatherIcon"
+        },
+        "rainAlertLabel": {
+          "type": "string",
+          "description": "Texto de la píldora de lluvia; ausente si no hay aviso."
+        }
+      },
+      "if": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "const": "ok"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "city",
+          "temperature",
+          "conditionLabel",
+          "icon"
+        ]
+      },
+      "unevaluatedProperties": false
+    },
+    "rainForecast": {
+      "$ref": "common.schema.json#/$defs/rainForecast"
+    },
+    "commute": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "common.schema.json#/$defs/section"
+        }
+      ],
+      "properties": {
+        "status": true,
+        "message": true,
+        "routeLabel": {
+          "type": "string"
+        },
+        "trafficLabel": {
+          "type": "string"
+        },
+        "durationMinutes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "leaveAt": {
+          "$ref": "common.schema.json#/$defs/time"
+        }
+      },
+      "if": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "const": "ok"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "routeLabel",
+          "trafficLabel",
+          "durationMinutes",
+          "leaveAt"
+        ]
+      },
+      "unevaluatedProperties": false
+    },
+    "agenda": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "common.schema.json#/$defs/section"
+        }
+      ],
+      "properties": {
+        "status": true,
+        "message": true,
+        "today": {
+          "$ref": "common.schema.json#/$defs/agendaDay"
+        },
+        "tomorrow": {
+          "$ref": "common.schema.json#/$defs/agendaDay"
+        }
+      },
+      "if": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "const": "ok"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "today",
+          "tomorrow"
+        ]
+      },
+      "unevaluatedProperties": false
+    },
+    "house": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "common.schema.json#/$defs/section"
+        }
+      ],
+      "properties": {
+        "status": true,
+        "message": true,
+        "devices": {
+          "type": "array",
+          "items": {
+            "$ref": "common.schema.json#/$defs/device"
+          },
+          "maxItems": 4
+        }
+      },
+      "if": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "const": "ok"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "devices"
+        ]
+      },
+      "unevaluatedProperties": false
+    },
+    "departureAlert": {
+      "description": "Aviso activo, o null si no hay ninguno.",
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "common.schema.json#/$defs/departureAlert"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "status": "ok",
+  "summary": "2 de 8 encendidos",
+  "devices": [
+    { "id": "salon", "name": "Luz salón", "kind": "light", "on": true, "stateLabel": "Encendido" },
+    { "id": "cocina", "name": "Luz cocina", "kind": "light", "on": false, "stateLabel": "Apagado" },
+    { "id": "dormitorio", "name": "Luz dormitorio", "kind": "light", "on": false, "stateLabel": "Apagado" },
+    { "id": "pasillo", "name": "Luz pasillo", "kind": "light", "on": false, "stateLabel": "Apagado" },
+    { "id": "escritorio", "name": "Enchufe escritorio", "kind": "plug", "on": true, "stateLabel": "Encendido" },
+    { "id": "enchufe-2", "name": "Enchufe 2", "kind": "plug", "on": false, "stateLabel": "Apagado" },
+    { "id": "persiana-salon", "name": "Persiana salón", "kind": "blind", "on": false, "stateLabel": "Cerrada" },
+    { "id": "persiana-dormitorio", "name": "Persiana dormitorio", "kind": "blind", "on": false, "stateLabel": "Cerrada" }
+  ]
+}
