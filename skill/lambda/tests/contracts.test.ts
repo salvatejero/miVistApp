@@ -1,27 +1,21 @@
 import { readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { contractValidator, contractsDir, readJson, schemaId } from './helpers';
-
-const ajv = contractValidator();
+import { contractErrors, contractsDir, readJson } from './helpers';
 
 /** Qué esquema valida cada fixture, por prefijo del nombre del fichero. */
 const schemaForFixture = (file: string): string => {
   const prefixes = ['departure-alert', 'home', 'calendar', 'weather', 'house'];
   const prefix = prefixes.find((p) => file.startsWith(p));
   if (!prefix) throw new Error(`Fixture sin esquema: ${file}`);
-  return schemaId(prefix);
+  return prefix;
 };
 
 describe('contrato de datos', () => {
   const fixtures = readdirSync(join(contractsDir, 'fixtures')).filter((f) => f.endsWith('.json'));
 
   it.each(fixtures)('%s cumple su esquema', (file) => {
-    const validate = ajv.getSchema(schemaForFixture(file));
-    expect(validate).toBeDefined();
-    const valid = validate!(readJson(join(contractsDir, 'fixtures', file)));
-    expect(validate!.errors ?? []).toEqual([]);
-    expect(valid).toBe(true);
+    expect(contractErrors(schemaForFixture(file), readJson(join(contractsDir, 'fixtures', file)))).toEqual([]);
   });
 
   it('hay un fixture para cada estado del aviso de salida', () => {
@@ -31,19 +25,24 @@ describe('contrato de datos', () => {
     expect(states.sort()).toEqual(['appear', 'leave_now', 'soon']);
   });
 
+  it('cada pantalla tiene fixtures normal y de error o vacío', () => {
+    for (const screen of ['home', 'calendar', 'weather', 'house']) {
+      const own = fixtures.filter((f) => schemaForFixture(f) === screen);
+      expect(own, screen).toContain(`${screen}.json`);
+      expect(own.some((f) => /-(errores|error|vacio|sin-eventos)\.json$/.test(f)), screen).toBe(true);
+    }
+  });
+
   it('rechaza campos inventados', () => {
-    const validate = ajv.getSchema(schemaId('house'))!;
-    expect(validate({ status: 'ok', summary: 'x', devices: [], color: 'rojo' })).toBe(false);
+    expect(contractErrors('house', { status: 'ok', summary: 'x', devices: [], color: 'rojo' })).not.toEqual([]);
   });
 
   it('exige mensaje cuando un bloque falla', () => {
-    const validate = ajv.getSchema(schemaId('weather'))!;
-    expect(validate({ status: 'error' })).toBe(false);
-    expect(validate({ status: 'error', message: 'Tiempo no disponible' })).toBe(true);
+    expect(contractErrors('weather', { status: 'error' })).not.toEqual([]);
+    expect(contractErrors('weather', { status: 'error', message: 'Tiempo no disponible' })).toEqual([]);
   });
 
   it('exige los datos cuando un bloque está bien', () => {
-    const validate = ajv.getSchema(schemaId('weather'))!;
-    expect(validate({ status: 'ok' })).toBe(false);
+    expect(contractErrors('weather', { status: 'ok' })).not.toEqual([]);
   });
 });

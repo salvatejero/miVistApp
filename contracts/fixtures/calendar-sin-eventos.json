@@ -1,0 +1,188 @@
+{
+  "status": "ok",
+  "monthLabel": "Febrero 2027",
+  "weekdayLabels": [
+    "Lun",
+    "Mar",
+    "Mié",
+    "Jue",
+    "Vie",
+    "Sáb",
+    "Dom"
+  ],
+  "cells": [
+    {
+      "day": 1,
+      "inMonth": true,
+      "isToday": false,
+      "hasEvents": false
+    },
+    {
+      "day": 2,
+      "inMonth": true,
+      "isToday": false,
+      "hasEvents": false
+    },
+    {
+      "day": 3,
+      "inMonth": true,
+      "isToday": false,
+      "hasEvents": false
+    },
+    {
+      "day": 4,
+      "inMonth": true,
+      "isToday": false,
+      "hasEvents": false
+    },
+    {
+      "day": 5,
+      "inMonth": true,
+      "isToday": false,
+      "hasEvents": false
+    },
+    {
+      "day": 6,
+      "inMonth": true,
+      "isToday": false,
+      "hasEvents": false
+    },
+    {
+      "day": 7,
+      "inMonth": true,
+      "isToday": false,
+      "hasEvents": false
+    },
+    {
+      "day": 8,
+      "inMonth": true,
+      "isToday": false,
+      "hasEvents": false
+    },
+    {
+      "day": 9,
+      "inMonth": true,
+      "isToday": false,
+      "hasEvents": false
+    },
+    {
+      "day": 10,
+      "inMonth": true,
+      "isToday": false,
+      "hasEvents": false
+    },
+    {
+      "day": 11,
+      "inMonth": true,
+      "isToday": false,
+      "hasEvents": false
+    },
+    {
+      "day": 12,
+      "inMonth": true,
+      "isToday": false,
+      "hasEvents": false
+    },
+    {
+      "day": 13,
+      "inMonth": true,
+      "isToday": false,
+      "hasEvents": false
+    },
+    {
+      "day": 14,
+      "inMonth": true,
+      "isToday": false,
+      "hasEvents": false
+    },
+    {
+      "day": 15,
+      "inMonth": true,
+      "isToday": false,
+      "hasEvents": false
+    },
+    {
+      "day": 16,
+      "inMonth": true,
+      "isToday": false,
+      "hasEvents": false
+    },
+    {
+      "day": 17,
+      "inMonth": true,
+      "isToday": false,
+      "hasEvents": false
+    },
+    {
+      "day": 18,
+      "inMonth": true,
+      "isToday": false,
+      "hasEvents": false
+    },
+    {
+      "day": 19,
+      "inMonth": true,
+      "isToday": false,
+      "hasEvents": false
+    },
+    {
+      "day": 20,
+      "inMonth": true,
+      "isToday": false,
+      "hasEvents": false
+    },
+    {
+      "day": 21,
+      "inMonth": true,
+      "isToday": false,
+      "hasEvents": false
+    },
+    {
+      "day": 22,
+      "inMonth": true,
+      "isToday": false,
+      "hasEvents": false
+    },
+    {
+      "day": 23,
+      "inMonth": true,
+      "isToday": false,
+      "hasEvents": false
+    },
+    {
+      "day": 24,
+      "inMonth": true,
+      "isToday": false,
+      "hasEvents": false
+    },
+    {
+      "day": 25,
+      "inMonth": true,
+      "isToday": false,
+      "hasEvents": false
+    },
+    {
+      "day": 26,
+      "inMonth": true,
+      "isToday": false,
+      "hasEvents": false
+    },
+    {
+      "day": 27,
+      "inMonth": true,
+      "isToday": false,
+      "hasEvents": false
+    },
+    {
+      "day": 28,
+      "inMonth": true,
+      "isToday": false,
+      "hasEvents": false
+    }
+  ],
+  "selectedDay": {
+    "title": "1 feb",
+    "dateLabel": "Lun 1 feb",
+    "items": []
+  }
+}

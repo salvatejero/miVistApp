@@ -1,0 +1,7 @@
+{
+  "description": "Estilos de texto comunes. Cada Text usa uno y fija solo tamaño, peso y, si cambia con el estado, color.",
+  "styles": {
+    "texto": { "values": [{ "fontFamily": "@fontFamily", "color": "@colorText", "fontWeight": "normal" }] },
+    "textoSecundario": { "values": [{ "fontFamily": "@fontFamily", "color": "@colorTextSecondary", "fontWeight": "normal" }] }
+  }
+}
