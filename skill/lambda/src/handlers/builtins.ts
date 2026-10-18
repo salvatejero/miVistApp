@@ -36,11 +36,23 @@ export const sessionEndedHandler: RequestHandler = {
   handle: (handlerInput) => handlerInput.responseBuilder.getResponse(),
 };
 
+/** Errores que informa el propio Echo Show o Alexa: se registran y no se contesta nada. */
+export const systemErrorHandler: RequestHandler = {
+  canHandle: (handlerInput) =>
+    ['Alexa.Presentation.APL.RuntimeError', 'System.ExceptionEncountered'].includes(getRequestType(handlerInput.requestEnvelope)),
+  handle: (handlerInput) => {
+    console.error('Error informado por el dispositivo:', getRequestType(handlerInput.requestEnvelope));
+    return handlerInput.responseBuilder.getResponse();
+  },
+};
+
 export const errorHandler: ErrorHandler = {
   canHandle: () => true,
   handle: (handlerInput, error) => {
     // Solo el tipo de petición y el error: el sobre de la petición lleva datos del usuario.
     console.error('Error en', getRequestType(handlerInput.requestEnvelope), error.name, error.message);
+    // Un refresco que nadie ha pedido no habla: la pantalla sigue y el siguiente tick lo reintenta.
+    if (userEventArguments(handlerInput)?.[0] === 'refresh') return handlerInput.responseBuilder.getResponse();
     return handlerInput.responseBuilder.speak('Lo siento, algo ha fallado. Inténtalo de nuevo en un momento.').getResponse();
   },
 };

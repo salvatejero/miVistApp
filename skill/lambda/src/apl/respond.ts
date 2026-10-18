@@ -1,6 +1,8 @@
 import type { HandlerInput } from 'ask-sdk-core';
 import type { Response } from 'ask-sdk-model';
+import { within } from '../../../../lib/time';
 import { config } from '../config';
+import type { HomeScreen } from '../contracts';
 import type { DashboardData } from '../services/dashboard';
 import { loadingContent } from './loading';
 import { renderDocument, supportsApl, withKeepAlive, withLoading } from './render';
@@ -17,21 +19,14 @@ export interface Previewable {
 const canPreview = (data: DashboardData): data is DashboardData & Previewable =>
   typeof (data as Partial<Previewable>).preview === 'function';
 
-/** Más a menudo mientras hay un aviso de salida, para que la cuenta atrás avance. */
-const refreshMinutes = (content: unknown): number =>
-  (content as { departureAlert?: unknown } | null)?.departureAlert ? config.alertRefreshMinutes : config.refreshMinutes;
-
-/** Espera `ms` o lo que tarde `promise`, lo que ocurra antes. Devuelve null si se acaba el tiempo. */
-async function within<T>(promise: Promise<T>, ms: number): Promise<{ value: T } | null> {
-  let timer: NodeJS.Timeout | undefined;
-  const timeout = new Promise<null>((resolve) => {
-    timer = setTimeout(() => resolve(null), ms);
-  });
-  try {
-    return await Promise.race([promise.then((value) => ({ value })), timeout]);
-  } finally {
-    clearTimeout(timer);
-  }
+/**
+ * Cada minuto mientras hay un aviso de salida (la cuenta atrás tiene que moverse) o un evento de hoy
+ * con salida calculada (para que el aviso aparezca a su hora y no hasta 5 min tarde).
+ */
+function refreshMinutes(content: unknown): number {
+  const home = content as Partial<HomeScreen> | null;
+  const upcoming = home?.agenda?.status === 'ok' && home.agenda.today.items.some((item) => item.departure);
+  return home?.departureAlert || upcoming ? config.alertRefreshMinutes : config.refreshMinutes;
 }
 
 export interface RespondOptions extends ScreenOptions {
@@ -41,6 +36,8 @@ export interface RespondOptions extends ScreenOptions {
    * y la pantalla pide los datos sola. Los refrescos y los botones de casa esperan a los datos.
    */
   progressive?: boolean;
+  /** No pedir datos ahora (el VPS acaba de fallar): pintar lo guardado o el esqueleto y que la pantalla los pida. */
+  offline?: boolean;
 }
 
 /** Pinta una pantalla con sus datos. La sesión queda abierta para seguir navegando. */
@@ -57,11 +54,10 @@ export async function respondWithScreen(
   if (options.speech) builder.speak(options.speech);
   const { document, datasource, load, cacheKey } = SCREENS[screen];
   const token = screenToken(screen);
-  const loading = load(data, options);
-
   if (options.progressive) {
-    loading.catch(() => undefined); // si se pinta la provisional, el resultado se descarta
-    const quick = await within(loading, config.preloadAfterMs);
+    const loading = options.offline ? null : load(data, options);
+    loading?.catch(() => undefined); // si se pinta la provisional, el resultado se descarta
+    const quick = loading ? await within(loading, config.preloadAfterMs) : null;
     if (!quick) {
       const cached = canPreview(data) ? await data.preview(cacheKey(options)) : undefined;
       const content = cached ?? loadingContent(screen, new Date(), config.timeZone);
@@ -70,7 +66,7 @@ export async function respondWithScreen(
     }
     return builder.addDirective(renderWithData(screen, quick.value)).getResponse();
   }
-  return builder.addDirective(renderWithData(screen, await loading)).getResponse();
+  return builder.addDirective(renderWithData(screen, await load(data, options))).getResponse();
 }
 
 function renderWithData(screen: ScreenId, content: unknown) {

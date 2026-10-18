@@ -1,7 +1,10 @@
 import type { AgendaItem, CalendarScreen, DashboardData, HomeScreen, HouseScreen, WeatherScreen } from '../../contracts';
 import { longDateLabel } from '../../../../../lib/labels';
-import { hhmm, sameDay, zoned } from '../../../../../lib/time';
-import type { CacheStore } from './cache-store';
+import { hhmm, sameDay, within, zoned } from '../../../../../lib/time';
+import type { Cached, CacheStore } from './cache-store';
+
+/** Tiempo máximo para leer o guardar en la caché: si DynamoDB va lento, se sigue sin ella. */
+const STORE_TIMEOUT_MS = 1000;
 
 const OFFLINE = 'Sin conexión con el servidor';
 const UPDATING = 'Actualizando…';
@@ -43,51 +46,79 @@ export class CachedDashboardData implements DashboardData {
     return `Sin conexión · actualizado el ${day}/${month} a las ${time}`;
   }
 
-  private async load<T>(key: string, fetchRemote: () => Promise<T>, stale: (value: T, notice: string) => T, fallback: T): Promise<T> {
+  private async read(key: string): Promise<Cached | undefined> {
     try {
-      const value = await fetchRemote();
-      await this.store.set(key, value, this.now()).catch((error: unknown) => log('No se pudo guardar la caché:', error));
-      return value;
+      return (await within(this.store.get(key), STORE_TIMEOUT_MS))?.value;
     } catch (error) {
-      log('VPS no disponible:', error);
-      const cached = await this.store.get(key).catch((e: unknown) => {
-        log('No se pudo leer la caché:', e);
-        return undefined;
-      });
-      return cached ? stale(cached.value as T, this.notice(cached.savedAt)) : fallback;
+      log('No se pudo leer la caché:', error);
+      return undefined;
     }
   }
 
-  /** Inicio guardado con el aviso en cada bloque y sin nada que dependa del tráfico de entonces. */
-  private staleHome = (home: HomeScreen, notice: string): HomeScreen => ({
-    ...home,
-    weather: withNotice(home.weather, notice),
-    rainForecast: withNotice(home.rainForecast, notice),
-    commute: withNotice(home.commute, notice),
-    agenda:
-      home.agenda.status === 'ok'
-        ? {
-            ...home.agenda,
-            notice,
-            // Sin el trayecto guardado: "Sal hh:mm" con tráfico viejo no sirve.
-            today: { ...home.agenda.today, items: home.agenda.today.items.map(withoutDeparture) },
-          }
-        : home.agenda,
-    house: withNotice(home.house, notice),
-    departureAlert: null,
-  });
+  private async write(key: string, value: unknown): Promise<void> {
+    try {
+      await within(this.store.set(key, value, this.now()), STORE_TIMEOUT_MS);
+    } catch (error) {
+      log('No se pudo guardar la caché:', error);
+    }
+  }
+
+  private async load<T>(
+    key: string,
+    fetchRemote: () => Promise<T>,
+    stale: (value: T, notice: string, savedAt: number) => T,
+    fallback: T,
+  ): Promise<T> {
+    try {
+      const value = await fetchRemote();
+      await this.write(key, value);
+      return value;
+    } catch (error) {
+      log('VPS no disponible:', error);
+      const cached = await this.read(key);
+      return cached ? stale(cached.value as T, this.notice(cached.savedAt), cached.savedAt) : fallback;
+    }
+  }
+
+  /**
+   * Inicio guardado con el aviso en cada bloque y sin nada que dependa del tráfico de entonces.
+   * La fecha de la cabecera es la de hoy; si lo guardado es de otro día, su "Hoy" ya no vale y la
+   * agenda dice que no hay conexión.
+   */
+  private staleHome = (home: HomeScreen, notice: string, savedAt: number): HomeScreen => {
+    const today = zoned(new Date(this.now()), this.timeZone);
+    const sameDayAgenda = sameDay(zoned(new Date(savedAt), this.timeZone), today);
+    return {
+      ...home,
+      header: { dateLabel: longDateLabel(today.year, today.month, today.day) },
+      weather: withNotice(home.weather, notice),
+      rainForecast: withNotice(home.rainForecast, notice),
+      commute: withNotice(home.commute, notice),
+      agenda: !sameDayAgenda
+        ? { status: 'error', message: 'Sin conexión con el calendario' }
+        : home.agenda.status === 'ok'
+          ? {
+              ...home.agenda,
+              notice,
+              // Sin el trayecto guardado: "Sal hh:mm" con tráfico viejo no sirve.
+              today: { ...home.agenda.today, items: home.agenda.today.items.map(withoutDeparture) },
+            }
+          : home.agenda,
+      house: withNotice(home.house, notice),
+      departureAlert: null,
+    };
+  };
 
   /**
    * Lo último guardado de una pantalla, marcado "Actualizando…", para pintarlo enseguida mientras
    * llegan los datos nuevos. `undefined` si no hay nada guardado.
    */
   async preview(key: string): Promise<unknown> {
-    const cached = await this.store.get(key).catch((error: unknown) => {
-      log('No se pudo leer la caché:', error);
-      return undefined;
-    });
+    const cached = await this.read(key);
     if (!cached) return undefined;
-    return key === 'home' ? this.staleHome(cached.value as HomeScreen, UPDATING) : withNotice(cached.value as AnySection, UPDATING);
+    return key === 'home'
+      ? this.staleHome(cached.value as HomeScreen, UPDATING, cached.savedAt)
+      : withNotice(cached.value as AnySection, UPDATING);
   }
 
   getHome(): Promise<HomeScreen> {

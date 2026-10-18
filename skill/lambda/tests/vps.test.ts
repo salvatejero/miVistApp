@@ -105,6 +105,30 @@ describe('caché de la skill', () => {
     }
   });
 
+  it('lo guardado de otro día lleva la fecha de hoy y no enseña su "Hoy"', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const { remote, state } = flakyVps();
+    let now = SAVED;
+    const data = new CachedDashboardData(remote, new MemoryCacheStore(), TZ, () => now);
+    await data.getHome();
+    state.down = true;
+    now = SAVED + 24 * 3_600_000;
+    const home = await data.getHome();
+    expect(home.header.dateLabel).toBe('Viernes, 16 de octubre');
+    expect(home.agenda).toEqual({ status: 'error', message: 'Sin conexión con el calendario' });
+    expect(home.weather).toMatchObject({ notice: 'Sin conexión · actualizado el 15/10 a las 08:30' });
+    expect(contractErrors('home', home)).toEqual([]);
+  });
+
+  it('si DynamoDB se cuelga, no espera más de un segundo', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const hanging = { get: () => new Promise<never>(() => undefined), set: () => new Promise<never>(() => undefined) };
+    const data = new CachedDashboardData(flakyVps().remote, hanging, TZ, () => SAVED);
+    const started = Date.now();
+    expect((await data.getHome()).weather.status).toBe('ok');
+    expect(Date.now() - started).toBeLessThan(1500);
+  });
+
   it('si DynamoDB falla, sigue funcionando con el VPS', async () => {
     vi.spyOn(console, 'error').mockImplementation(() => undefined);
     const broken = { get: () => Promise.reject(new Error('dynamo')), set: () => Promise.reject(new Error('dynamo')) };
@@ -148,13 +172,20 @@ describe('skill con el VPS caído', () => {
     expect(home.weather.notice).toMatch(/^Sin conexión · actualizado a las \d\d:\d\d$/);
   });
 
-  it('avisa en voz si no puede actuar sobre la casa y vuelve a pintar la pantalla', async () => {
+  it('avisa en voz si no puede actuar sobre la casa y pinta sin volver a esperar al VPS', async () => {
     vi.spyOn(console, 'error').mockImplementation(() => undefined);
     const { remote, state } = flakyVps();
+    const store = new MemoryCacheStore();
+    const data = new CachedDashboardData(remote, store, TZ);
+    await data.getHouse();
     state.down = true;
-    const skill = buildSkill(() => new CachedDashboardData(remote, new MemoryCacheStore(), TZ));
+    const getHouse = vi.spyOn(remote, 'getHouse');
+    const skill = buildSkill(() => data);
     const envelope = await skill.invoke(requestEnvelope('Alexa.Presentation.APL.UserEvent', { event: ['house.toggle', 'cocina', 'casa'] }));
     expect(speech(envelope)).toContain('No he podido conectar con la casa');
-    expect(envelope.response.directives?.[0]).toMatchObject({ token: 'vistapp-casa' });
+    expect(getHouse).not.toHaveBeenCalled();
+    const directive = envelope.response.directives?.[0] as interfaces.alexa.presentation.apl.RenderDocumentDirective;
+    expect(directive.token).toBe('vistapp-casa');
+    expect(directive.datasources?.house).toMatchObject({ status: 'ok', notice: 'Actualizando…' });
   });
 });

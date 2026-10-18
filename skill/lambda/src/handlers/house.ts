@@ -14,6 +14,7 @@ export const houseHandler = (dataFor: DashboardDataFactory): RequestHandler => (
     const args = userEventArguments(handlerInput) ?? [];
     const data = dataFor(handlerInput);
     let speech: string | undefined;
+    let offline = false;
     try {
       if (args[0] === 'house.toggle' && typeof args[1] === 'string') {
         await data.toggleDevice(args[1]);
@@ -23,8 +24,10 @@ export const houseHandler = (dataFor: DashboardDataFactory): RequestHandler => (
     } catch (error) {
       console.error('No se pudo actuar sobre la casa:', error instanceof Error ? error.name : 'Error');
       speech = 'No he podido conectar con la casa.';
+      offline = true;
     }
     const origin = args.at(-1);
-    return respondWithScreen(handlerInput, data, isScreenId(origin) ? origin : 'casa', { speech });
+    // Ya se ha esperado al VPS para la acción: no se vuelve a esperar otro tanto (Alexa corta a los 8 s).
+    return respondWithScreen(handlerInput, data, isScreenId(origin) ? origin : 'casa', { speech, progressive: true, offline });
   },
 });

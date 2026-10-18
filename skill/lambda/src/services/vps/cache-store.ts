@@ -37,8 +37,14 @@ export class DynamoCacheStore implements CacheStore {
     private readonly client: DocumentClient,
   ) {}
 
+  /** Con tiempos cortos y un solo reintento: la caché no puede hacer que Alexa corte la respuesta. */
   static create(table: string, region?: string): DynamoCacheStore {
-    return new DynamoCacheStore(table, DynamoDBDocumentClient.from(new DynamoDBClient(region ? { region } : {})));
+    const client = new DynamoDBClient({
+      ...(region ? { region } : {}),
+      maxAttempts: 2,
+      requestHandler: { requestTimeout: 800, connectionTimeout: 500 },
+    });
+    return new DynamoCacheStore(table, DynamoDBDocumentClient.from(client));
   }
 
   async get(key: string): Promise<Cached | undefined> {

@@ -5,6 +5,7 @@ import { withKeepAlive, withShared } from '../src/apl/render';
 import { SCREEN_IDS, SCREENS } from '../src/apl/screens';
 import { config } from '../src/config';
 import type { CalendarScreen } from '../src/contracts';
+import { MockDashboardData } from '../src/services/mock';
 import { buildSkill } from '../src/skill';
 import { requestEnvelope } from './helpers';
 
@@ -19,14 +20,39 @@ describe('pantalla siempre visible', () => {
   it.each(SCREEN_IDS)('%s pide una inactividad larga y programa su propio refresco', async (screen) => {
     const { document } = directive(await tap(['navigate', screen]));
     expect(document?.settings).toEqual({ idleTimeout: config.idleTimeoutMs });
-    expect(document?.onMount).toEqual([{ type: 'SendEvent', delay: config.refreshMinutes * 60_000, arguments: ['refresh', screen] }]);
+    // Inicio de ejemplo tiene hoy un evento con salida calculada: cada minuto.
+    const minutes = screen === 'inicio' ? config.alertRefreshMinutes : config.refreshMinutes;
+    expect(document?.handleTick).toEqual([{ minimumDelay: minutes * 60_000, commands: [{ type: 'SendEvent', arguments: ['refresh', screen] }] }]);
+    expect(document?.onMount).toBeUndefined();
   });
 
   it('con un aviso de salida, Inicio se refresca cada minuto', async () => {
     vi.stubEnv('VISTAPP_MOCK_ALERT', 'soon');
     const { document } = directive(await tap(['refresh', 'inicio']));
     vi.unstubAllEnvs();
-    expect(document?.onMount).toEqual([{ type: 'SendEvent', delay: 60_000, arguments: ['refresh', 'inicio'] }]);
+    expect(document?.handleTick).toEqual([{ minimumDelay: 60_000, commands: [{ type: 'SendEvent', arguments: ['refresh', 'inicio'] }] }]);
+  });
+
+  it('también cada minuto si hoy hay un evento con salida calculada (el aviso aparece a su hora)', async () => {
+    const data = new MockDashboardData({ houseState: {} });
+    const home = await data.getHome();
+    expect(home.agenda.status === 'ok' && home.agenda.today.items.some((i) => i.departure)).toBe(true);
+    const { document } = directive(await buildSkill(() => data).invoke(requestEnvelope('LaunchRequest')));
+    expect((document?.handleTick as Array<{ minimumDelay: number }>)[0]?.minimumDelay).toBe(60_000);
+  });
+
+  it('un refresco que falla no habla (la pantalla sigue y el siguiente tick reintenta)', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const fail = () => Promise.reject(new Error('caída'));
+    const failing = buildSkill(() => ({ getHome: fail, getCalendar: fail, getWeather: fail, getHouse: fail, toggleDevice: fail, turnAllOff: fail }));
+    const envelope = await failing.invoke(requestEnvelope('Alexa.Presentation.APL.UserEvent', { event: ['refresh', 'inicio'] }));
+    expect(envelope.response.outputSpeech).toBeUndefined();
+  });
+
+  it.each(['Alexa.Presentation.APL.RuntimeError', 'System.ExceptionEncountered'])('%s se registra sin hablar', async (type) => {
+    vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const envelope = await skill.invoke(requestEnvelope(type));
+    expect(envelope.response.outputSpeech).toBeUndefined();
   });
 
   it('el refresco vuelve a pintar la misma pantalla sin hablar', async () => {

@@ -39,18 +39,24 @@ export interface KeepAlive {
   idleTimeoutMs: number;
 }
 
+/** Evento `refresh` cada `ms` mientras el documento esté en pantalla (APL `handleTick`). */
+const tick = (screen: string, ms: number) => [{ minimumDelay: ms, commands: [{ type: 'SendEvent', arguments: ['refresh', screen] }] }];
+
 /**
- * Mantiene la pantalla viva: pide al Echo Show una inactividad larga y, al montarse el documento,
- * programa un evento `refresh` que el backend contesta pintando la misma pantalla con datos nuevos.
- * Como el documento nuevo vuelve a programar el suyo, el ciclo se repite mientras la skill esté abierta.
+ * Mantiene la pantalla viva: pide al Echo Show una inactividad larga y, mientras el documento esté en
+ * pantalla, manda `refresh` cada `refreshMs`; el backend contesta pintando la misma pantalla con datos
+ * nuevos. Como el tick es del documento, si una respuesta se pierde o falla, el siguiente vuelve a intentarlo.
  */
 export function withKeepAlive(document: AplDocument, { screen, refreshMs, idleTimeoutMs }: KeepAlive): AplDocument {
   return {
     ...document,
     settings: { ...(document.settings as object | undefined), idleTimeout: idleTimeoutMs },
-    onMount: [{ type: 'SendEvent', delay: refreshMs, arguments: ['refresh', screen] }],
+    handleTick: tick(screen, refreshMs),
   };
 }
+
+/** Si la carga que pide una pantalla provisional se pierde, se reintenta cada minuto. */
+const PROVISIONAL_RETRY_MS = 60_000;
 
 /**
  * Pantalla provisional (precargada o en esqueleto): al montarse pide enseguida los datos (`refresh`)
@@ -70,6 +76,7 @@ export function withLoading(document: AplDocument, screen: string, idleTimeoutMs
     ...document,
     settings: { ...(document.settings as object | undefined), idleTimeout: idleTimeoutMs },
     onMount: pulse ? [{ type: 'Parallel', commands: [load, beat] }] : [load],
+    handleTick: tick(screen, PROVISIONAL_RETRY_MS),
   };
 }
 

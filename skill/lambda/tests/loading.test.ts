@@ -39,11 +39,11 @@ afterEach(() => {
 });
 
 describe('primera carga', () => {
-  it('con datos rápidos pinta directamente con el refresco normal', async () => {
+  it('con datos rápidos pinta directamente (cada minuto: hoy hay una salida calculada)', async () => {
     const envelope = await buildSkill(() => slow(0)).invoke(requestEnvelope('LaunchRequest'));
     const { document, datasources } = directive(envelope);
     expect((datasources?.home as HomeScreen).weather.status).toBe('ok');
-    expect(document?.onMount).toEqual([{ type: 'SendEvent', delay: config.refreshMinutes * 60_000, arguments: ['refresh', 'inicio'] }]);
+    expect(document?.handleTick).toEqual([{ minimumDelay: 60_000, commands: [{ type: 'SendEvent', arguments: ['refresh', 'inicio'] }] }]);
   });
 
   it('sin nada guardado y con datos lentos pinta el esqueleto de cada módulo y pide los datos', async () => {
@@ -58,6 +58,8 @@ describe('primera carga', () => {
     expect(onMount?.commands[0]).toEqual({ type: 'SendEvent', arguments: ['refresh', 'inicio'] });
     expect(onMount?.commands[1]).toMatchObject({ type: 'AnimateItem', componentId: 'contenido' });
     expect(document?.settings).toEqual({ idleTimeout: config.idleTimeoutMs });
+    // Si esa carga se pierde, se reintenta cada minuto.
+    expect(document?.handleTick).toEqual([{ minimumDelay: 60_000, commands: [{ type: 'SendEvent', arguments: ['refresh', 'inicio'] }] }]);
   });
 
   it.each(SCREEN_IDS)('el esqueleto de %s cumple el contrato', async (screen) => {

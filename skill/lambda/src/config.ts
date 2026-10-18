@@ -4,6 +4,7 @@
 
 declare const __VISTAPP_VPS_URL__: string | undefined;
 declare const __VISTAPP_API_KEY__: string | undefined;
+declare const __VISTAPP_TIMEZONE__: string | undefined;
 
 const injected = (value: string | undefined): string | undefined => (value ? value : undefined);
 
@@ -26,8 +27,9 @@ export const config = {
    * puede aplicar un máximo propio. El refresco periódico también cuenta como actividad.
    */
   idleTimeoutMs: 24 * 60 * 60 * 1000,
-  /** Zona horaria para el aviso "actualizado a las hh:mm". */
-  timeZone: 'Europe/Madrid',
+  /** Zona horaria para "actualizado a las hh:mm"; la misma que VISTAPP_TIMEZONE en el VPS. */
+  timeZone:
+    injected(typeof __VISTAPP_TIMEZONE__ === 'undefined' ? process.env.VISTAPP_TIMEZONE : __VISTAPP_TIMEZONE__) ?? 'Europe/Madrid',
   /** Tabla que crea Alexa-hosted para la skill (clave de partición `id`). */
   dynamoTable: process.env.DYNAMODB_PERSISTENCE_TABLE_NAME,
   dynamoRegion: process.env.DYNAMODB_PERSISTENCE_REGION,

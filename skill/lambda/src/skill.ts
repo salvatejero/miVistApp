@@ -7,6 +7,7 @@ import {
   helpHandler,
   sessionEndedHandler,
   stopHandler,
+  systemErrorHandler,
   unknownEventHandler,
 } from './handlers/builtins';
 import { calendarMonthHandler } from './handlers/calendar';
@@ -59,6 +60,7 @@ export function buildSkill(dataFor: DashboardDataFactory = defaultFactory()): Sk
       stopHandler,
       fallbackHandler,
       unknownEventHandler,
+      systemErrorHandler,
       sessionEndedHandler,
     )
     .addErrorHandlers(errorHandler)
