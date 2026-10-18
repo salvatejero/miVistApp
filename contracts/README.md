@@ -14,10 +14,11 @@ Lo que necesita cada pantalla, en JSON Schema (2020-12). La UI (APL) solo lee es
 ## Reglas
 
 - **Bloques que pueden fallar:** llevan `status` (`ok`, `empty`, `error`). Con `ok`, los datos son obligatorios; con `empty` o `error`, `message` es obligatorio y la UI lo muestra en el sitio del bloque.
+- **Datos que no son de ahora:** un bloque puede llevar `notice` ("No actualizado · 08:15" si falla una fuente en el VPS, "Sin conexión · actualizado a las 08:30" si la skill pinta su caché). La UI lo muestra junto al bloque.
 - **Textos ya formateados:** fechas, horas y estados llegan como texto listo para pintar (`dateLabel`, `leaveAt`, `stateLabel`). La UI no formatea: APL no sabe escribir nombres de días ni meses en español. La zona horaria la aplica quien genera el texto (el servicio de datos).
 - **Sin campos inventados:** los esquemas rechazan propiedades no declaradas.
 - **Datos de ejemplo inventados:** nada de direcciones, nombres o eventos reales en los fixtures.
 
 ## Cambiar el contrato
 
-Cambia a la vez el esquema, sus fixtures y los tipos de `skill/lambda/src/contracts.ts`. `npm test` valida cada fixture contra su esquema y la respuesta de la skill contra el de Inicio.
+Cambia a la vez el esquema, sus fixtures y los tipos de `contracts/types.ts` (los usan la skill y el VPS). `npm test` valida cada fixture contra su esquema y la respuesta de la skill contra el de Inicio.

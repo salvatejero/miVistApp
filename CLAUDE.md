@@ -17,7 +17,8 @@ Skill de Alexa (APL) con un dashboard siempre visible para Echo Show. Plan compl
 
 ## Comandos
 - `npm install` y luego `npm run check` (typecheck, lint, tests y build). Detalle en `docs/desarrollo.md`.
-- Estructura y decisiones técnicas: `docs/arquitectura.md`. Contrato: `contracts/README.md`.
+- Estructura y decisiones técnicas: `docs/arquitectura.md`. Contrato: `contracts/README.md`. VPS: `docs/vps.md`.
+- `npm run build` genera la skill (`build/hosted/`) y el servicio del VPS (`build/vps/server.cjs`). La URL del VPS y la clave de la skill van en `skill/lambda/.env.local`, que nunca se sube.
 
 ## Decisiones tomadas
 <!-- Respuestas a §2 de PLAN.md -->

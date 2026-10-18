@@ -26,21 +26,24 @@ Echo Show ──▶ Alexa ──▶ Skill (Alexa-hosted) ──HTTPS + clave─�
 | `scripts/build.mjs` | Empaqueta todo en `build/hosted/` con la estructura de un repositorio Alexa-hosted. |
 | `scripts/preview.ts` | `npm run preview`: documentos y datos de ejemplo para la herramienta de autoría de APL. |
 
-## Skill y VPS (decidido el 18 oct 2026, se implementa en la Fase 3)
+## Skill y VPS (decidido el 18 oct 2026; Fase 3)
 
 - **La skill no guarda credenciales ni llama a APIs externas.** Pide a `vps/` el JSON de cada pantalla, que ya cumple el contrato.
-- **Caché en la skill.** Cada respuesta buena del VPS se guarda en DynamoDB. Si el VPS no contesta en un tiempo corto (del orden de 1–2 s), la skill pinta lo guardado y cada bloque lo indica ("sin conexión · actualizado a las hh:mm"). El aviso de salida no se muestra con datos de tráfico viejos.
-- **Caché en el VPS.** El VPS guarda el último dato bueno de cada fuente; si una API falla, lo sirve marcado como no actualizado.
-- **Acciones.** Los botones de casa llegan al VPS como peticiones; si el VPS no responde, la skill avisa en pantalla de que no se pudo hacer.
-- Hasta la Fase 3, `MockDashboardData` sustituye al VPS.
+- **Caché en la skill.** Cada respuesta buena del VPS se guarda en DynamoDB. Si el VPS no contesta en 2,5 s, la skill pinta lo guardado y cada bloque lo indica ("Sin conexión · actualizado a las hh:mm"). El aviso de salida no se muestra con datos de tráfico viejos.
+- **Caché en el VPS.** El VPS guarda el último dato bueno de cada fuente y no vuelve a preguntar mientras es reciente (minutos configurables); si una API falla, lo sirve con "No actualizado · hh:mm".
+- **Acciones.** Los botones de casa llegan al VPS; si no responde, Alexa dice que no ha podido conectar y la pantalla se vuelve a pintar.
+- Sin `skill/lambda/.env.local` al empaquetar, la skill usa `MockDashboardData` en lugar del VPS.
+- Montaje y API del VPS: `docs/vps.md`.
 
-## Skill y VPS (decidido el 18 oct 2026, se implementa en la Fase 3)
-
-- **La skill no guarda credenciales ni llama a APIs externas.** Pide a `vps/` el JSON de cada pantalla, que ya cumple el contrato.
-- **Caché en la skill.** Cada respuesta buena del VPS se guarda en DynamoDB. Si el VPS no contesta en un tiempo corto (del orden de 1–2 s), la skill pinta lo guardado y cada bloque lo indica ("sin conexión · actualizado a las hh:mm"). El aviso de salida no se muestra con datos de tráfico viejos.
-- **Caché en el VPS.** El VPS guarda el último dato bueno de cada fuente; si una API falla, lo sirve marcado como no actualizado.
-- **Acciones.** Los botones de casa llegan al VPS como peticiones; si el VPS no responde, la skill avisa en pantalla de que no se pudo hacer.
-- Hasta la Fase 3, `MockDashboardData` sustituye al VPS.
+| Ruta | Qué es |
+|---|---|
+| `vps/src/server.ts` | API HTTP con la clave compartida |
+| `vps/src/dashboard.ts` | Compone cada pantalla desde las fuentes, con el último dato bueno de cada una (`last-good.ts`) |
+| `vps/src/services/` | Fuentes: `weather` (Open-Meteo), `traffic` (TomTom y regla del aviso de salida), `calendar` (iCloud CalDAV), `home` (de ejemplo hasta Home Assistant) |
+| `vps/src/config.ts` | Variables de entorno del VPS (`vps/.env.example`) |
+| `skill/lambda/src/services/vps/` | Cliente del VPS y caché en DynamoDB |
+| `lib/` | Código común de skill y VPS: textos en español, rejilla del mes y horas con zona horaria |
+| `contracts/types.ts` | Tipos del contrato e interfaz `DashboardData`, compartidos |
 
 ## Decisiones
 
