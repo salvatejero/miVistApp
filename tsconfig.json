@@ -14,5 +14,5 @@
     "skipLibCheck": true,
     "noEmit": true
   },
-  "include": ["contracts", "skill/lambda/src", "skill/lambda/tests", "vps", "scripts", "vitest.config.ts"]
+  "include": ["contracts", "lib", "skill/lambda/src", "skill/lambda/tests", "vps", "scripts", "vitest.config.ts"]
 }

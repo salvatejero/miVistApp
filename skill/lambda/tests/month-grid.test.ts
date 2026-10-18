@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { monthLabel, shortDateLabel } from '../src/services/shared/labels';
-import { addMonths, buildMonthGrid } from '../src/services/shared/month-grid';
+import { monthLabel, shortDateLabel } from '../../../lib/labels';
+import { addMonths, buildMonthGrid } from '../../../lib/month-grid';
 
 const today = { year: 2026, month: 10, day: 15 };
 

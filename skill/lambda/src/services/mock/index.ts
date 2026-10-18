@@ -8,9 +8,9 @@ import type {
   WeatherScreen,
 } from '../../contracts';
 import type { DashboardData } from '../dashboard';
-import { deviceStateLabel, houseSummary, monthLabel, MONTHS, shortDateLabel, WEEKDAYS_SHORT } from '../shared/labels';
-import type { CivilDate } from '../shared/month-grid';
-import { addMonths, buildMonthGrid } from '../shared/month-grid';
+import { deviceStateLabel, houseSummary, monthLabel, MONTHS, shortDateLabel, WEEKDAYS_SHORT } from '../../../../../lib/labels';
+import type { CivilDate } from '../../../../../lib/month-grid';
+import { addMonths, buildMonthGrid } from '../../../../../lib/month-grid';
 import alertAppear from '../../../../../contracts/fixtures/departure-alert-appear.json';
 import alertLeaveNow from '../../../../../contracts/fixtures/departure-alert-leave-now.json';
 import alertSoon from '../../../../../contracts/fixtures/departure-alert-soon.json';
