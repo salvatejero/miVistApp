@@ -5,7 +5,7 @@ Amazon no tiene una opción oficial para dejar una skill fija en pantalla. Mi Vi
 ## Cómo funciona
 
 1. **Inactividad larga.** Cada pantalla pide al Echo Show 24 horas de inactividad antes de cerrarse (`settings.idleTimeout` en el documento APL). Es una sugerencia: el dispositivo puede imponer un máximo menor.
-2. **Refresco periódico.** Al mostrarse, cada pantalla programa un evento `refresh`. El backend lo contesta pintando la misma pantalla con datos nuevos, y esa pantalla programa el siguiente. Además de traer datos frescos, cuenta como actividad y mantiene la sesión abierta.
+2. **Refresco periódico.** Mientras está en pantalla, cada documento manda un evento `refresh` cada pocos minutos (`handleTick` de APL). El backend lo contesta pintando la misma pantalla con datos nuevos. Si una respuesta se pierde o falla, el siguiente tick vuelve a intentarlo, y un refresco fallido nunca hace hablar a Alexa. Además de traer datos frescos, cuenta como actividad y mantiene la sesión abierta.
 3. **Rutina de Alexa que la reabre.** Si la skill se cierra (otra skill toma la pantalla, un reinicio, el límite del dispositivo), una rutina la vuelve a abrir. Esto se configura en la app de Alexa, no en código (ver abajo).
 
 ## Cada cuánto se actualiza cada cosa
@@ -14,7 +14,7 @@ Amazon no tiene una opción oficial para dejar una skill fija en pantalla. Mi Vi
 |---|---|---|
 | Reloj | Al minuto, en el propio Echo Show (no consulta nada) | — |
 | Pantalla completa | Cada 5 min | `refreshMinutes` en `skill/lambda/src/config.ts` |
-| Inicio con aviso de salida activo | Cada minuto, para que la cuenta atrás avance | `alertRefreshMinutes` |
+| Inicio con aviso de salida activo, o con un evento de hoy con salida calculada | Cada minuto, para que el aviso aparezca a su hora y la cuenta atrás avance | `alertRefreshMinutes` |
 | Tiempo y lluvia en el VPS | Pide datos nuevos a Open-Meteo como mucho cada 15 min | `VISTAPP_REFRESH_WEATHER_MINUTES` |
 | Tráfico en el VPS | Pide datos nuevos a TomTom como mucho cada 5 min | `VISTAPP_REFRESH_TRAFFIC_MINUTES` |
 | Calendario en el VPS | Pide datos nuevos a iCloud como mucho cada 5 min | `VISTAPP_REFRESH_CALENDAR_MINUTES` |

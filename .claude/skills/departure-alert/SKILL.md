@@ -21,8 +21,9 @@ Umbrales (30, 10, 0) y colchón (10 min por defecto) viven en la configuración,
 
 ## Qué eventos cuentan
 - Solo eventos con ubicación física.
-- Ignorar ubicaciones que sean enlaces de reunión (Teams, Meet, Zoom, etc.) o texto no geocodificable.
-- Considerar solo el siguiente evento con ubicación que aún no haya empezado.
+- Ignorar ubicaciones que sean enlaces o nombres de reunión (Teams, Meet, Zoom, "videollamada", "online"…) o texto no geocodificable.
+- Considerar el siguiente evento con ubicación que aún no haya empezado; si no se puede situar (la geocodificación busca a menos de 100 km de casa y con confianza mínima), probar el siguiente, hasta 3.
+- Descartar trayectos de más de 3 h: el lugar está mal situado.
 
 ## Cálculo del trayecto
 - Origen por defecto: casa. Decisión abierta: usar otro origen según la hora del día o la ubicación del dispositivo. No cambiarlo sin confirmarlo.
