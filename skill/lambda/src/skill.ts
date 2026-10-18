@@ -13,6 +13,7 @@ import { calendarMonthHandler } from './handlers/calendar';
 import { houseHandler } from './handlers/house';
 import { launchHandler } from './handlers/launch';
 import { navigationHandler } from './handlers/navigation';
+import { refreshHandler } from './handlers/refresh';
 import { sessionAttributes } from './handlers/util';
 import { config } from './config';
 import type { DashboardDataFactory } from './services/dashboard';
@@ -51,6 +52,7 @@ export function buildSkill(dataFor: DashboardDataFactory = defaultFactory()): Sk
     .addRequestHandlers(
       launchHandler(dataFor),
       navigationHandler(dataFor),
+      refreshHandler(dataFor),
       calendarMonthHandler(dataFor),
       houseHandler(dataFor),
       helpHandler,

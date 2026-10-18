@@ -32,6 +32,26 @@ export function withShared(document: AplDocument): AplDocument {
   };
 }
 
+export interface KeepAlive {
+  /** Pantalla que se vuelve a pedir al refrescar. */
+  screen: string;
+  refreshMs: number;
+  idleTimeoutMs: number;
+}
+
+/**
+ * Mantiene la pantalla viva: pide al Echo Show una inactividad larga y, al montarse el documento,
+ * programa un evento `refresh` que el backend contesta pintando la misma pantalla con datos nuevos.
+ * Como el documento nuevo vuelve a programar el suyo, el ciclo se repite mientras la skill esté abierta.
+ */
+export function withKeepAlive(document: AplDocument, { screen, refreshMs, idleTimeoutMs }: KeepAlive): AplDocument {
+  return {
+    ...document,
+    settings: { ...(document.settings as object | undefined), idleTimeout: idleTimeoutMs },
+    onMount: [{ type: 'SendEvent', delay: refreshMs, arguments: ['refresh', screen] }],
+  };
+}
+
 export function renderDocument(
   token: string,
   document: AplDocument,
