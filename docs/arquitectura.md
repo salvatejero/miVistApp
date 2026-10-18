@@ -7,11 +7,11 @@ Echo Show ──▶ Alexa ──▶ Skill (Alexa-hosted) ──HTTPS + clave─�
                           │           del VPS (caché)              ├─ tráfico (TomTom)
                           │                                        └─ casa (Home Assistant, futuro)
                           │
-                          ├─ handlers/      peticiones de Alexa (lanzamiento, intents, eventos APL)
-                          ├─ screens/       arma la respuesta de cada pantalla: documento APL + datasource
-                          ├─ services/      DashboardData: de dónde salen los datos de cada pantalla
-                          │   └─ mock/      datos de ejemplo (contracts/fixtures)
-                          └─ apl.ts         une el tema compartido con cada documento
+                          ├─ handlers/      un fichero por tipo de petición: lanzamiento, navegación, calendario, casa, integrados
+                          ├─ apl/           pantallas (documento + datasource), paquete compartido y respuesta
+                          └─ services/      DashboardData: de dónde salen los datos de cada pantalla
+                              ├─ mock/      datos de ejemplo (contracts/fixtures)
+                              └─ shared/    rejilla del mes y textos en español
 ```
 
 ## Piezas
@@ -19,11 +19,12 @@ Echo Show ──▶ Alexa ──▶ Skill (Alexa-hosted) ──HTTPS + clave─�
 | Ruta | Qué es |
 |---|---|
 | `skill/skill-package/` | Manifiesto (`skill.json`) y modelo de interacción `es-ES`. Es la carpeta `skill-package` de un proyecto ASK. |
-| `skill/apl/` | Documentos APL, uno por pantalla. `shared/theme.json` tiene colores y medidas para 1280x800 y 1920x1080. |
+| `skill/apl/` | Documentos APL, uno por pantalla. `shared/` es el paquete común: `theme.json` (colores y medidas), `styles.json`, `graphics.json` (iconos) y `layouts.json` (menú, filas de agenda, tarjeta de aviso, botones…). |
 | `skill/lambda/src/` | Código TypeScript del backend. Punto de entrada: `index.ts` (`handler`). |
-| `skill/lambda/test/` | Tests (Vitest). |
+| `skill/lambda/tests/` | Tests (Vitest), incluida la validación de los documentos APL. |
 | `contracts/` | Contrato entre UI y servicios. Ver `contracts/README.md`. |
 | `scripts/build.mjs` | Empaqueta todo en `build/hosted/` con la estructura de un repositorio Alexa-hosted. |
+| `scripts/preview.ts` | `npm run preview`: documentos y datos de ejemplo para la herramienta de autoría de APL. |
 
 ## Skill y VPS (decidido el 18 oct 2026, se implementa en la Fase 3)
 
@@ -38,7 +39,10 @@ Echo Show ──▶ Alexa ──▶ Skill (Alexa-hosted) ──HTTPS + clave─�
 - **La UI no calcula nada.** El backend manda textos ya formateados (`dateLabel`, `leaveAt`…); APL solo los pinta. Así las reglas (aviso de salida, formatos de fecha) se prueban en TypeScript.
 - **La hora la pinta el dispositivo** con `localTime`, para que el reloj avance sin pedir nada al backend.
 - **Cada bloque puede fallar solo.** Tiempo, lluvia, tráfico, agenda y casa llevan `status`; si no es `ok`, la pantalla muestra `message` en ese bloque y el resto sigue funcionando.
-- **Un tema, dos tamaños.** Los documentos usan recursos (`@textClock`, `@gap`…) que cambian con `viewport.width >= 1920`. El tema se inyecta en cada documento al enviarlo (`withTheme`).
+- **Un tema, dos tamaños.** Los documentos usan recursos (`@textClock`, `@gap`…). Las medidas están a 1280x800 en `theme.json`; al enviar el documento se añade una segunda versión multiplicada por `xlScale` que APL aplica cuando `viewport.width >= 1920` (Echo Show 15).
+- **Paquete compartido sin `import`.** APL solo importa paquetes publicados en una URL. Para no depender de alojar ficheros, `withShared` copia tema, estilos, iconos y componentes en cada documento al enviarlo. El efecto es el mismo: se cambian una vez y afectan a todas las pantallas.
+- **Navegación.** Cada botón lanza un `SendEvent` (`navigate`, `calendar.month`, `house.toggle`, `house.allOff`); el backend responde pintando la pantalla que toca. Por voz, `ShowScreenIntent` con el slot `pantalla`.
+- **Estado de la sesión.** El mes que se ve en Calendario y, mientras sea de ejemplo, el estado de la casa viven en los atributos de sesión.
 - **Todo en un fichero.** esbuild empaqueta código, documentos APL y dependencias en `lambda/index.js`, así Alexa-hosted no necesita compilar TypeScript ni instalar nada.
 - **Fuentes intercambiables.** Los handlers solo conocen `DashboardData`. En la Fase 3 cada fuente real sustituye a su parte del mock.
 

@@ -9,7 +9,7 @@ Antes de escribir, lee `vistapp-design-system` y el contrato de `contracts/`. An
 
 ## Organización
 - Un documento por pantalla: `inicio`, `calendario`, `tiempo`, `casa`. El aviso de salida es un componente dentro de Inicio y Calendario, no una pantalla.
-- Menú lateral y estilos comunes en un paquete importado (`import`) para que cambiarlos una vez afecte a todas.
+- Menú lateral, estilos, iconos y componentes comunes en `skill/apl/shared/`; el backend los copia en cada documento al enviarlo (`withShared`), porque `import` exige publicar el paquete en una URL.
 - Los datos entran por **datasources**, nunca escritos en el documento. Los nombres de campo salen del contrato.
 - Documento y datasource se envían juntos en la directiva de renderizado.
 
@@ -24,7 +24,7 @@ Antes de escribir, lee `vistapp-design-system` y el contrato de `contracts/`. An
 - No bloquear ni deshabilitar toda interacción: el menú debe seguir siendo tocable.
 
 ## Estructura de cada pantalla
-- Contenedor raíz de 1280×800, menú de 120 px y contenido con el relleno del diseño.
+- Contenedor raíz a pantalla completa (`100vw` × `100vh`), menú y relleno con los recursos del tema, para que sirva a 1280×800 y a 1920×1080.
 - Texto que pueda desbordar: limitar líneas y usar elipsis; no dejar que rompa el layout (títulos de eventos largos).
 - Imágenes e iconos: vectoriales si es posible. No cargar recursos remotos sin necesidad.
 

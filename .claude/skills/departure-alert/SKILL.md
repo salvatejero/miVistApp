@@ -26,7 +26,7 @@ Umbrales (30, 10, 0) y colchón (10 min por defecto) viven en la configuración,
 
 ## Cálculo del trayecto
 - Origen por defecto: casa. Decisión abierta: usar otro origen según la hora del día o la ubicación del dispositivo. No cambiarlo sin confirmarlo.
-- Servicio de rutas con tráfico en vivo (propuesta: Google Routes). El modo por defecto es en coche.
+- Servicio de rutas con tráfico en vivo: TomTom Routing API (decidido). El modo por defecto es en coche.
 - Recalcular cada pocos minutos solo cuando el evento esté cerca de entrar en la ventana de aviso; fuera de ella, con baja frecuencia, para controlar el coste.
 - Si la API falla: mantener el último trayecto conocido y marcarlo como estimado.
 

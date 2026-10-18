@@ -8,7 +8,7 @@ description: Colores, tipografía, tamaños, espaciado y estados visuales de Mi 
 Fuente de verdad: los bocetos de `design/` (Main, Calendario, Tiempo, Casa, Estados). Si algo de aquí contradice el boceto, gana el boceto y se corrige esta skill.
 
 ## Pantalla
-- Lienzo de 1280×800 (Echo Show 8/10). Confirmar el modelo antes de asumir otra resolución.
+- Lienzo de 1280×800 (Echo Show 8/10). También Echo Show 15 (1920×1080): las medidas de `skill/apl/shared/theme.json` se escalan solas; no escribas tamaños fijos fuera del tema.
 - Menú lateral fijo de 120 px a la izquierda; contenido con relleno de 36 px (vertical) y 40 px (horizontal).
 - Pensada para leerse a distancia y sin tocar: lo importante en grande, el resto secundario.
 
@@ -27,11 +27,12 @@ Fuente de verdad: los bocetos de `design/` (Main, Calendario, Tiempo, Casa, Esta
 | Texto sobre ámbar | `#1A1206` |
 | Lluvia (barras / texto claro / fondo de aviso) | `#6CC4EA` / `#8FD3F2` / `#17303D` |
 | Día de otro mes (fondo / texto) | `#151C22` / `#5C6872` |
+| Icono neutro (nublado, niebla) | `#C9D2D8` |
 
 El ámbar significa "atención o seleccionado". No lo uses como decoración.
 
 ## Tipografía
-- Familia del boceto: Manrope (400, 600, 800). En APL no está garantizada: elegir una fuente soportada por APL (comprobar la lista vigente) y mantener los tres pesos equivalentes.
+- Familia del boceto: Manrope (400, 600, 800). En APL se usa Amazon Ember Display con los mismos pesos.
 - Reloj 104 px; temperatura grande 64 px; títulos de tarjeta 22 px en gris secundario; eventos 20–24 px; botones de casa 22–26 px.
 - Mínimo 16 px en cualquier texto. Nada por debajo.
 

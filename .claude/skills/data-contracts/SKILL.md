@@ -15,7 +15,7 @@ El contrato es el acuerdo entre quien dibuja (UI) y quien trae los datos (servic
 ## Reglas
 - Nunca inventes un campo en la UI o en un servicio. Si hace falta uno nuevo, se añade primero al esquema.
 - Cada campo indica unidad y formato (por ejemplo minutos como entero, hora local en ISO). Los valores que pueden faltar se declaran como opcionales o nulos y la UI los trata.
-- Las fechas y horas viajan con zona horaria explícita; el formato de pantalla ("Jue 15 oct") se decide en la UI.
+- Los textos de fecha y hora ("Jue 15 oct", "09:30") llegan ya formateados en la zona horaria del usuario: APL no puede escribir nombres de días ni meses en español. Las marcas de tiempo técnicas (`generatedAt`) van en ISO con zona horaria.
 - Un servicio y su UI se cambian en el mismo PR que el contrato.
 
 ## Flujo de cambio

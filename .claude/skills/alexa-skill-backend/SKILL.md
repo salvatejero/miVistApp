@@ -10,11 +10,11 @@ Antes de usar una API del SDK de Alexa o de ASK CLI que no conozcas, verifícala
 ## Estructura
 ```
 skill/lambda/
-├─ handlers/      # un fichero por tipo de petición (lanzamiento, navegación, eventos de usuario, ayuda, parar)
-├─ services/      # weather, calendar, traffic, home, mock (cada uno detrás de una interfaz)
-├─ apl/           # carga de documentos y construcción de datasources
-├─ config/        # umbrales, colchón, intervalos (todo configurable)
+├─ src/handlers/  # un fichero por tipo de petición (lanzamiento, navegación, calendario, casa, integrados)
+├─ src/services/  # DashboardData: mock ahora; cliente del VPS con caché en la Fase 3
+├─ src/apl/       # pantallas, paquete compartido y respuesta con RenderDocument
 └─ tests/
+vps/              # servicio de datos (Fase 3): weather, calendar, traffic, home y config (umbrales, colchón, intervalos)
 ```
 
 ## Reglas
