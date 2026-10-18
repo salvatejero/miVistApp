@@ -20,6 +20,7 @@ Fuente de verdad: los bocetos de `design/` (Main, Calendario, Tiempo, Casa, Esta
 | Tarjeta | `#182027` |
 | Elemento dentro de tarjeta | `#1F2931` |
 | Líneas y bordes tenues | `#2B3640` |
+| Esqueleto de carga | `#26313A` |
 | Texto principal | `#F2EFE8` |
 | Texto secundario | `#A9B4BC` |
 | Acento ámbar | `#F2A33A` |
@@ -45,6 +46,7 @@ El ámbar significa "atención o seleccionado". No lo uses como decoración.
 - **Apagado:** fondo de tarjeta, borde `#2B3640`.
 - **Aviso de salida:** 1) borde ámbar fino; 2) fondo ámbar oscuro y borde grueso, cuenta atrás en grande; 3) ámbar sólido, "¡Sal ya!" enorme.
 - **Dato no disponible:** mostrar `--` y una línea de estado ("sin conexión", "actualizado hace N min"), nunca un hueco vacío.
+- **Cargando:** cada módulo se pinta con bloques de esqueleto (`Hueso`, color `#26313A`) con la forma aproximada de su contenido; el contenido late (opacidad 1 ↔ 0,55). Con datos guardados no hay esqueleto: se muestran con "Actualizando…".
 
 ## Reglas
 - Texto en español (es-ES). Fechas tipo "Jue 15 oct".

@@ -24,10 +24,12 @@ Mientras la skill no esté desplegada (Fase 6), cada pantalla se puede ver en la
 
 | Pantalla | Variantes de datos |
 |---|---|
-| `inicio` | `inicio`, `inicio-aviso-aparece`, `inicio-aviso-falta-poco`, `inicio-aviso-sal-ya`, `inicio-errores`, `inicio-textos-largos` |
-| `calendario` | `calendario`, `calendario-sin-eventos`, `calendario-error` |
-| `tiempo` | `tiempo`, `tiempo-error` |
-| `casa` | `casa`, `casa-vacio` |
+| `inicio` | `inicio`, `inicio-aviso-aparece`, `inicio-aviso-falta-poco`, `inicio-aviso-sal-ya`, `inicio-errores`, `inicio-textos-largos`, `inicio-cargando`, `inicio-actualizando` |
+| `calendario` | `calendario`, `calendario-sin-eventos`, `calendario-error`, `calendario-cargando` |
+| `tiempo` | `tiempo`, `tiempo-error`, `tiempo-cargando` |
+| `casa` | `casa`, `casa-vacio`, `casa-cargando` |
+
+En las variantes `-cargando` el esqueleto no late: el latido lo lanza la skill al pintar la pantalla.
 
 En la herramienta de autoría los botones no hacen nada: la navegación necesita la skill desplegada. Lo que hay que mirar es la lista de `device-testing` (simulador): que nada se corte ni se solape, que los textos largos acaben en puntos suspensivos y que los mensajes de error ocupen el sitio del bloque.
 

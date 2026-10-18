@@ -36,6 +36,18 @@ Echo Show ──▶ Alexa ──▶ Skill (Alexa-hosted) ──HTTPS + clave─�
 - Montaje y API del VPS: `docs/vps.md`.
 - Pantalla siempre visible, refresco y rutina de Alexa: `docs/siempre-visible.md`.
 
+## Primera carga (precarga y esqueletos)
+
+Alexa da una sola respuesta por petición, así que al abrir la skill, tocar el menú o cambiar de mes la carga va en dos pasos:
+
+1. La skill espera hasta 0,8 s (`preloadAfterMs`). Si los datos llegan antes, pinta la pantalla normal.
+2. Si no, responde enseguida con una pantalla provisional:
+   - **Precargada:** lo último guardado de esa pantalla, con "Actualizando…" en cada bloque y sin aviso de salida.
+   - **Esqueleto:** si no hay nada guardado, cada módulo con `status: "loading"`, que la UI pinta como bloques grises (`Hueso`) mientras el contenido late.
+3. La pantalla provisional manda `refresh` al montarse; el backend espera a los datos (hasta 5 s y, si no, la caché con "Sin conexión") y pinta la pantalla definitiva.
+
+Los refrescos periódicos y los botones de casa no usan este camino: la pantalla actual se queda hasta que llegan los datos nuevos.
+
 | Ruta | Qué es |
 |---|---|
 | `vps/src/server.ts` | API HTTP con la clave compartida |
