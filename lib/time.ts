@@ -53,16 +53,32 @@ export function nextDay({ year, month, day }: CivilDate): CivilDate {
   return { year: d.getUTCFullYear(), month: d.getUTCMonth() + 1, day: d.getUTCDate() };
 }
 
-/** Instante en que empieza un día civil en una zona horaria (medianoche local). */
-export function startOfDay({ year, month, day }: CivilDate, timeZone: string): Date {
-  // Se parte de la medianoche UTC y se corrige por la diferencia horaria de ese momento (dos pasadas por si cruza un cambio de hora).
-  let guess = Date.UTC(year, month - 1, day);
+/** Instante de una fecha y hora civiles en una zona horaria (09:00 en Madrid sigue siendo 09:00 tras el cambio de hora). */
+export function zonedInstant({ year, month, day }: CivilDate, hour: number, minute: number, timeZone: string): Date {
+  // Se parte de esa hora en UTC y se corrige por la diferencia horaria de ese momento (dos pasadas por si cruza un cambio de hora).
+  const target = Date.UTC(year, month - 1, day, hour, minute);
+  let guess = target;
   for (let i = 0; i < 2; i++) {
     const z = zoned(new Date(guess), timeZone);
-    const asUtc = Date.UTC(z.year, z.month - 1, z.day, z.hour, z.minute);
-    guess -= asUtc - Date.UTC(year, month - 1, day);
+    guess -= Date.UTC(z.year, z.month - 1, z.day, z.hour, z.minute) - target;
   }
   return new Date(guess);
+}
+
+/** Instante en que empieza un día civil en una zona horaria (medianoche local). */
+export const startOfDay = (day: CivilDate, timeZone: string): Date => zonedInstant(day, 0, 0, timeZone);
+
+/** Espera `ms` o lo que tarde `promise`, lo que ocurra antes. Devuelve null si se acaba el tiempo. */
+export async function within<T>(promise: Promise<T>, ms: number): Promise<{ value: T } | null> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const timeout = new Promise<null>((resolve) => {
+    timer = setTimeout(() => resolve(null), ms);
+  });
+  try {
+    return await Promise.race([promise.then((value) => ({ value })), timeout]);
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
 export const addMinutes = (date: Date, minutes: number): Date => new Date(date.getTime() + minutes * 60_000);

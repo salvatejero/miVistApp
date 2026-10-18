@@ -43,7 +43,20 @@ describe('aviso de salida', () => {
 
   it('ignora enlaces de reunión y ubicaciones vacías', () => {
     expect(isPhysicalLocation('Centro de salud, Calle Falsa 1')).toBe(true);
-    for (const location of ['https://teams.microsoft.com/l/abc', 'Zoom: zoom.us/j/1', 'Google Meet (meet.google.com/abc)', '', '  ', undefined]) {
+    for (const location of [
+      'https://teams.microsoft.com/l/abc',
+      'Zoom: zoom.us/j/1',
+      'Google Meet (meet.google.com/abc)',
+      'Reunión de Microsoft Teams',
+      'Microsoft Teams Meeting',
+      'Zoom',
+      'Google Meet',
+      'Videollamada',
+      'Online',
+      '',
+      '  ',
+      undefined,
+    ]) {
       expect(isPhysicalLocation(location), String(location)).toBe(false);
     }
   });

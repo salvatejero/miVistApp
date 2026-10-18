@@ -16,6 +16,11 @@ export function trafficLabel(delayMinutes: number): string {
 
 const point = ({ lat, lon }: Coordinates): string => `${lat},${lon}`;
 
+/** Una ubicación de un evento a más de esto de casa no es un sitio al que ir hoy. */
+const GEOCODE_RADIUS_M = 100_000;
+/** Confianza mínima de TomTom en que el resultado es la dirección buscada (0–1). */
+const MIN_GEOCODE_SCORE = 0.5;
+
 /** Rutas con tráfico en vivo y búsqueda de direcciones de TomTom. La clave nunca se registra. */
 export class TomTom {
   constructor(
@@ -37,19 +42,25 @@ export class TomTom {
     };
   }
 
-  /** Coordenadas de un texto de ubicación, o null si TomTom no lo encuentra. `near` orienta la búsqueda. */
+  /**
+   * Coordenadas de un texto de ubicación, o null si TomTom no lo encuentra con confianza.
+   * Con `near`, solo acepta resultados a menos de `GEOCODE_RADIUS_M` de ese punto.
+   */
   async geocode(query: string, near?: Coordinates): Promise<Coordinates | null> {
     const params = new URLSearchParams({ key: this.apiKey, limit: '1', language: 'es-ES' });
     if (near) {
       params.set('lat', String(near.lat));
       params.set('lon', String(near.lon));
+      params.set('radius', String(GEOCODE_RADIUS_M));
     }
     const data = (await getJson(
       this.fetchFn,
       `https://api.tomtom.com/search/2/geocode/${encodeURIComponent(query)}.json?${params}`,
-    )) as { results?: Array<{ position?: { lat?: number; lon?: number } }> };
-    const position = data.results?.[0]?.position;
+    )) as { results?: Array<{ position?: { lat?: number; lon?: number }; matchConfidence?: { score?: number } }> };
+    const result = data.results?.[0];
+    const position = result?.position;
     if (typeof position?.lat !== 'number' || typeof position.lon !== 'number') return null;
+    if ((result?.matchConfidence?.score ?? 1) < MIN_GEOCODE_SCORE) return null;
     return { lat: position.lat, lon: position.lon };
   }
 }

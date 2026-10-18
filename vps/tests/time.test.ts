@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { hhmm, minutesBetween, nextDay, startOfDay, zoned } from '../../lib/time';
+import { hhmm, minutesBetween, nextDay, startOfDay, zoned, zonedInstant } from '../../lib/time';
 import { TZ } from './helpers';
 
 describe('horas en la zona del usuario', () => {
@@ -13,6 +13,11 @@ describe('horas en la zona del usuario', () => {
     expect(startOfDay({ year: 2026, month: 10, day: 25 }, TZ).toISOString()).toBe('2026-10-24T22:00:00.000Z');
     expect(startOfDay({ year: 2026, month: 10, day: 26 }, TZ).toISOString()).toBe('2026-10-25T23:00:00.000Z');
     expect(startOfDay({ year: 2026, month: 3, day: 29 }, TZ).toISOString()).toBe('2026-03-28T23:00:00.000Z');
+  });
+
+  it('una hora civil sigue siendo la misma hora los días de cambio de hora', () => {
+    expect(hhmm(zonedInstant({ year: 2026, month: 10, day: 25 }, 9, 0, TZ), TZ)).toBe('09:00');
+    expect(hhmm(zonedInstant({ year: 2027, month: 3, day: 28 }, 9, 0, TZ), TZ)).toBe('09:00');
   });
 
   it('pasa de mes y de año', () => {

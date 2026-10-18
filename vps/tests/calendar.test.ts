@@ -80,6 +80,16 @@ describe('eventos iCalendar', () => {
     ]);
   });
 
+  it('mantiene las ocurrencias de un evento diario creado hace años', () => {
+    const ics = calendar(event(`
+      UID:diario
+      SUMMARY:Pastilla
+      DTSTART:20200101T070000Z
+      DTEND:20200101T071500Z
+      RRULE:FREQ=DAILY`));
+    expect(parseEvents(ics, range, dayToDate)).toHaveLength(31);
+  });
+
   it('descarta eventos cancelados y fuera del rango', () => {
     const ics = calendar(
       event(`

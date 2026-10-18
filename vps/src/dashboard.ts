@@ -11,7 +11,7 @@ import type {
 import { houseSummary, longDateLabel } from '../../lib/labels';
 import type { CivilDate } from '../../lib/month-grid';
 import { addMonths } from '../../lib/month-grid';
-import { addMinutes, hhmm, nextDay, startOfDay, zoned } from '../../lib/time';
+import { addMinutes, hhmm, nextDay, startOfDay, within, zoned, zonedInstant } from '../../lib/time';
 import type { Config } from './config';
 import type { Fetched } from './last-good';
 import { LastGood } from './last-good';
@@ -24,7 +24,7 @@ import { departureAlert, isPhysicalLocation, leaveTime } from './services/traffi
 import type { Route, TomTom } from './services/traffic/tomtom';
 import { trafficLabel } from './services/traffic/tomtom';
 import type { Forecast, OpenMeteo } from './services/weather/open-meteo';
-import { rainOutlook } from './services/weather/open-meteo';
+import { hoursFrom, rainOutlook, weekFrom } from './services/weather/open-meteo';
 
 export interface Sources {
   weather?: OpenMeteo;
@@ -36,9 +36,30 @@ export interface Sources {
 
 /** Solo se calcula el trayecto de eventos que empiezan dentro de este margen (más el umbral del aviso). */
 const MAX_TRAVEL_MINUTES = 180;
+/** Eventos con ubicación que se prueban si los primeros no se pueden geocodificar. */
+const MAX_DEPARTURE_CANDIDATES = 3;
 const HOME_RAIN_HOURS = 8;
 const WEATHER_RAIN_HOURS = 12;
 const HOME_DEVICES = 4;
+const MAX_PLACES = 500;
+
+/**
+ * Tiempo máximo de cada bloque. La skill espera al VPS 5 s: un bloque lento responde con error (o su
+ * último dato) a tiempo y los demás llegan bien. La consulta lenta sigue y deja el dato para el siguiente refresco.
+ */
+export const SECTION_BUDGET_MS = 3500;
+/** Tiempo para geocodificar y calcular el trayecto del aviso, dentro del plazo de la agenda. */
+const DEPARTURE_BUDGET_MS = 1500;
+
+class TooSlow extends Error {
+  override name = 'TooSlow';
+}
+
+async function deadline<T>(promise: Promise<T>, ms: number): Promise<T> {
+  const result = await within(promise, ms);
+  if (!result) throw new TooSlow(`Más de ${ms} ms`);
+  return result.value;
+}
 
 /** Primera parte de la ubicación ("Centro de salud, Calle…" → "Centro de salud"): corta y sin la dirección. */
 const placeLabel = (location: string): string => location.split(/[,\n]/)[0]!.trim();
@@ -58,6 +79,7 @@ export class VpsDashboard implements DashboardData {
   constructor(
     private readonly config: Config,
     private readonly sources: Sources,
+    private readonly budgetMs = SECTION_BUDGET_MS,
   ) {
     this.now = sources.now ?? (() => new Date());
     const clock = () => this.now().getTime();
@@ -108,7 +130,7 @@ export class VpsDashboard implements DashboardData {
       end: this.dayToDate({ year: following.year, month: following.month, day: 1 }),
     };
     try {
-      const fetched = await this.events.get(`month:${year}-${month}`, () => calendar.events(range));
+      const fetched = await deadline(this.events.get(`month:${year}-${month}`, () => calendar.events(range)), this.budgetMs);
       return { status: 'ok', ...monthView(year, month, today, fetched.value, this.config.timeZone), ...this.notice(fetched) };
     } catch (error) {
       logFailure('calendario', error);
@@ -120,12 +142,15 @@ export class VpsDashboard implements DashboardData {
     const weather = this.sources.weather;
     if (!weather) return { status: 'empty', message: 'Tiempo sin configurar' };
     try {
-      const fetched = await this.forecasts.get('forecast', () => weather.forecast());
-      const rain = rainOutlook(fetched.value.hourly, WEATHER_RAIN_HOURS);
+      const fetched = await deadline(this.forecasts.get('forecast', () => weather.forecast()), this.budgetMs);
+      const now = zoned(this.now(), this.config.timeZone);
+      const days = weekFrom(fetched.value, now);
+      if (!days) throw new TooSlow('Previsión guardada demasiado vieja');
+      const rain = rainOutlook(hoursFrom(fetched.value, now), WEATHER_RAIN_HOURS);
       return {
         status: 'ok',
         city: this.config.cityLabel,
-        days: fetched.value.days,
+        days,
         hourlyRain: { status: 'ok', summary: rain.summary, bars: rain.bars },
         ...this.notice(fetched),
       };
@@ -150,7 +175,7 @@ export class VpsDashboard implements DashboardData {
 
   private async houseDevices(): Promise<Extract<HomeScreen['house'], { status: 'ok' }> | { status: 'error'; message: string }> {
     try {
-      return { status: 'ok', devices: await this.sources.house.devices() };
+      return { status: 'ok', devices: await deadline(this.sources.house.devices(), this.budgetMs) };
     } catch (error) {
       logFailure('casa', error);
       return { status: 'error', message: 'No se pudo conectar con la casa' };
@@ -163,9 +188,9 @@ export class VpsDashboard implements DashboardData {
       return { weather: { status: 'empty', message: 'Tiempo sin configurar' }, rain: { status: 'empty', message: 'Tiempo sin configurar' } };
     }
     try {
-      const fetched = await this.forecasts.get('forecast', () => weather.forecast());
+      const fetched = await deadline(this.forecasts.get('forecast', () => weather.forecast()), this.budgetMs);
       const forecast = fetched.value;
-      const rain = rainOutlook(forecast.hourly, HOME_RAIN_HOURS);
+      const rain = rainOutlook(hoursFrom(forecast, zoned(this.now(), this.config.timeZone)), HOME_RAIN_HOURS);
       const notice = this.notice(fetched);
       return {
         weather: {
@@ -188,15 +213,20 @@ export class VpsDashboard implements DashboardData {
     }
   }
 
+  /** Hora de salir hacia el trabajo: hoy, o mañana si la hora de entrada de hoy ya ha pasado. */
+  private nextWorkStart(today: CivilDate): Date {
+    const [hours, minutes] = this.config.workStart.split(':').map(Number) as [number, number];
+    const todayStart = zonedInstant(today, hours, minutes, this.config.timeZone);
+    return todayStart > this.now() ? todayStart : zonedInstant(nextDay(today), hours, minutes, this.config.timeZone);
+  }
+
   private async commute(today: CivilDate): Promise<HomeScreen['commute']> {
     const { tomtom } = this.sources;
     const { home, work } = this.config;
     if (!tomtom || !home || !work) return { status: 'empty', message: 'Tráfico sin configurar' };
     try {
-      const fetched = await this.routes.get('commute', () => tomtom.route(home, work));
-      const [hours, minutes] = this.config.workStart.split(':').map(Number) as [number, number];
-      const workStart = addMinutes(this.dayToDate(today), hours * 60 + minutes);
-      const leaveAt = leaveTime(workStart, fetched.value.travelMinutes, this.config.departure.bufferMinutes);
+      const fetched = await deadline(this.routes.get('commute', () => tomtom.route(home, work)), this.budgetMs);
+      const leaveAt = leaveTime(this.nextWorkStart(today), fetched.value.travelMinutes, this.config.departure.bufferMinutes);
       return {
         status: 'ok',
         routeLabel: this.config.routeLabel,
@@ -218,12 +248,17 @@ export class VpsDashboard implements DashboardData {
     const range = { start: this.dayToDate(today), end: this.dayToDate(nextDay(tomorrow)) };
     let fetched: Fetched<CalendarEvent[]>;
     try {
-      fetched = await this.events.get(`agenda:${today.year}-${today.month}-${today.day}`, () => calendar.events(range));
+      fetched = await deadline(
+        this.events.get(`agenda:${today.year}-${today.month}-${today.day}`, () => calendar.events(range)),
+        this.budgetMs - DEPARTURE_BUDGET_MS,
+      );
     } catch (error) {
       logFailure('calendario', error);
       return { section: { status: 'error', message: 'Sin conexión con el calendario' }, alert: null };
     }
-    const { departure, alert } = await this.departure(fetched.value);
+    // Si el trayecto tarda, esta vez no hay aviso; la consulta sigue y lo tendrá el siguiente refresco.
+    const computed = await within(this.departure(fetched.value), DEPARTURE_BUDGET_MS);
+    const { departure, alert } = computed?.value ?? { alert: null };
     const departures = new Map(departure ? [[departure.eventId, departure.info]] : []);
     const days: [AgendaDay, AgendaDay] = [
       agendaDay('Hoy', today, fetched.value, this.config.timeZone, departures),
@@ -232,7 +267,10 @@ export class VpsDashboard implements DashboardData {
     return { section: { status: 'ok', today: days[0], tomorrow: days[1], ...this.notice(fetched) }, alert };
   }
 
-  /** Aviso de salida del próximo evento con ubicación física, si está dentro de la ventana. */
+  /**
+   * Aviso de salida del próximo evento con ubicación física que se pueda situar, dentro de la ventana.
+   * Nunca lanza: si algo falla, no hay aviso.
+   */
   private async departure(
     events: CalendarEvent[],
   ): Promise<{ departure?: { eventId: string; info: Departure }; alert: DepartureAlert | null }> {
@@ -241,38 +279,44 @@ export class VpsDashboard implements DashboardData {
     if (!tomtom || !home) return { alert: null };
     const now = this.now();
     const horizon = addMinutes(now, this.config.departure.appearMinutes + this.config.departure.bufferMinutes + MAX_TRAVEL_MINUTES);
-    const next = events.find((e) => !e.allDay && e.start > now && e.start <= horizon && isPhysicalLocation(e.location));
-    if (!next?.location) return { alert: null };
+    const candidates = events
+      .filter((e) => !e.allDay && e.start > now && e.start <= horizon && isPhysicalLocation(e.location))
+      .slice(0, MAX_DEPARTURE_CANDIDATES);
     try {
-      const destination = await this.geocode(next.location, home);
-      if (!destination) return { alert: null };
-      const fetched = await this.routes.get(`event:${next.id}`, () => tomtom.route(home, destination));
-      // Con un trayecto viejo no se avisa: podría hacer salir tarde.
-      if (fetched.staleSince) return { alert: null };
-      const route = fetched.value;
-      const event: UpcomingEvent = {
-        id: next.id,
-        title: next.title,
-        start: next.start,
-        timeLabel: hhmm(next.start, this.config.timeZone),
-        placeLabel: placeLabel(next.location),
-      };
-      const rule = { ...this.config.departure, timeZone: this.config.timeZone };
-      const alert = departureAlert(event, { travelMinutes: route.travelMinutes, trafficLabel: trafficLabel(route.trafficDelayMinutes) }, now, rule);
-      const leave = leaveTime(next.start, route.travelMinutes, this.config.departure.bufferMinutes);
-      return {
-        departure: { eventId: next.id, info: { placeLabel: event.placeLabel, travelMinutes: route.travelMinutes, leaveAt: hhmm(leave, this.config.timeZone) } },
-        alert,
-      };
+      for (const next of candidates) {
+        const destination = await this.geocode(next.location!, home);
+        if (!destination) continue;
+        const fetched = await this.routes.get(`event:${next.id}`, () => tomtom.route(home, destination));
+        // Con un trayecto viejo no se avisa: podría hacer salir tarde.
+        if (fetched.staleSince) return { alert: null };
+        const route = fetched.value;
+        // Un trayecto de horas no es una cita a la que se va desde casa (lugar mal situado).
+        if (route.travelMinutes > MAX_TRAVEL_MINUTES) continue;
+        const event: UpcomingEvent = {
+          id: next.id,
+          title: next.title,
+          start: next.start,
+          timeLabel: hhmm(next.start, this.config.timeZone),
+          placeLabel: placeLabel(next.location!),
+        };
+        const rule = { ...this.config.departure, timeZone: this.config.timeZone };
+        const alert = departureAlert(event, { travelMinutes: route.travelMinutes, trafficLabel: trafficLabel(route.trafficDelayMinutes) }, now, rule);
+        const leave = leaveTime(next.start, route.travelMinutes, this.config.departure.bufferMinutes);
+        return {
+          departure: { eventId: next.id, info: { placeLabel: event.placeLabel, travelMinutes: route.travelMinutes, leaveAt: hhmm(leave, this.config.timeZone) } },
+          alert,
+        };
+      }
     } catch (error) {
       logFailure('aviso de salida', error);
-      return { alert: null };
     }
+    return { alert: null };
   }
 
   private async geocode(location: string, near: { lat: number; lon: number }) {
     if (this.places.has(location)) return this.places.get(location)!;
     const found = await this.sources.tomtom!.geocode(location, near);
+    if (this.places.size >= MAX_PLACES) this.places.clear();
     this.places.set(location, found);
     return found;
   }

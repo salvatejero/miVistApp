@@ -20,8 +20,10 @@ export interface Range {
   end: Date;
 }
 
-/** Límite de ocurrencias por evento repetido, por si una regla no tiene fin. */
+/** Ocurrencias de un evento repetido que se devuelven como mucho dentro del rango. */
 const MAX_OCCURRENCES = 2000;
+/** Pasos que se dan como mucho para llegar al rango (un evento diario desde 1990 son ~13 000). */
+const MAX_STEPS = 100_000;
 
 const civil = (t: ICAL.Time): CivilDate => ({ year: t.year, month: t.month, day: t.day });
 
@@ -74,12 +76,17 @@ export function parseEvents(ics: string, range: Range, dayToDate: (day: CivilDat
       add(event, event.startDate, end, event);
       continue;
     }
+    // Solo cuentan para el límite las ocurrencias dentro del rango: un evento diario creado hace años
+    // tiene miles de ocurrencias antes de hoy y no debe perder las de este mes.
     const iterator = event.iterator();
-    for (let i = 0, next = iterator.next(); next && i < MAX_OCCURRENCES; i++, next = iterator.next()) {
+    let inRange = 0;
+    for (let step = 0, next = iterator.next(); next && step < MAX_STEPS && inRange < MAX_OCCURRENCES; step++, next = iterator.next()) {
       const details = event.getOccurrenceDetails(next);
       const startDate = details.startDate.isDate ? dayToDate(civil(details.startDate)) : details.startDate.toJSDate();
       if (startDate >= range.end) break;
+      const before = result.length;
       add(event, details.startDate, details.endDate, details.item);
+      inRange += result.length - before;
     }
   }
   return result.sort((a, b) => a.start.getTime() - b.start.getTime());

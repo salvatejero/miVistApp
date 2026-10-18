@@ -20,6 +20,20 @@ describe('último dato bueno', () => {
     expect(await cache.get('k', () => Promise.reject(new Error('caída')))).toEqual({ value: 1, staleSince: new Date(0) });
   });
 
+  it('no espera a una fuente lenta si tiene un dato anterior, y lo renueva al terminar', async () => {
+    let now = 0;
+    const cache = new LastGood<number>(1000, () => now, 20);
+    await cache.get('k', () => Promise.resolve(1));
+    now = 5000;
+    let finish: (v: number) => void = () => undefined;
+    const slow = new Promise<number>((resolve) => (finish = resolve));
+    expect(await cache.get('k', () => slow)).toEqual({ value: 1, staleSince: new Date(0) });
+    finish(2);
+    await slow;
+    await Promise.resolve();
+    expect(await cache.get('k', () => Promise.resolve(3))).toEqual({ value: 2 });
+  });
+
   it('propaga el error si nunca hubo dato', async () => {
     const cache = new LastGood<number>(1000);
     await expect(cache.get('k', () => Promise.reject(new Error('caída')))).rejects.toThrow('caída');

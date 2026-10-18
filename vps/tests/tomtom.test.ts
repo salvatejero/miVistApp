@@ -16,6 +16,12 @@ describe('TomTom', () => {
     expect(await new TomTom(fakeFetch(() => ({ body: { results: [] } })), 'clave').geocode('???')).toBeNull();
   });
 
+  it('busca cerca de casa y descarta resultados poco fiables', async () => {
+    const fetchFn = fakeFetch(() => ({ body: { results: [{ position: { lat: 40.2, lon: -3.2 }, matchConfidence: { score: 0.3 } }] } }));
+    expect(await new TomTom(fetchFn, 'clave').geocode('Sala 3', { lat: 40, lon: -3 })).toBeNull();
+    expect(fetchFn.urls[0]).toContain('radius=100000');
+  });
+
   it('falla con respuestas inesperadas o errores HTTP', async () => {
     await expect(new TomTom(fakeFetch(() => ({ body: {} })), 'clave').route({ lat: 0, lon: 0 }, { lat: 1, lon: 1 })).rejects.toThrow();
     await expect(new TomTom(fakeFetch(() => ({ status: 403, body: {} })), 'clave').route({ lat: 0, lon: 0 }, { lat: 1, lon: 1 })).rejects.toThrow('403');

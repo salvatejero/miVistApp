@@ -131,6 +131,61 @@ describe('pantallas desde el VPS', () => {
     expect(await data.getCalendar(0)).toEqual({ status: 'empty', message: 'Calendario sin configurar' });
   });
 
+  it('un calendario colgado no tumba el resto de Inicio', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const hanging: CalendarSource = { events: () => new Promise(() => undefined) };
+    const data = new VpsDashboard(
+      testConfig(),
+      {
+        weather: new OpenMeteo(fakeFetch(() => ({ body: openMeteoResponse() })), { lat: 40, lon: -3 }, TZ),
+        tomtom: new TomTom(tomtomFetch(), 'clave'),
+        calendar: hanging,
+        house: new MockHouse(),
+        now: () => NOW,
+      },
+      1700,
+    );
+    const started = Date.now();
+    const home = await data.getHome();
+    expect(Date.now() - started).toBeLessThan(1500);
+    expect(home.agenda).toEqual({ status: 'error', message: 'Sin conexión con el calendario' });
+    expect(home.weather.status).toBe('ok');
+    expect(home.commute.status).toBe('ok');
+  });
+
+  it('la hora de salir al trabajo respeta el cambio de hora y pasa a mañana si ya es tarde', async () => {
+    // Domingo 25/10/2026 (cambio a horario de invierno) a las 07:00 en Madrid.
+    const morning = await dashboard({ now: () => new Date('2026-10-25T06:00:00Z') }).getHome();
+    expect(morning.commute).toMatchObject({ leaveAt: '08:30' });
+    // A las 18:00 la de hoy ya pasó: se muestra la de mañana.
+    const evening = await dashboard({ now: () => new Date('2026-10-15T16:00:00Z') }).getHome();
+    expect(evening.commute).toMatchObject({ leaveAt: '08:30' });
+  });
+
+  it('si el primer evento no se puede situar, prueba el siguiente', async () => {
+    const events = [
+      timed('sala', 'Revisión de proyecto', '2026-10-15T06:45:00Z', 'Sala 3'),
+      timed('salud', 'Revisión médica', '2026-10-15T07:00:00Z', 'Centro de salud, Calle Falsa 1'),
+    ];
+    const fetchFn = fakeFetch((url) => {
+      if (url.includes('Sala%203')) return { body: { results: [] } };
+      if (url.includes('/geocode/')) return { body: { results: [{ position: { lat: 40.2, lon: -3.2 } }] } };
+      return { body: { routes: [{ summary: { travelTimeInSeconds: 1200, trafficDelayInSeconds: 0 } }] } };
+    });
+    const data = new VpsDashboard(testConfig(), { tomtom: new TomTom(fetchFn, 'clave'), calendar: calendarOf(events), house: new MockHouse(), now: () => NOW });
+    expect((await data.getHome()).departureAlert?.eventId).toBe('salud');
+  });
+
+  it('descarta trayectos de horas (lugar mal situado)', async () => {
+    const fetchFn = fakeFetch((url) =>
+      url.includes('/geocode/')
+        ? { body: { results: [{ position: { lat: 41, lon: 2 } }] } }
+        : { body: { routes: [{ summary: { travelTimeInSeconds: 6 * 3600, trafficDelayInSeconds: 0 } }] } },
+    );
+    const data = new VpsDashboard(testConfig(), { tomtom: new TomTom(fetchFn, 'clave'), calendar: calendarOf(EVENTS), house: new MockHouse(), now: () => NOW });
+    expect((await data.getHome()).departureAlert).toBeNull();
+  });
+
   it('los días civiles salen en la zona del usuario', () => {
     expect(startOfDay({ year: 2026, month: 10, day: 15 }, TZ).toISOString()).toBe('2026-10-14T22:00:00.000Z');
   });

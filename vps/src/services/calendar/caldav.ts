@@ -1,6 +1,7 @@
 import { DAVClient } from 'tsdav';
 import type { CivilDate } from '../../../../lib/month-grid';
 import type { Fetch } from '../../http';
+import { fetchWithTimeout, SourceError } from '../../http';
 import type { CalendarEvent, Range } from './ical';
 import { parseEvents } from './ical';
 
@@ -30,6 +31,8 @@ export class ICloudCalendar implements CalendarSource {
         (c.components?.includes('VEVENT') ?? true) &&
         (this.credentials.calendars.length === 0 || this.credentials.calendars.includes(nameOf(c.displayName))),
     );
+    // Un nombre mal escrito en ICLOUD_CALENDARS no debe parecer un calendario vacío.
+    if (calendars.length === 0) throw new SourceError('Ningún calendario coincide con ICLOUD_CALENDARS');
     const timeRange = { start: range.start.toISOString(), end: range.end.toISOString() };
     const objects = (await Promise.all(calendars.map((calendar) => client.fetchCalendarObjects({ calendar, timeRange })))).flat();
     return objects
@@ -45,7 +48,7 @@ export class ICloudCalendar implements CalendarSource {
       credentials: { username: this.credentials.username, password: this.credentials.appPassword },
       authMethod: 'Basic',
       defaultAccountType: 'caldav',
-      ...(this.fetchFn ? { fetch: this.fetchFn } : {}),
+      fetch: fetchWithTimeout(this.fetchFn ?? fetch),
     });
     await client.login();
     this.client = client;

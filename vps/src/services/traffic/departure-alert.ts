@@ -16,7 +16,8 @@ export interface UpcomingEvent {
   placeLabel: string;
 }
 
-const MEETING_LINK = /(https?:\/\/|www\.|teams\.microsoft|meet\.google|zoom\.us|webex|skype|facetime)/i;
+const MEETING_LINK =
+  /(https?:\/\/|www\.|\bteams\b|\bzoom\b|\bmeet\b|\bwebex\b|\bskype\b|facetime|videollamada|llamada|\bonline\b|\bvirtual\b|\bremot[oa]\b)/i;
 
 /** Ubicación física (no vacía y no un enlace de reunión). La geocodificación decide después si existe. */
 export const isPhysicalLocation = (location: string | undefined): location is string =>
