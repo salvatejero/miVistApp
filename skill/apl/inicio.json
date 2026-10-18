@@ -4,7 +4,9 @@
   "theme": "dark",
   "description": "Inicio: reloj, tiempo, lluvia o aviso de salida, tráfico al trabajo, agenda de hoy y mañana y botones de casa. Datasource `home` (contracts/schemas/home.schema.json).",
   "mainTemplate": {
-    "parameters": ["home"],
+    "parameters": [
+      "home"
+    ],
     "items": [
       {
         "type": "Frame",
@@ -16,9 +18,13 @@
           "direction": "row",
           "height": "100%",
           "items": [
-            { "type": "MenuLateral", "current": "inicio" },
+            {
+              "type": "MenuLateral",
+              "current": "inicio"
+            },
             {
               "type": "Container",
+              "id": "contenido",
               "grow": 1,
               "shrink": 1,
               "height": "100%",
@@ -36,8 +42,23 @@
                     {
                       "type": "Container",
                       "items": [
-                        { "type": "Text", "id": "reloj", "style": "texto", "text": "${Time.format('HH:mm', localTime)}", "fontSize": "@textClock", "fontWeight": "800", "maxLines": 1 },
-                        { "type": "Text", "style": "textoSecundario", "text": "${home.header.dateLabel}", "spacing": "@gapSmall", "fontSize": "@textDate", "maxLines": 1 }
+                        {
+                          "type": "Text",
+                          "id": "reloj",
+                          "style": "texto",
+                          "text": "${Time.format('HH:mm', localTime)}",
+                          "fontSize": "@textClock",
+                          "fontWeight": "800",
+                          "maxLines": 1
+                        },
+                        {
+                          "type": "Text",
+                          "style": "textoSecundario",
+                          "text": "${home.header.dateLabel}",
+                          "spacing": "@gapSmall",
+                          "fontSize": "@textDate",
+                          "maxLines": 1
+                        }
                       ]
                     },
                     {
@@ -57,7 +78,8 @@
                               "text": "${home.weather.status == 'ok' ? Math.round(home.weather.temperature) + '°' : '--°'}",
                               "fontSize": "@textTemperature",
                               "fontWeight": "800",
-                              "maxLines": 1
+                              "maxLines": 1,
+                              "when": "${home.weather.status != 'loading'}"
                             },
                             {
                               "type": "Text",
@@ -66,7 +88,21 @@
                               "spacing": "6dp",
                               "textAlign": "right",
                               "fontSize": "@textCardTitle",
-                              "maxLines": 1
+                              "maxLines": 1,
+                              "when": "${home.weather.status != 'loading'}"
+                            },
+                            {
+                              "type": "Hueso",
+                              "when": "${home.weather.status == 'loading'}",
+                              "width": "140dp",
+                              "height": "@textTemperature"
+                            },
+                            {
+                              "type": "Hueso",
+                              "when": "${home.weather.status == 'loading'}",
+                              "width": "220dp",
+                              "height": "@textCardTitle",
+                              "spacing": "@gapSmall"
                             }
                           ]
                         },
@@ -85,8 +121,25 @@
                             "direction": "row",
                             "alignItems": "center",
                             "items": [
-                              { "type": "VectorGraphic", "source": "weather-rain", "width": "@pillIcon", "height": "@pillIcon", "scale": "fill", "strokeWidth": 2, "color": "@colorRainText" },
-                              { "type": "Text", "style": "texto", "text": "${home.weather.rainAlertLabel}", "spacing": "10dp", "fontSize": "@textBody", "fontWeight": "600", "color": "@colorRainText", "maxLines": 1 }
+                              {
+                                "type": "VectorGraphic",
+                                "source": "weather-rain",
+                                "width": "@pillIcon",
+                                "height": "@pillIcon",
+                                "scale": "fill",
+                                "strokeWidth": 2,
+                                "color": "@colorRainText"
+                              },
+                              {
+                                "type": "Text",
+                                "style": "texto",
+                                "text": "${home.weather.rainAlertLabel}",
+                                "spacing": "10dp",
+                                "fontSize": "@textBody",
+                                "fontWeight": "600",
+                                "color": "@colorRainText",
+                                "maxLines": 1
+                              }
                             ]
                           }
                         }
@@ -105,8 +158,19 @@
                       "type": "Container",
                       "width": "38%",
                       "items": [
-                        { "type": "TarjetaAviso", "when": "${home.departureAlert != null}", "alert": "${home.departureAlert}", "grow": 1 },
-                        { "type": "TarjetaLluvia", "when": "${home.departureAlert == null}", "rain": "${home.rainForecast}", "title": "Lluvia próximas horas", "grow": 1 },
+                        {
+                          "type": "TarjetaAviso",
+                          "when": "${home.departureAlert != null}",
+                          "alert": "${home.departureAlert}",
+                          "grow": 1
+                        },
+                        {
+                          "type": "TarjetaLluvia",
+                          "when": "${home.departureAlert == null}",
+                          "rain": "${home.rainForecast}",
+                          "title": "Lluvia próximas horas",
+                          "grow": 1
+                        },
                         {
                           "type": "Frame",
                           "spacing": "@gap",
@@ -126,16 +190,39 @@
                                 "type": "Container",
                                 "shrink": 1,
                                 "items": [
-                                  { "type": "Text", "style": "textoSecundario", "text": "Tráfico al trabajo", "fontSize": "@textCardTitle", "fontWeight": "600", "maxLines": 1 },
+                                  {
+                                    "type": "Text",
+                                    "style": "textoSecundario",
+                                    "text": "Tráfico al trabajo",
+                                    "fontSize": "@textCardTitle",
+                                    "fontWeight": "600",
+                                    "maxLines": 1
+                                  },
                                   {
                                     "type": "Text",
                                     "style": "texto",
                                     "text": "${home.commute.status == 'ok' ? home.commute.routeLabel + ' · ' + home.commute.trafficLabel : home.commute.message}",
                                     "spacing": "4dp",
                                     "fontSize": "@textSmall",
-                                    "maxLines": 2
+                                    "maxLines": 2,
+                                    "when": "${home.commute.status != 'loading'}"
                                   },
-                                  { "type": "Text", "style": "textoSecundario", "when": "${home.commute.notice}", "text": "${home.commute.notice}", "spacing": "4dp", "fontSize": "@textCaption", "maxLines": 1 }
+                                  {
+                                    "type": "Hueso",
+                                    "when": "${home.commute.status == 'loading'}",
+                                    "width": "200dp",
+                                    "height": "@textSmall",
+                                    "spacing": "@gapSmall"
+                                  },
+                                  {
+                                    "type": "Text",
+                                    "style": "textoSecundario",
+                                    "when": "${home.commute.notice}",
+                                    "text": "${home.commute.notice}",
+                                    "spacing": "4dp",
+                                    "fontSize": "@textCaption",
+                                    "maxLines": 1
+                                  }
                                 ]
                               },
                               {
@@ -144,9 +231,31 @@
                                 "alignItems": "end",
                                 "spacing": "@gapMedium",
                                 "items": [
-                                  { "type": "Text", "style": "texto", "text": "${home.commute.durationMinutes} min", "fontSize": "@textCommute", "fontWeight": "800", "color": "@colorAccent", "maxLines": 1 },
-                                  { "type": "Text", "style": "textoSecundario", "text": "Sal a las ${home.commute.leaveAt}", "spacing": "4dp", "fontSize": "@textSmall", "maxLines": 1 }
+                                  {
+                                    "type": "Text",
+                                    "style": "texto",
+                                    "text": "${home.commute.durationMinutes} min",
+                                    "fontSize": "@textCommute",
+                                    "fontWeight": "800",
+                                    "color": "@colorAccent",
+                                    "maxLines": 1
+                                  },
+                                  {
+                                    "type": "Text",
+                                    "style": "textoSecundario",
+                                    "text": "Sal a las ${home.commute.leaveAt}",
+                                    "spacing": "4dp",
+                                    "fontSize": "@textSmall",
+                                    "maxLines": 1
+                                  }
                                 ]
+                              },
+                              {
+                                "type": "Hueso",
+                                "when": "${home.commute.status == 'loading'}",
+                                "width": "110dp",
+                                "height": "@textCommute",
+                                "spacing": "@gapMedium"
                               }
                             ]
                           }
@@ -174,11 +283,31 @@
                             "alignItems": "baseline",
                             "justifyContent": "spaceBetween",
                             "items": [
-                              { "type": "Text", "style": "textoSecundario", "text": "Agenda", "fontSize": "@textCardTitle", "fontWeight": "600" },
-                              { "type": "Text", "style": "textoSecundario", "when": "${home.agenda.notice}", "text": "${home.agenda.notice}", "shrink": 1, "spacing": "@gapMedium", "fontSize": "@textCaption", "maxLines": 1 }
+                              {
+                                "type": "Text",
+                                "style": "textoSecundario",
+                                "text": "Agenda",
+                                "fontSize": "@textCardTitle",
+                                "fontWeight": "600"
+                              },
+                              {
+                                "type": "Text",
+                                "style": "textoSecundario",
+                                "when": "${home.agenda.notice}",
+                                "text": "${home.agenda.notice}",
+                                "shrink": 1,
+                                "spacing": "@gapMedium",
+                                "fontSize": "@textCaption",
+                                "maxLines": 1
+                              }
                             ]
                           },
-                          { "type": "MensajeEstado", "when": "${home.agenda.status != 'ok'}", "text": "${home.agenda.message}", "spacing": "@gapMedium" },
+                          {
+                            "type": "MensajeEstado",
+                            "when": "${home.agenda.status == 'empty' || home.agenda.status == 'error'}",
+                            "text": "${home.agenda.message}",
+                            "spacing": "@gapMedium"
+                          },
                           {
                             "type": "Container",
                             "when": "${home.agenda.status == 'ok'}",
@@ -187,8 +316,39 @@
                             "shrink": 1,
                             "spacing": "@gapMedium",
                             "items": [
-                              { "type": "DiaAgenda", "day": "${home.agenda.today}", "highlight": true, "width": "50%", "paddingRight": "@itemPaddingX" },
-                              { "type": "DiaAgenda", "day": "${home.agenda.tomorrow}", "width": "50%", "paddingLeft": "@itemPaddingX" }
+                              {
+                                "type": "DiaAgenda",
+                                "day": "${home.agenda.today}",
+                                "highlight": true,
+                                "width": "50%",
+                                "paddingRight": "@itemPaddingX"
+                              },
+                              {
+                                "type": "DiaAgenda",
+                                "day": "${home.agenda.tomorrow}",
+                                "width": "50%",
+                                "paddingLeft": "@itemPaddingX"
+                              }
+                            ]
+                          },
+                          {
+                            "type": "Container",
+                            "when": "${home.agenda.status == 'loading'}",
+                            "direction": "row",
+                            "grow": 1,
+                            "shrink": 1,
+                            "spacing": "@gapMedium",
+                            "items": [
+                              {
+                                "type": "DiaEsqueleto",
+                                "width": "50%",
+                                "paddingRight": "@itemPaddingX"
+                              },
+                              {
+                                "type": "DiaEsqueleto",
+                                "width": "50%",
+                                "paddingLeft": "@itemPaddingX"
+                              }
                             ]
                           }
                         ]
@@ -203,12 +363,41 @@
                   "spacing": "@gap",
                   "data": "${home.house.devices}",
                   "items": [
-                    { "type": "BotonCasa", "device": "${data}", "origin": "inicio", "width": 0, "grow": 1, "spacing": "@gap" }
+                    {
+                      "type": "BotonCasa",
+                      "device": "${data}",
+                      "origin": "inicio",
+                      "width": 0,
+                      "grow": 1,
+                      "spacing": "@gap"
+                    }
+                  ]
+                },
+                {
+                  "type": "Container",
+                  "when": "${home.house.status == 'loading'}",
+                  "direction": "row",
+                  "spacing": "@gap",
+                  "data": [
+                    1,
+                    2,
+                    3,
+                    4
+                  ],
+                  "items": [
+                    {
+                      "type": "Hueso",
+                      "width": 0,
+                      "grow": 1,
+                      "height": "@houseTileHeight",
+                      "radius": "@radiusCard",
+                      "spacing": "@gap"
+                    }
                   ]
                 },
                 {
                   "type": "Frame",
-                  "when": "${home.house.status != 'ok'}",
+                  "when": "${home.house.status == 'empty' || home.house.status == 'error'}",
                   "spacing": "@gap",
                   "backgroundColor": "@colorCard",
                   "borderRadius": "@radiusCard",
@@ -216,7 +405,10 @@
                   "paddingRight": "@cardPaddingX",
                   "paddingTop": "@cardPaddingYCompact",
                   "paddingBottom": "@cardPaddingYCompact",
-                  "item": { "type": "MensajeEstado", "text": "${home.house.message}" }
+                  "item": {
+                    "type": "MensajeEstado",
+                    "text": "${home.house.message}"
+                  }
                 }
               ]
             }

@@ -24,6 +24,7 @@
             },
             {
               "type": "Container",
+              "id": "contenido",
               "grow": 1,
               "shrink": 1,
               "height": "100%",
@@ -102,7 +103,7 @@
                   "paddingRight": "@cardPaddingX",
                   "paddingTop": "@cardPaddingY",
                   "paddingBottom": "@cardPaddingY",
-                  "when": "${calendar.status != 'ok'}",
+                  "when": "${calendar.status == 'empty' || calendar.status == 'error'}",
                   "spacing": "@gap",
                   "grow": 1,
                   "item": {
@@ -224,6 +225,101 @@
                         "highlight": true,
                         "stacked": true,
                         "height": "100%"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "Container",
+                  "when": "${calendar.status == 'loading'}",
+                  "direction": "row",
+                  "grow": 1,
+                  "shrink": 1,
+                  "spacing": "20dp",
+                  "items": [
+                    {
+                      "type": "Frame",
+                      "grow": 1,
+                      "shrink": 1,
+                      "width": 0,
+                      "backgroundColor": "@colorCard",
+                      "borderRadius": "@radiusCard",
+                      "paddingLeft": "20dp",
+                      "paddingRight": "20dp",
+                      "paddingTop": "18dp",
+                      "paddingBottom": "18dp",
+                      "item": {
+                        "type": "Container",
+                        "height": "100%",
+                        "direction": "row",
+                        "wrap": "wrap",
+                        "data": [
+                          0,
+                          1,
+                          2,
+                          3,
+                          4,
+                          5,
+                          6,
+                          7,
+                          8,
+                          9,
+                          10,
+                          11,
+                          12,
+                          13,
+                          14,
+                          15,
+                          16,
+                          17,
+                          18,
+                          19,
+                          20,
+                          21,
+                          22,
+                          23,
+                          24,
+                          25,
+                          26,
+                          27,
+                          28,
+                          29,
+                          30,
+                          31,
+                          32,
+                          33,
+                          34
+                        ],
+                        "items": [
+                          {
+                            "type": "Container",
+                            "width": "14.2857%",
+                            "height": "20%",
+                            "paddingLeft": "3dp",
+                            "paddingRight": "3dp",
+                            "paddingTop": "3dp",
+                            "paddingBottom": "3dp",
+                            "items": [
+                              {
+                                "type": "Hueso",
+                                "grow": 1
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "type": "Frame",
+                      "width": "@dayPanelWidth",
+                      "backgroundColor": "@colorCard",
+                      "borderRadius": "@radiusCard",
+                      "paddingLeft": "22dp",
+                      "paddingRight": "22dp",
+                      "paddingTop": "22dp",
+                      "paddingBottom": "22dp",
+                      "item": {
+                        "type": "DiaEsqueleto"
                       }
                     }
                   ]

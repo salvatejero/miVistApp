@@ -3,7 +3,12 @@
   "layouts": {
     "MenuLateral": {
       "description": "Menú lateral con los 4 botones. `current` es la pantalla activa.",
-      "parameters": [{ "name": "current", "type": "string" }],
+      "parameters": [
+        {
+          "name": "current",
+          "type": "string"
+        }
+      ],
       "item": {
         "type": "Frame",
         "width": "@menuWidth",
@@ -18,26 +23,73 @@
           "paddingLeft": "@menuPaddingX",
           "paddingRight": "@menuPaddingX",
           "items": [
-            { "type": "BotonMenu", "screen": "inicio", "label": "Inicio", "icon": "iconInicio", "current": "${current}" },
-            { "type": "BotonMenu", "screen": "calendario", "label": "Calendario", "icon": "iconCalendario", "current": "${current}", "spacing": "@menuGap" },
-            { "type": "BotonMenu", "screen": "tiempo", "label": "Tiempo", "icon": "iconTiempo", "current": "${current}", "spacing": "@menuGap" },
-            { "type": "BotonMenu", "screen": "casa", "label": "Casa", "icon": "iconCasa", "current": "${current}", "spacing": "@menuGap" }
+            {
+              "type": "BotonMenu",
+              "screen": "inicio",
+              "label": "Inicio",
+              "icon": "iconInicio",
+              "current": "${current}"
+            },
+            {
+              "type": "BotonMenu",
+              "screen": "calendario",
+              "label": "Calendario",
+              "icon": "iconCalendario",
+              "current": "${current}",
+              "spacing": "@menuGap"
+            },
+            {
+              "type": "BotonMenu",
+              "screen": "tiempo",
+              "label": "Tiempo",
+              "icon": "iconTiempo",
+              "current": "${current}",
+              "spacing": "@menuGap"
+            },
+            {
+              "type": "BotonMenu",
+              "screen": "casa",
+              "label": "Casa",
+              "icon": "iconCasa",
+              "current": "${current}",
+              "spacing": "@menuGap"
+            }
           ]
         }
       }
     },
     "BotonMenu": {
       "parameters": [
-        { "name": "screen", "type": "string" },
-        { "name": "label", "type": "string" },
-        { "name": "icon", "type": "string" },
-        { "name": "current", "type": "string" }
+        {
+          "name": "screen",
+          "type": "string"
+        },
+        {
+          "name": "label",
+          "type": "string"
+        },
+        {
+          "name": "icon",
+          "type": "string"
+        },
+        {
+          "name": "current",
+          "type": "string"
+        }
       ],
       "item": {
         "type": "TouchWrapper",
         "role": "button",
         "accessibilityLabel": "${label}",
-        "onPress": [{ "type": "SendEvent", "arguments": ["navigate", "${screen}"] }],
+        "onPress": [
+          {
+            "type": "SendEvent",
+            "arguments": [
+              "navigate",
+              "${screen}"
+            ]
+          }
+        ],
         "item": {
           "type": "Frame",
           "height": "@menuButtonHeight",
@@ -73,7 +125,12 @@
     },
     "MensajeEstado": {
       "description": "Texto que sustituye a un bloque vacío o con error.",
-      "parameters": [{ "name": "text", "type": "string" }],
+      "parameters": [
+        {
+          "name": "text",
+          "type": "string"
+        }
+      ],
       "item": {
         "type": "Text",
         "style": "textoSecundario",
@@ -85,8 +142,15 @@
     "FilaAgenda": {
       "description": "Evento o recordatorio. Con `stacked`, la hora va encima del título (panel del calendario).",
       "parameters": [
-        { "name": "entry", "type": "object" },
-        { "name": "stacked", "type": "boolean", "default": false }
+        {
+          "name": "entry",
+          "type": "object"
+        },
+        {
+          "name": "stacked",
+          "type": "boolean",
+          "default": false
+        }
       ],
       "item": {
         "type": "Frame",
@@ -107,16 +171,49 @@
               "direction": "row",
               "alignItems": "center",
               "items": [
-                { "type": "Text", "style": "texto", "text": "${entry.timeLabel}", "width": "@timeColumn", "fontSize": "@textSmall", "fontWeight": "800", "color": "@colorAccent", "maxLines": 1 },
-                { "type": "Text", "style": "texto", "text": "${entry.title}", "spacing": "@itemPaddingX", "grow": 1, "shrink": 1, "fontSize": "@textBody", "maxLines": 1 }
+                {
+                  "type": "Text",
+                  "style": "texto",
+                  "text": "${entry.timeLabel}",
+                  "width": "@timeColumn",
+                  "fontSize": "@textSmall",
+                  "fontWeight": "800",
+                  "color": "@colorAccent",
+                  "maxLines": 1
+                },
+                {
+                  "type": "Text",
+                  "style": "texto",
+                  "text": "${entry.title}",
+                  "spacing": "@itemPaddingX",
+                  "grow": 1,
+                  "shrink": 1,
+                  "fontSize": "@textBody",
+                  "maxLines": 1
+                }
               ]
             },
             {
               "type": "Container",
               "when": "${entry.kind == 'event' && stacked}",
               "items": [
-                { "type": "Text", "style": "texto", "text": "${entry.timeLabel}", "fontSize": "@textSmall", "fontWeight": "800", "color": "@colorAccent", "maxLines": 1 },
-                { "type": "Text", "style": "texto", "text": "${entry.title}", "spacing": "2dp", "fontSize": "@textBody", "maxLines": 2 }
+                {
+                  "type": "Text",
+                  "style": "texto",
+                  "text": "${entry.timeLabel}",
+                  "fontSize": "@textSmall",
+                  "fontWeight": "800",
+                  "color": "@colorAccent",
+                  "maxLines": 1
+                },
+                {
+                  "type": "Text",
+                  "style": "texto",
+                  "text": "${entry.title}",
+                  "spacing": "2dp",
+                  "fontSize": "@textBody",
+                  "maxLines": 2
+                }
               ]
             },
             {
@@ -125,8 +222,24 @@
               "direction": "row",
               "alignItems": "center",
               "items": [
-                { "type": "Frame", "width": "@reminderDot", "height": "@reminderDot", "borderRadius": "@reminderDot", "borderWidth": "3dp", "borderColor": "@colorAccent" },
-                { "type": "Text", "style": "texto", "text": "${entry.title}", "spacing": "@itemPaddingX", "grow": 1, "shrink": 1, "fontSize": "@textBody", "maxLines": 1 }
+                {
+                  "type": "Frame",
+                  "width": "@reminderDot",
+                  "height": "@reminderDot",
+                  "borderRadius": "@reminderDot",
+                  "borderWidth": "3dp",
+                  "borderColor": "@colorAccent"
+                },
+                {
+                  "type": "Text",
+                  "style": "texto",
+                  "text": "${entry.title}",
+                  "spacing": "@itemPaddingX",
+                  "grow": 1,
+                  "shrink": 1,
+                  "fontSize": "@textBody",
+                  "maxLines": 1
+                }
               ]
             },
             {
@@ -136,7 +249,15 @@
               "alignItems": "center",
               "spacing": "4dp",
               "items": [
-                { "type": "VectorGraphic", "source": "iconCar", "width": "@smallIcon", "height": "@smallIcon", "scale": "fill", "color": "@colorAccent", "strokeWidth": 2 },
+                {
+                  "type": "VectorGraphic",
+                  "source": "iconCar",
+                  "width": "@smallIcon",
+                  "height": "@smallIcon",
+                  "scale": "fill",
+                  "color": "@colorAccent",
+                  "strokeWidth": 2
+                },
                 {
                   "type": "Text",
                   "style": "texto",
@@ -158,9 +279,20 @@
     "DiaAgenda": {
       "description": "Columna de un día: cabecera, línea y lista de eventos.",
       "parameters": [
-        { "name": "day", "type": "object" },
-        { "name": "highlight", "type": "boolean", "default": false },
-        { "name": "stacked", "type": "boolean", "default": false }
+        {
+          "name": "day",
+          "type": "object"
+        },
+        {
+          "name": "highlight",
+          "type": "boolean",
+          "default": false
+        },
+        {
+          "name": "stacked",
+          "type": "boolean",
+          "default": false
+        }
       ],
       "item": {
         "type": "Container",
@@ -170,11 +302,30 @@
             "direction": "row",
             "alignItems": "baseline",
             "items": [
-              { "type": "Text", "style": "texto", "text": "${day.title}", "fontSize": "@textDayTitle", "fontWeight": "800", "maxLines": 1 },
-              { "type": "Text", "style": "textoSecundario", "text": "${day.dateLabel}", "spacing": "10dp", "fontSize": "@textSmall", "maxLines": 1 }
+              {
+                "type": "Text",
+                "style": "texto",
+                "text": "${day.title}",
+                "fontSize": "@textDayTitle",
+                "fontWeight": "800",
+                "maxLines": 1
+              },
+              {
+                "type": "Text",
+                "style": "textoSecundario",
+                "text": "${day.dateLabel}",
+                "spacing": "10dp",
+                "fontSize": "@textSmall",
+                "maxLines": 1
+              }
             ]
           },
-          { "type": "Frame", "spacing": "@gapSmall", "height": "@borderThin", "backgroundColor": "${highlight ? @colorAccent : @colorBorder}" },
+          {
+            "type": "Frame",
+            "spacing": "@gapSmall",
+            "height": "@borderThin",
+            "backgroundColor": "${highlight ? @colorAccent : @colorBorder}"
+          },
           {
             "type": "Text",
             "style": "textoSecundario",
@@ -190,21 +341,45 @@
             "grow": 1,
             "shrink": 1,
             "data": "${day.items}",
-            "items": [{ "type": "FilaAgenda", "entry": "${data}", "stacked": "${stacked}", "spacing": "@gapSmall" }]
+            "items": [
+              {
+                "type": "FilaAgenda",
+                "entry": "${data}",
+                "stacked": "${stacked}",
+                "spacing": "@gapSmall"
+              }
+            ]
           }
         ]
       }
     },
     "TarjetaAviso": {
       "description": "Aviso de salida en sus 3 estados: appear (borde fino), soon (fondo ámbar oscuro y cuenta atrás), leave_now (ámbar sólido).",
-      "parameters": [{ "name": "alert", "type": "object" }],
+      "parameters": [
+        {
+          "name": "alert",
+          "type": "object"
+        }
+      ],
       "item": {
         "type": "Frame",
         "bind": [
-          { "name": "soon", "value": "${alert.state == 'soon'}" },
-          { "name": "leave", "value": "${alert.state == 'leave_now'}" },
-          { "name": "fg", "value": "${alert.state == 'leave_now' ? @colorOnAccent : @colorText}" },
-          { "name": "accentFg", "value": "${alert.state == 'leave_now' ? @colorOnAccent : @colorAccent}" }
+          {
+            "name": "soon",
+            "value": "${alert.state == 'soon'}"
+          },
+          {
+            "name": "leave",
+            "value": "${alert.state == 'leave_now'}"
+          },
+          {
+            "name": "fg",
+            "value": "${alert.state == 'leave_now' ? @colorOnAccent : @colorText}"
+          },
+          {
+            "name": "accentFg",
+            "value": "${alert.state == 'leave_now' ? @colorOnAccent : @colorAccent}"
+          }
         ],
         "borderRadius": "@radiusCard",
         "backgroundColor": "${leave ? @colorAccent : soon ? @colorAccentBackground : @colorItem}",
@@ -224,8 +399,27 @@
               "direction": "row",
               "alignItems": "center",
               "items": [
-                { "type": "Text", "style": "texto", "text": "${alert.eventTimeLabel}", "fontSize": "@textBody", "fontWeight": "800", "color": "${accentFg}", "maxLines": 1 },
-                { "type": "Text", "style": "texto", "text": "${alert.title}", "spacing": "@itemPaddingX", "grow": 1, "shrink": 1, "fontSize": "@textEventLarge", "fontWeight": "${leave ? '600' : 'normal'}", "color": "${fg}", "maxLines": 1 }
+                {
+                  "type": "Text",
+                  "style": "texto",
+                  "text": "${alert.eventTimeLabel}",
+                  "fontSize": "@textBody",
+                  "fontWeight": "800",
+                  "color": "${accentFg}",
+                  "maxLines": 1
+                },
+                {
+                  "type": "Text",
+                  "style": "texto",
+                  "text": "${alert.title}",
+                  "spacing": "@itemPaddingX",
+                  "grow": 1,
+                  "shrink": 1,
+                  "fontSize": "@textEventLarge",
+                  "fontWeight": "${leave ? '600' : 'normal'}",
+                  "color": "${fg}",
+                  "maxLines": 1
+                }
               ]
             },
             {
@@ -233,7 +427,15 @@
               "direction": "row",
               "alignItems": "center",
               "items": [
-                { "type": "VectorGraphic", "source": "iconCar", "width": "@pillIcon", "height": "@pillIcon", "scale": "fill", "strokeWidth": 2, "color": "${leave ? @colorOnAccent : soon ? @colorAccent : @colorTextSecondary}" },
+                {
+                  "type": "VectorGraphic",
+                  "source": "iconCar",
+                  "width": "@pillIcon",
+                  "height": "@pillIcon",
+                  "scale": "fill",
+                  "strokeWidth": 2,
+                  "color": "${leave ? @colorOnAccent : soon ? @colorAccent : @colorTextSecondary}"
+                },
                 {
                   "type": "Text",
                   "style": "texto",
@@ -252,24 +454,70 @@
               "type": "Container",
               "when": "${alert.state == 'appear'}",
               "items": [
-                { "type": "Text", "style": "texto", "text": "Sal a las ${alert.leaveAt}", "fontSize": "@textAlertTime", "fontWeight": "800", "maxLines": 1 },
-                { "type": "Text", "style": "textoSecundario", "text": "Faltan ${alert.minutesToLeave} min para salir", "spacing": "6dp", "fontSize": "@textBody", "maxLines": 1 }
+                {
+                  "type": "Text",
+                  "style": "texto",
+                  "text": "Sal a las ${alert.leaveAt}",
+                  "fontSize": "@textAlertTime",
+                  "fontWeight": "800",
+                  "maxLines": 1
+                },
+                {
+                  "type": "Text",
+                  "style": "textoSecundario",
+                  "text": "Faltan ${alert.minutesToLeave} min para salir",
+                  "spacing": "6dp",
+                  "fontSize": "@textBody",
+                  "maxLines": 1
+                }
               ]
             },
             {
               "type": "Container",
               "when": "${soon}",
               "items": [
-                { "type": "Text", "style": "texto", "text": "${alert.minutesToLeave} min", "fontSize": "@textCountdown", "fontWeight": "800", "color": "@colorAccent", "maxLines": 1 },
-                { "type": "Text", "style": "texto", "text": "para salir · ${alert.leaveAt}", "spacing": "6dp", "fontSize": "@textCardTitle", "maxLines": 1 }
+                {
+                  "type": "Text",
+                  "style": "texto",
+                  "text": "${alert.minutesToLeave} min",
+                  "fontSize": "@textCountdown",
+                  "fontWeight": "800",
+                  "color": "@colorAccent",
+                  "maxLines": 1
+                },
+                {
+                  "type": "Text",
+                  "style": "texto",
+                  "text": "para salir · ${alert.leaveAt}",
+                  "spacing": "6dp",
+                  "fontSize": "@textCardTitle",
+                  "maxLines": 1
+                }
               ]
             },
             {
               "type": "Container",
               "when": "${leave}",
               "items": [
-                { "type": "Text", "style": "texto", "text": "¡Sal ya!", "fontSize": "@textLeaveNow", "fontWeight": "800", "color": "@colorOnAccent", "maxLines": 1 },
-                { "type": "Text", "style": "texto", "text": "Llegas a las ${alert.arriveAt}", "spacing": "6dp", "fontSize": "@textCardTitle", "fontWeight": "600", "color": "@colorOnAccent", "maxLines": 1 }
+                {
+                  "type": "Text",
+                  "style": "texto",
+                  "text": "¡Sal ya!",
+                  "fontSize": "@textLeaveNow",
+                  "fontWeight": "800",
+                  "color": "@colorOnAccent",
+                  "maxLines": 1
+                },
+                {
+                  "type": "Text",
+                  "style": "texto",
+                  "text": "Llegas a las ${alert.arriveAt}",
+                  "spacing": "6dp",
+                  "fontSize": "@textCardTitle",
+                  "fontWeight": "600",
+                  "color": "@colorOnAccent",
+                  "maxLines": 1
+                }
               ]
             }
           ]
@@ -279,9 +527,19 @@
     "TarjetaLluvia": {
       "description": "Barras de lluvia por horas. Con `inline`, título y resumen en la misma línea (pantalla Tiempo).",
       "parameters": [
-        { "name": "rain", "type": "object" },
-        { "name": "title", "type": "string" },
-        { "name": "inline", "type": "boolean", "default": false }
+        {
+          "name": "rain",
+          "type": "object"
+        },
+        {
+          "name": "title",
+          "type": "string"
+        },
+        {
+          "name": "inline",
+          "type": "boolean",
+          "default": false
+        }
       ],
       "item": {
         "type": "Frame",
@@ -301,12 +559,41 @@
               "justifyContent": "${inline ? 'spaceBetween' : 'start'}",
               "alignItems": "${inline ? 'end' : 'stretch'}",
               "items": [
-                { "type": "Text", "style": "textoSecundario", "text": "${title}", "fontSize": "@textCardTitle", "fontWeight": "600", "maxLines": 1 },
-                { "type": "Text", "style": "texto", "when": "${rain.status == 'ok'}", "text": "${rain.summary}", "spacing": "4dp", "shrink": 1, "fontSize": "@textBody", "maxLines": 2 }
+                {
+                  "type": "Text",
+                  "style": "textoSecundario",
+                  "text": "${title}",
+                  "fontSize": "@textCardTitle",
+                  "fontWeight": "600",
+                  "maxLines": 1
+                },
+                {
+                  "type": "Text",
+                  "style": "texto",
+                  "when": "${rain.status == 'ok'}",
+                  "text": "${rain.summary}",
+                  "spacing": "4dp",
+                  "shrink": 1,
+                  "fontSize": "@textBody",
+                  "maxLines": 2
+                }
               ]
             },
-            { "type": "Text", "style": "textoSecundario", "when": "${rain.notice}", "text": "${rain.notice}", "spacing": "4dp", "fontSize": "@textCaption", "maxLines": 1 },
-            { "type": "MensajeEstado", "when": "${rain.status != 'ok'}", "text": "${rain.message}", "spacing": "@gapMedium" },
+            {
+              "type": "Text",
+              "style": "textoSecundario",
+              "when": "${rain.notice}",
+              "text": "${rain.notice}",
+              "spacing": "4dp",
+              "fontSize": "@textCaption",
+              "maxLines": 1
+            },
+            {
+              "type": "MensajeEstado",
+              "when": "${rain.status == 'empty' || rain.status == 'error'}",
+              "text": "${rain.message}",
+              "spacing": "@gapMedium"
+            },
             {
               "type": "Container",
               "when": "${rain.status == 'ok'}",
@@ -334,7 +621,57 @@
                         }
                       ]
                     },
-                    { "type": "Text", "style": "textoSecundario", "text": "${data.label}", "spacing": "@gapSmall", "textAlign": "center", "fontSize": "@textCaption", "maxLines": 1 }
+                    {
+                      "type": "Text",
+                      "style": "textoSecundario",
+                      "text": "${data.label}",
+                      "spacing": "@gapSmall",
+                      "textAlign": "center",
+                      "fontSize": "@textCaption",
+                      "maxLines": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "Hueso",
+              "when": "${rain.status == 'loading'}",
+              "width": "70%",
+              "height": "@textBody",
+              "spacing": "@gapSmall"
+            },
+            {
+              "type": "Container",
+              "when": "${rain.status == 'loading'}",
+              "direction": "row",
+              "grow": 1,
+              "spacing": "@gapMedium",
+              "alignItems": "end",
+              "data": [
+                0.35,
+                0.55,
+                0.8,
+                0.6,
+                0.45,
+                0.7,
+                0.4,
+                0.25
+              ],
+              "items": [
+                {
+                  "type": "Container",
+                  "width": "12.5%",
+                  "height": "100%",
+                  "paddingLeft": "4dp",
+                  "paddingRight": "4dp",
+                  "justifyContent": "end",
+                  "items": [
+                    {
+                      "type": "Hueso",
+                      "height": "${data * 100}%",
+                      "radius": "@rainBarRadius"
+                    }
                   ]
                 }
               ]
@@ -346,18 +683,42 @@
     "BotonCasa": {
       "description": "Dispositivo que se enciende o apaga al tocarlo. `large` para la pantalla Casa; `origin` es la pantalla que se vuelve a pintar.",
       "parameters": [
-        { "name": "device", "type": "object" },
-        { "name": "origin", "type": "string" },
-        { "name": "large", "type": "boolean", "default": false }
+        {
+          "name": "device",
+          "type": "object"
+        },
+        {
+          "name": "origin",
+          "type": "string"
+        },
+        {
+          "name": "large",
+          "type": "boolean",
+          "default": false
+        }
       ],
       "item": {
         "type": "TouchWrapper",
         "role": "button",
         "accessibilityLabel": "${device.name}: ${device.stateLabel}",
-        "onPress": [{ "type": "SendEvent", "arguments": ["house.toggle", "${device.id}", "${origin}"] }],
+        "onPress": [
+          {
+            "type": "SendEvent",
+            "arguments": [
+              "house.toggle",
+              "${device.id}",
+              "${origin}"
+            ]
+          }
+        ],
         "item": {
           "type": "Frame",
-          "bind": [{ "name": "fg", "value": "${device.on ? @colorOnAccent : @colorText}" }],
+          "bind": [
+            {
+              "name": "fg",
+              "value": "${device.on ? @colorOnAccent : @colorText}"
+            }
+          ],
           "height": "${large ? '100%' : @houseTileHeight}",
           "borderRadius": "@radiusCard",
           "borderWidth": "@borderThin",
@@ -387,8 +748,26 @@
                 "spacing": "${large ? 0 : @gapMedium}",
                 "shrink": 1,
                 "items": [
-                  { "type": "Text", "style": "texto", "text": "${device.name}", "fontSize": "${large ? @textHouseLarge : @textHouseName}", "fontWeight": "800", "color": "${fg}", "maxLines": 2 },
-                  { "type": "Text", "style": "texto", "text": "${device.stateLabel}", "spacing": "2dp", "fontSize": "@textSmall", "fontWeight": "600", "color": "${fg}", "opacity": 0.8, "maxLines": 1 }
+                  {
+                    "type": "Text",
+                    "style": "texto",
+                    "text": "${device.name}",
+                    "fontSize": "${large ? @textHouseLarge : @textHouseName}",
+                    "fontWeight": "800",
+                    "color": "${fg}",
+                    "maxLines": 2
+                  },
+                  {
+                    "type": "Text",
+                    "style": "texto",
+                    "text": "${device.stateLabel}",
+                    "spacing": "2dp",
+                    "fontSize": "@textSmall",
+                    "fontWeight": "600",
+                    "color": "${fg}",
+                    "opacity": 0.8,
+                    "maxLines": 1
+                  }
                 ]
               }
             ]
@@ -399,15 +778,30 @@
     "BotonPildora": {
       "description": "Botón de texto redondeado (Hoy, Apagar todo).",
       "parameters": [
-        { "name": "label", "type": "string" },
-        { "name": "event", "type": "array" },
-        { "name": "accent", "type": "boolean", "default": false }
+        {
+          "name": "label",
+          "type": "string"
+        },
+        {
+          "name": "event",
+          "type": "array"
+        },
+        {
+          "name": "accent",
+          "type": "boolean",
+          "default": false
+        }
       ],
       "item": {
         "type": "TouchWrapper",
         "role": "button",
         "accessibilityLabel": "${label}",
-        "onPress": [{ "type": "SendEvent", "arguments": "${event}" }],
+        "onPress": [
+          {
+            "type": "SendEvent",
+            "arguments": "${event}"
+          }
+        ],
         "item": {
           "type": "Frame",
           "height": "@navButton",
@@ -433,15 +827,29 @@
     "BotonRedondo": {
       "description": "Botón circular con icono (mes anterior y siguiente).",
       "parameters": [
-        { "name": "label", "type": "string" },
-        { "name": "icon", "type": "string" },
-        { "name": "event", "type": "array" }
+        {
+          "name": "label",
+          "type": "string"
+        },
+        {
+          "name": "icon",
+          "type": "string"
+        },
+        {
+          "name": "event",
+          "type": "array"
+        }
       ],
       "item": {
         "type": "TouchWrapper",
         "role": "button",
         "accessibilityLabel": "${label}",
-        "onPress": [{ "type": "SendEvent", "arguments": "${event}" }],
+        "onPress": [
+          {
+            "type": "SendEvent",
+            "arguments": "${event}"
+          }
+        ],
         "item": {
           "type": "Frame",
           "width": "@navButton",
@@ -455,9 +863,76 @@
             "height": "100%",
             "alignItems": "center",
             "justifyContent": "center",
-            "items": [{ "type": "VectorGraphic", "source": "${icon}", "width": "@navIcon", "height": "@navIcon", "scale": "fill", "strokeWidth": 2, "color": "@colorText" }]
+            "items": [
+              {
+                "type": "VectorGraphic",
+                "source": "${icon}",
+                "width": "@navIcon",
+                "height": "@navIcon",
+                "scale": "fill",
+                "strokeWidth": 2,
+                "color": "@colorText"
+              }
+            ]
           }
         }
+      }
+    },
+    "Hueso": {
+      "description": "Bloque de esqueleto: ocupa el sitio de un dato mientras carga.",
+      "parameters": [
+        {
+          "name": "radius",
+          "type": "dimension",
+          "default": "@radiusItem"
+        }
+      ],
+      "item": {
+        "type": "Frame",
+        "backgroundColor": "@colorSkeleton",
+        "borderRadius": "${radius}"
+      }
+    },
+    "FilasEsqueleto": {
+      "description": "Cuatro filas de agenda en esqueleto.",
+      "item": {
+        "type": "Container",
+        "data": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "items": [
+          {
+            "type": "Hueso",
+            "height": "44dp",
+            "spacing": "@gapSmall"
+          }
+        ]
+      }
+    },
+    "DiaEsqueleto": {
+      "description": "Columna de un día de la agenda en esqueleto.",
+      "item": {
+        "type": "Container",
+        "items": [
+          {
+            "type": "Hueso",
+            "width": "45%",
+            "height": "@textDayTitle"
+          },
+          {
+            "type": "Frame",
+            "spacing": "@gapSmall",
+            "height": "@borderThin",
+            "backgroundColor": "@colorBorder"
+          },
+          {
+            "type": "FilasEsqueleto",
+            "spacing": "@gapSmall"
+          }
+        ]
       }
     }
   }

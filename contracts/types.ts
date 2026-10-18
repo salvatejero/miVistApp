@@ -2,14 +2,16 @@
 // Reflejan contracts/schemas/*.schema.json; si cambias uno, cambia el otro (los tests validan
 // los fixtures y las salidas de los servicios contra los esquemas).
 
-export type SectionStatus = 'ok' | 'empty' | 'error';
+export type SectionStatus = 'ok' | 'loading' | 'empty' | 'error';
 
 /**
- * Bloque de pantalla que puede fallar sin romper el resto. Si `status` no es `ok`, `message` es
- * obligatorio. `notice` marca datos que no son de ahora ("Sin conexión · actualizado a las 08:30").
+ * Bloque de pantalla que puede fallar sin romper el resto. Con `empty` o `error`, `message` es
+ * obligatorio; con `loading`, la UI pinta el esqueleto del bloque. `notice` marca datos que no son
+ * de ahora ("Sin conexión · actualizado a las 08:30", "Actualizando…").
  */
 export type Section<T> =
   | ({ status: 'ok'; message?: string; notice?: string } & T)
+  | { status: 'loading'; notice?: string }
   | { status: 'empty' | 'error'; message: string; notice?: string };
 
 /** Hora local HH:mm (24 h). */

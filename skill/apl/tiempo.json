@@ -24,6 +24,7 @@
             },
             {
               "type": "Container",
+              "id": "contenido",
               "grow": 1,
               "shrink": 1,
               "height": "100%",
@@ -65,7 +66,7 @@
                   "paddingRight": "@cardPaddingX",
                   "paddingTop": "@cardPaddingY",
                   "paddingBottom": "@cardPaddingY",
-                  "when": "${weather.status != 'ok'}",
+                  "when": "${weather.status == 'empty' || weather.status == 'error'}",
                   "spacing": "20dp",
                   "grow": 1,
                   "item": {
@@ -198,6 +199,39 @@
                   "title": "Lluvia hoy por horas",
                   "inline": true,
                   "height": "@hourlyCardHeight",
+                  "spacing": "20dp"
+                },
+                {
+                  "type": "Container",
+                  "when": "${weather.status == 'loading'}",
+                  "direction": "row",
+                  "grow": 1,
+                  "shrink": 1,
+                  "spacing": "20dp",
+                  "data": [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6
+                  ],
+                  "items": [
+                    {
+                      "type": "Hueso",
+                      "width": 0,
+                      "grow": 1,
+                      "radius": "@radiusCard",
+                      "spacing": "@itemPaddingX"
+                    }
+                  ]
+                },
+                {
+                  "type": "Hueso",
+                  "when": "${weather.status == 'loading'}",
+                  "height": "@hourlyCardHeight",
+                  "radius": "@radiusCard",
                   "spacing": "20dp"
                 }
               ]
