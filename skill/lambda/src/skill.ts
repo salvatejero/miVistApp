@@ -14,9 +14,14 @@ import { houseHandler } from './handlers/house';
 import { launchHandler } from './handlers/launch';
 import { navigationHandler } from './handlers/navigation';
 import { sessionAttributes } from './handlers/util';
+import { config } from './config';
 import type { DashboardDataFactory } from './services/dashboard';
 import type { MockHouseState } from './services/mock';
 import { MockDashboardData } from './services/mock';
+import type { CacheStore } from './services/vps/cache-store';
+import { DynamoCacheStore, MemoryCacheStore } from './services/vps/cache-store';
+import { CachedDashboardData } from './services/vps/cached';
+import { VpsClient } from './services/vps/client';
 
 const MOCK_ALERTS: readonly string[] = ['appear', 'soon', 'leave_now'];
 
@@ -31,7 +36,17 @@ export const mockDataFactory: DashboardDataFactory = (handlerInput) => {
   });
 };
 
-export function buildSkill(dataFor: DashboardDataFactory = mockDataFactory): Skill {
+/** Datos del VPS con la caché de la skill. Sin tabla de DynamoDB (en local), la caché vive en memoria. */
+export function vpsDataFactory(vpsUrl: string, apiKey: string, store?: CacheStore): DashboardDataFactory {
+  const cache = store ?? (config.dynamoTable ? DynamoCacheStore.create(config.dynamoTable, config.dynamoRegion) : new MemoryCacheStore());
+  const data = new CachedDashboardData(new VpsClient(vpsUrl, apiKey, config.vpsTimeoutMs), cache, config.timeZone);
+  return () => data;
+}
+
+const defaultFactory = (): DashboardDataFactory =>
+  config.vpsUrl && config.apiKey ? vpsDataFactory(config.vpsUrl, config.apiKey) : mockDataFactory;
+
+export function buildSkill(dataFor: DashboardDataFactory = defaultFactory()): Skill {
   return SkillBuilders.custom()
     .addRequestHandlers(
       launchHandler(dataFor),

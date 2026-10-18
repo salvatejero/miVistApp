@@ -13,12 +13,18 @@ export const houseHandler = (dataFor: DashboardDataFactory): RequestHandler => (
   handle: async (handlerInput) => {
     const args = userEventArguments(handlerInput) ?? [];
     const data = dataFor(handlerInput);
-    if (args[0] === 'house.toggle' && typeof args[1] === 'string') {
-      await data.toggleDevice(args[1]);
-    } else if (args[0] === 'house.allOff') {
-      await data.turnAllOff();
+    let speech: string | undefined;
+    try {
+      if (args[0] === 'house.toggle' && typeof args[1] === 'string') {
+        await data.toggleDevice(args[1]);
+      } else if (args[0] === 'house.allOff') {
+        await data.turnAllOff();
+      }
+    } catch (error) {
+      console.error('No se pudo actuar sobre la casa:', error instanceof Error ? error.name : 'Error');
+      speech = 'No he podido conectar con la casa.';
     }
     const origin = args.at(-1);
-    return respondWithScreen(handlerInput, data, isScreenId(origin) ? origin : 'casa');
+    return respondWithScreen(handlerInput, data, isScreenId(origin) ? origin : 'casa', { speech });
   },
 });
