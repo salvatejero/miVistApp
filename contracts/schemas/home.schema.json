@@ -42,6 +42,7 @@
       "properties": {
         "status": true,
         "message": true,
+        "notice": true,
         "city": {
           "type": "string"
         },
@@ -90,6 +91,7 @@
       "properties": {
         "status": true,
         "message": true,
+        "notice": true,
         "routeLabel": {
           "type": "string"
         },
@@ -132,6 +134,7 @@
       "properties": {
         "status": true,
         "message": true,
+        "notice": true,
         "today": {
           "$ref": "common.schema.json#/$defs/agendaDay"
         },
@@ -165,6 +168,7 @@
       "properties": {
         "status": true,
         "message": true,
+        "notice": true,
         "devices": {
           "type": "array",
           "items": {

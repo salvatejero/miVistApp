@@ -25,6 +25,11 @@
         "message": {
           "type": "string",
           "minLength": 1
+        },
+        "notice": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Aviso de datos que no son de ahora, p. ej. «Sin conexión · actualizado a las 08:30»."
         }
       },
       "if": {
@@ -85,6 +90,7 @@
       "properties": {
         "status": true,
         "message": true,
+        "notice": true,
         "summary": {
           "type": "string",
           "description": "Resumen: cuándo empieza y cuánto dura."

@@ -17,8 +17,12 @@
     "preview": "node scripts/preview.mjs"
   },
   "dependencies": {
+    "@aws-sdk/client-dynamodb": "3.1139.0",
+    "@aws-sdk/lib-dynamodb": "3.1139.0",
     "ask-sdk-core": "^2.14.0",
-    "ask-sdk-model": "^1.86.0"
+    "ask-sdk-model": "^1.86.0",
+    "ical.js": "2.2.1",
+    "tsdav": "2.3.5"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

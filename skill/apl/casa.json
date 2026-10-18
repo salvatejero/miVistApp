@@ -54,7 +54,7 @@
                           "type": "Text",
                           "style": "textoSecundario",
                           "when": "${house.status == 'ok'}",
-                          "text": "${house.summary}",
+                          "text": "${house.notice ? house.summary + ' · ' + house.notice : house.summary}",
                           "spacing": "2dp",
                           "fontSize": "@textCardTitle",
                           "maxLines": 1

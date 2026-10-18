@@ -86,6 +86,15 @@
                   ]
                 },
                 {
+                  "type": "Text",
+                  "style": "textoSecundario",
+                  "when": "${calendar.notice}",
+                  "text": "${calendar.notice}",
+                  "spacing": "@gapSmall",
+                  "fontSize": "@textCaption",
+                  "maxLines": 1
+                },
+                {
                   "type": "Frame",
                   "backgroundColor": "@colorCard",
                   "borderRadius": "@radiusCard",

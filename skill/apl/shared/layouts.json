@@ -305,6 +305,7 @@
                 { "type": "Text", "style": "texto", "when": "${rain.status == 'ok'}", "text": "${rain.summary}", "spacing": "4dp", "shrink": 1, "fontSize": "@textBody", "maxLines": 2 }
               ]
             },
+            { "type": "Text", "style": "textoSecundario", "when": "${rain.notice}", "text": "${rain.notice}", "spacing": "4dp", "fontSize": "@textCaption", "maxLines": 1 },
             { "type": "MensajeEstado", "when": "${rain.status != 'ok'}", "text": "${rain.message}", "spacing": "@gapMedium" },
             {
               "type": "Container",

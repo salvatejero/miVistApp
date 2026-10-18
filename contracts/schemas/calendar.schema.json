@@ -11,6 +11,7 @@
   "properties": {
     "status": true,
     "message": true,
+    "notice": true,
     "monthLabel": {
       "type": "string",
       "description": "Octubre 2026"

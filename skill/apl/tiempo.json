@@ -51,7 +51,7 @@
                       "type": "Text",
                       "style": "textoSecundario",
                       "when": "${weather.status == 'ok'}",
-                      "text": "${weather.city}",
+                      "text": "${weather.notice ?? weather.city}",
                       "fontSize": "@textCity",
                       "maxLines": 1
                     }

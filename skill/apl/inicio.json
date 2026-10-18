@@ -62,7 +62,7 @@
                             {
                               "type": "Text",
                               "style": "textoSecundario",
-                              "text": "${home.weather.status == 'ok' ? home.weather.city + ' · ' + home.weather.conditionLabel : home.weather.message}",
+                              "text": "${home.weather.status != 'ok' ? home.weather.message : home.weather.notice ? home.weather.notice : home.weather.city + ' · ' + home.weather.conditionLabel}",
                               "spacing": "6dp",
                               "textAlign": "right",
                               "fontSize": "@textCardTitle",
@@ -134,7 +134,8 @@
                                     "spacing": "4dp",
                                     "fontSize": "@textSmall",
                                     "maxLines": 2
-                                  }
+                                  },
+                                  { "type": "Text", "style": "textoSecundario", "when": "${home.commute.notice}", "text": "${home.commute.notice}", "spacing": "4dp", "fontSize": "@textCaption", "maxLines": 1 }
                                 ]
                               },
                               {
@@ -167,7 +168,16 @@
                         "type": "Container",
                         "height": "100%",
                         "items": [
-                          { "type": "Text", "style": "textoSecundario", "text": "Agenda", "fontSize": "@textCardTitle", "fontWeight": "600" },
+                          {
+                            "type": "Container",
+                            "direction": "row",
+                            "alignItems": "baseline",
+                            "justifyContent": "spaceBetween",
+                            "items": [
+                              { "type": "Text", "style": "textoSecundario", "text": "Agenda", "fontSize": "@textCardTitle", "fontWeight": "600" },
+                              { "type": "Text", "style": "textoSecundario", "when": "${home.agenda.notice}", "text": "${home.agenda.notice}", "shrink": 1, "spacing": "@gapMedium", "fontSize": "@textCaption", "maxLines": 1 }
+                            ]
+                          },
                           { "type": "MensajeEstado", "when": "${home.agenda.status != 'ok'}", "text": "${home.agenda.message}", "spacing": "@gapMedium" },
                           {
                             "type": "Container",
