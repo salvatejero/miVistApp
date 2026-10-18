@@ -14,7 +14,8 @@
     "lint": "eslint .",
     "test": "vitest run",
     "check": "npm run typecheck && npm run lint && npm test && npm run build",
-    "preview": "node scripts/preview.mjs"
+    "preview": "node scripts/preview.mjs",
+    "deploy:hosted": "node scripts/deploy-hosted.mjs"
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "3.1139.0",

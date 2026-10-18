@@ -17,16 +17,17 @@ Skill de Alexa (APL) con un dashboard siempre visible para Echo Show. Plan compl
 
 ## Comandos
 - `npm install` y luego `npm run check` (typecheck, lint, tests y build). Detalle en `docs/desarrollo.md`.
-- Estructura y decisiones técnicas: `docs/arquitectura.md`. Contrato: `contracts/README.md`. VPS: `docs/vps.md`.
-- `npm run build` genera la skill (`build/hosted/`) y el servicio del VPS (`build/vps/server.cjs`). La URL del VPS y la clave de la skill van en `skill/lambda/.env.local`, que nunca se sube.
+- Estructura y decisiones técnicas: `docs/arquitectura.md`. Contrato: `contracts/README.md`. Servidor de datos: `docs/raspberry.md`. Despliegue de la skill: `docs/despliegue-skill.md`.
+- `npm run build` genera la skill (`build/hosted/`) y el servicio de datos (`build/vps/server.cjs`). La URL del servidor y la clave de la skill van en `skill/lambda/.env.local`, que nunca se sube. `npm run deploy:hosted -- <repo de Alexa-hosted>` copia la skill conservando su endpoint.
 
 ## Decisiones tomadas
 <!-- Respuestas a §2 de PLAN.md -->
 - **Dispositivos:** Echo Show 8/10 (1280×800) y Echo Show 15 (1920×1080). Los APL se adaptan por perfil de viewport; el diseño de `design/` es la referencia a 1280×800.
 - **Uso personal:** la skill es solo para el usuario y se queda en modo desarrollo; no se publica en la tienda (decidido el 18 oct 2026, sustituye a la decisión anterior de publicarla). Aun así, nada personal en el repo: es público.
 - **Idioma:** es-ES.
-- **Arquitectura:** la skill (TypeScript, Node.js) vive en **Alexa-hosted** y pide los datos a un **servicio propio en un VPS en internet** (`vps/`, también TypeScript). Hablan el idioma de `contracts/` por HTTPS con una clave compartida. La skill guarda en DynamoDB la última respuesta del VPS y, si este no contesta a tiempo, pinta esos datos marcados como "sin conexión · actualizado a las hh:mm".
-- **Datos personales:** direcciones de casa y trabajo, colchón y credenciales viven en el entorno del VPS, nunca en el repo ni en la skill.
+- **Arquitectura:** la skill (TypeScript, Node.js) vive en **Alexa-hosted** y pide los datos a un **servicio propio** (`vps/`, también TypeScript) que corre en una **Raspberry Pi 3B+ en casa**, publicada por HTTPS con **Tailscale Funnel** (decidido el 18 oct 2026; la carpeta conserva el nombre `vps/`). Hablan el idioma de `contracts/` por HTTPS con una clave compartida. La skill guarda en DynamoDB la última respuesta del VPS y, si este no contesta a tiempo, pinta esos datos marcados como "sin conexión · actualizado a las hh:mm".
+- **Terminología:** en el código y la documentación, «VPS» es el servidor de datos (`vps/`), que hoy corre en la Raspberry Pi.
+- **Datos personales:** direcciones de casa y trabajo, colchón y credenciales viven en el entorno del servidor (`/etc/mivistapp/vps.env` en la Raspberry), nunca en el repo ni en la skill.
 - **Tiempo y lluvia:** Open-Meteo.
 - **Calendario:** **Apple (iCloud, CalDAV)** leído desde el VPS con una contraseña de app guardada en su entorno. Google y Outlook, si hacen falta, se añaden también en el VPS. Investigación previa en `docs/calendario-apple.md`.
 - **Tráfico y rutas:** TomTom Routing API.

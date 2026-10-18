@@ -18,7 +18,7 @@ Pantallas (ya diseñadas, ver `design/`):
 
 Regla del aviso: `hora de salir = inicio del evento − trayecto con tráfico − colchón`. Aparece unos 30 min antes de esa hora; umbrales iniciales 30 / 10 / 0 min; colchón por defecto 10 min.
 
-**Uso personal (18 oct 2026):** la skill es solo para el usuario y no se publica en la tienda. Los datos los sirve un VPS propio en internet; la skill, en Alexa-hosted, guarda en caché lo último que recibió para seguir funcionando si el VPS cae. Ver §3 y `docs/arquitectura.md`.
+**Uso personal (18 oct 2026):** la skill es solo para el usuario y no se publica en la tienda. Los datos los sirve un servidor propio (una Raspberry Pi 3B+ en casa, publicada con Tailscale Funnel; en el código, «VPS»); la skill, en Alexa-hosted, guarda en caché lo último que recibió para seguir funcionando si el servidor cae. Ver §3 y `docs/arquitectura.md`.
 
 ## 2. Decisiones abiertas (confirmar antes de la Fase 1)
 
@@ -116,7 +116,7 @@ Cada agente respeta el contrato de `contracts/` y deja pruebas con respuestas si
 **Hecho cuando:** los tests pasan en local y la revisión no deja hallazgos graves abiertos.
 
 ### Fase 6 — Despliegue y prueba real (tú + `arquitecto`)
-- Desplegar el servicio de datos en el VPS (dominio, HTTPS con Let's Encrypt, secretos en el entorno del VPS).
+- Desplegar el servicio de datos en la Raspberry Pi 3B+ con Tailscale Funnel para el HTTPS (`docs/raspberry.md`) y la skill en Alexa-hosted (`docs/despliegue-skill.md`).
 - Publicar en la etapa de desarrollo de la skill, probar en el Echo Show y recoger ajustes.
 - La skill se queda en modo desarrollo para uso personal. No se publica en la tienda.
 
@@ -176,7 +176,7 @@ Cada agente de §5 debería nombrar en su cabecera las skills que usa. Las skill
 - **Vinculación de cuenta:** el calendario necesita OAuth con Alexa; añade un paso de configuración.
 - **Privacidad:** direcciones de casa y trabajo y tokens como secretos del entorno, nunca en el repo.
 - **Costes:** las APIs de tráfico y rutas pueden tener coste por consulta; limitar la frecuencia de refresco.
-- **VPS:** necesita dominio, HTTPS válido, actualizaciones de seguridad y copias de las credenciales fuera del repo. La API del VPS queda expuesta a internet: solo responde con la clave compartida, y nunca devuelve credenciales.
+- **Servidor (Raspberry Pi):** HTTPS válido vía Tailscale Funnel, actualizaciones de seguridad, cortes de luz y desgaste de la microSD (ver `docs/raspberry.md`). Su API queda expuesta a internet: solo responde con la clave compartida, y nunca devuelve credenciales.
 - **Caché de la skill:** si el VPS cae, la skill muestra datos que pueden tener horas; la marca de "actualizado a las hh:mm" es obligatoria para no engañar (sobre todo en el aviso de salida, que no se muestra con datos viejos de tráfico).
 - **Modelos de Echo Show:** el diseño asume 1280×800; otros modelos exigen ajustes.
 

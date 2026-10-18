@@ -1,5 +1,5 @@
 // Configuración del servicio, leída de variables de entorno del VPS. Ningún valor real va en el repo:
-// ver vps/.env.example y docs/vps.md.
+// ver vps/.env.example y docs/raspberry.md.
 
 export interface Coordinates {
   lat: number;
