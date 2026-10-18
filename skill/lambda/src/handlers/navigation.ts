@@ -27,6 +27,6 @@ export const navigationHandler = (dataFor: DashboardDataFactory): RequestHandler
         .getResponse();
     }
     if (screen === 'calendario') sessionAttributes(handlerInput).calendarOffset = 0;
-    return respondWithScreen(handlerInput, dataFor(handlerInput), screen);
+    return respondWithScreen(handlerInput, dataFor(handlerInput), screen, { progressive: true });
   },
 });

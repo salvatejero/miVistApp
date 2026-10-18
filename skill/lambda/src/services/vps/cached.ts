@@ -4,6 +4,7 @@ import { hhmm, sameDay, zoned } from '../../../../../lib/time';
 import type { CacheStore } from './cache-store';
 
 const OFFLINE = 'Sin conexión con el servidor';
+const UPDATING = 'Actualizando…';
 
 type AnySection = { status: string; notice?: string };
 
@@ -57,28 +58,44 @@ export class CachedDashboardData implements DashboardData {
     }
   }
 
+  /** Inicio guardado con el aviso en cada bloque y sin nada que dependa del tráfico de entonces. */
+  private staleHome = (home: HomeScreen, notice: string): HomeScreen => ({
+    ...home,
+    weather: withNotice(home.weather, notice),
+    rainForecast: withNotice(home.rainForecast, notice),
+    commute: withNotice(home.commute, notice),
+    agenda:
+      home.agenda.status === 'ok'
+        ? {
+            ...home.agenda,
+            notice,
+            // Sin el trayecto guardado: "Sal hh:mm" con tráfico viejo no sirve.
+            today: { ...home.agenda.today, items: home.agenda.today.items.map(withoutDeparture) },
+          }
+        : home.agenda,
+    house: withNotice(home.house, notice),
+    departureAlert: null,
+  });
+
+  /**
+   * Lo último guardado de una pantalla, marcado "Actualizando…", para pintarlo enseguida mientras
+   * llegan los datos nuevos. `undefined` si no hay nada guardado.
+   */
+  async preview(key: string): Promise<unknown> {
+    const cached = await this.store.get(key).catch((error: unknown) => {
+      log('No se pudo leer la caché:', error);
+      return undefined;
+    });
+    if (!cached) return undefined;
+    return key === 'home' ? this.staleHome(cached.value as HomeScreen, UPDATING) : withNotice(cached.value as AnySection, UPDATING);
+  }
+
   getHome(): Promise<HomeScreen> {
     const today = zoned(new Date(this.now()), this.timeZone);
     return this.load(
       'home',
       () => this.remote.getHome(),
-      (home, notice) => ({
-        ...home,
-        weather: withNotice(home.weather, notice),
-        rainForecast: withNotice(home.rainForecast, notice),
-        commute: withNotice(home.commute, notice),
-        agenda:
-          home.agenda.status === 'ok'
-            ? {
-                ...home.agenda,
-                notice,
-                // Sin el trayecto guardado: "Sal hh:mm" con tráfico viejo no sirve.
-                today: { ...home.agenda.today, items: home.agenda.today.items.map(withoutDeparture) },
-              }
-            : home.agenda,
-        house: withNotice(home.house, notice),
-        departureAlert: null,
-      }),
+      this.staleHome,
       {
         generatedAt: new Date(this.now()).toISOString(),
         header: { dateLabel: longDateLabel(today.year, today.month, today.day) },

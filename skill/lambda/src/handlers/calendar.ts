@@ -12,6 +12,6 @@ export const calendarMonthHandler = (dataFor: DashboardDataFactory): RequestHand
     const current = typeof attributes.calendarOffset === 'number' ? attributes.calendarOffset : 0;
     const calendarOffset = step === 0 || !Number.isFinite(step) ? 0 : current + Math.sign(step);
     attributes.calendarOffset = calendarOffset;
-    return respondWithScreen(handlerInput, dataFor(handlerInput), 'calendario', { calendarOffset });
+    return respondWithScreen(handlerInput, dataFor(handlerInput), 'calendario', { calendarOffset, progressive: true });
   },
 });

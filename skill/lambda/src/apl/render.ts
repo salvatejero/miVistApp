@@ -52,6 +52,27 @@ export function withKeepAlive(document: AplDocument, { screen, refreshMs, idleTi
   };
 }
 
+/**
+ * Pantalla provisional (precargada o en esqueleto): al montarse pide enseguida los datos (`refresh`)
+ * y, si es esqueleto, hace latir el contenido mientras tanto.
+ */
+export function withLoading(document: AplDocument, screen: string, idleTimeoutMs: number, pulse: boolean): AplDocument {
+  const load = { type: 'SendEvent', arguments: ['refresh', screen] };
+  const beat = {
+    type: 'AnimateItem',
+    componentId: 'contenido',
+    duration: 900,
+    repeatCount: 200,
+    repeatMode: 'reverse',
+    value: [{ property: 'opacity', from: 1, to: 0.55 }],
+  };
+  return {
+    ...document,
+    settings: { ...(document.settings as object | undefined), idleTimeout: idleTimeoutMs },
+    onMount: pulse ? [{ type: 'Parallel', commands: [load, beat] }] : [load],
+  };
+}
+
 export function renderDocument(
   token: string,
   document: AplDocument,

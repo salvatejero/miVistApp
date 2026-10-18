@@ -20,13 +20,20 @@ interface ScreenDefinition {
   /** Nombre del datasource; coincide con el parámetro de mainTemplate y con el contrato. */
   datasource: string;
   load: (data: DashboardData, options: ScreenOptions) => Promise<unknown>;
+  /** Clave de la última respuesta guardada para esta pantalla. */
+  cacheKey: (options: ScreenOptions) => string;
 }
 
 export const SCREENS: Record<ScreenId, ScreenDefinition> = {
-  inicio: { document: inicio, datasource: 'home', load: (data) => data.getHome() },
-  calendario: { document: calendario, datasource: 'calendar', load: (data, options) => data.getCalendar(options.calendarOffset ?? 0) },
-  tiempo: { document: tiempo, datasource: 'weather', load: (data) => data.getWeather() },
-  casa: { document: casa, datasource: 'house', load: (data) => data.getHouse() },
+  inicio: { document: inicio, datasource: 'home', load: (data) => data.getHome(), cacheKey: () => 'home' },
+  calendario: {
+    document: calendario,
+    datasource: 'calendar',
+    load: (data, options) => data.getCalendar(options.calendarOffset ?? 0),
+    cacheKey: (options) => `calendar:${options.calendarOffset ?? 0}`,
+  },
+  tiempo: { document: tiempo, datasource: 'weather', load: (data) => data.getWeather(), cacheKey: () => 'weather' },
+  casa: { document: casa, datasource: 'house', load: (data) => data.getHouse(), cacheKey: () => 'house' },
 };
 
 export const screenToken = (screen: ScreenId): string => `vistapp-${screen}`;

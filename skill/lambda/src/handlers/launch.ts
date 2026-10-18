@@ -9,5 +9,5 @@ export const launchHandler = (dataFor: DashboardDataFactory): RequestHandler => 
   canHandle: (handlerInput) =>
     getRequestType(handlerInput.requestEnvelope) === 'LaunchRequest' ||
     isIntent(handlerInput, 'AMAZON.NavigateHomeIntent'),
-  handle: (handlerInput) => respondWithScreen(handlerInput, dataFor(handlerInput), 'inicio'),
+  handle: (handlerInput) => respondWithScreen(handlerInput, dataFor(handlerInput), 'inicio', { progressive: true }),
 });

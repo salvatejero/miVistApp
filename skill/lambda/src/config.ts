@@ -12,6 +12,11 @@ export const config = {
   apiKey: injected(typeof __VISTAPP_API_KEY__ === 'undefined' ? process.env.VISTAPP_API_KEY : __VISTAPP_API_KEY__),
   /** Tiempo máximo de espera al VPS antes de pintar la caché (Alexa corta a los 8 s). */
   vpsTimeoutMs: 5000,
+  /**
+   * Al abrir o cambiar de pantalla, si los datos tardan más que esto se pinta enseguida lo guardado
+   * ("Actualizando…") o el esqueleto de cada módulo, y la pantalla pide los datos sola al aparecer.
+   */
+  preloadAfterMs: 800,
   /** Cada cuánto pide la pantalla datos nuevos mientras está visible. */
   refreshMinutes: 5,
   /** Con un aviso de salida en pantalla, cada minuto: la cuenta atrás tiene que moverse. */
