@@ -19,8 +19,8 @@ Antes de escribir, lee `vistapp-design-system` y el contrato de `contracts/`. An
 - El botón de la pantalla actual se marca con el estado "seleccionado" del diseño (ámbar oscuro).
 
 ## Pantalla siempre visible
-- Declarar un tiempo de inactividad largo en los ajustes del documento y mantener la sesión abierta desde el backend. Es un apaño, no una función oficial; ver `device-testing`.
-- Refresco de datos con un comando temporizado o actualizando datasources desde el backend, sin recargar todo el documento.
+- `withKeepAlive` (skill/lambda/src/apl/render.ts) añade a cada documento `settings.idleTimeout` y un `onMount` con un `SendEvent` `refresh` retrasado; el backend contesta pintando la misma pantalla. No lo dupliques en los documentos. Detalle en `docs/siempre-visible.md`.
+- APL no permite cambiar los datos de un documento ya pintado salvo listas dinámicas, así que el refresco vuelve a enviar el documento.
 - No bloquear ni deshabilitar toda interacción: el menú debe seguir siendo tocable.
 
 ## Estructura de cada pantalla
