@@ -22,11 +22,11 @@ Skill de Alexa (APL) con un dashboard siempre visible para Echo Show. Plan compl
 ## Decisiones tomadas
 <!-- Respuestas a §2 de PLAN.md -->
 - **Dispositivos:** Echo Show 8/10 (1280×800) y Echo Show 15 (1920×1080). Los APL se adaptan por perfil de viewport; el diseño de `design/` es la referencia a 1280×800.
-- **Publicación:** la skill se publicará en la tienda de Alexa (cambia la Fase 6 de `PLAN.md`). Consecuencias: varios usuarios, nada personal fijo en el código (direcciones y preferencias por usuario), política de privacidad y certificación de Amazon.
+- **Uso personal:** la skill es solo para el usuario y se queda en modo desarrollo; no se publica en la tienda (decidido el 18 oct 2026, sustituye a la decisión anterior de publicarla). Aun así, nada personal en el repo: es público.
 - **Idioma:** es-ES.
-- **Backend:** TypeScript (Node.js), alojado en **Alexa-hosted** (incluye DynamoDB para los datos de cada usuario). Si el uso crece, se migra a AWS propia sin reescribir la skill.
-- **Datos de cada usuario:** dirección de casa desde la API de dirección del dispositivo de Alexa (con permiso); dirección del trabajo y colchón, introducidos por el usuario y guardados en DynamoDB por `userId`. Nada de esto en el repo.
+- **Arquitectura:** la skill (TypeScript, Node.js) vive en **Alexa-hosted** y pide los datos a un **servicio propio en un VPS en internet** (`vps/`, también TypeScript). Hablan el idioma de `contracts/` por HTTPS con una clave compartida. La skill guarda en DynamoDB la última respuesta del VPS y, si este no contesta a tiempo, pinta esos datos marcados como "sin conexión · actualizado a las hh:mm".
+- **Datos personales:** direcciones de casa y trabajo, colchón y credenciales viven en el entorno del VPS, nunca en el repo ni en la skill.
 - **Tiempo y lluvia:** Open-Meteo.
-- **Calendario:** primero **Apple (iCloud, CalDAV)**. Google Calendar y Outlook / Microsoft 365 (Microsoft Graph) en una fase posterior; tener varios a la vez exigirá una web propia de vinculación.
+- **Calendario:** **Apple (iCloud, CalDAV)** leído desde el VPS con una contraseña de app guardada en su entorno. Google y Outlook, si hacen falta, se añaden también en el VPS. Investigación previa en `docs/calendario-apple.md`.
 - **Tráfico y rutas:** TomTom Routing API.
-- **Domótica:** solo dispositivos vinculados a Alexa. Pendiente de investigar si una skill propia puede controlarlos (ver `PLAN.md` §6). Hasta entonces, la pantalla Casa usa datos de ejemplo.
+- **Domótica:** Amazon no deja que una skill ni un servidor propio controlen los dispositivos vinculados a Alexa. El camino previsto es **Home Assistant** (el usuario lo está valorando), al que llamaría el VPS. Hasta entonces, la pantalla Casa usa datos de ejemplo.

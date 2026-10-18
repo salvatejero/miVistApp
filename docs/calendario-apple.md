@@ -1,6 +1,8 @@
 # Calendario de Apple en una skill publicada
 
-Investigación previa a la Fase 3 (15 oct 2026). Pendiente de decisión del usuario.
+Investigación previa a la Fase 3 (15 oct 2026).
+
+**Decisión (18 oct 2026):** la skill pasa a ser de uso personal y los datos los sirve un VPS propio. El VPS lee iCloud por CalDAV con la contraseña de app del usuario, guardada solo en su entorno. Al no haber más usuarios, desaparecen los problemas de vinculación de cuenta y de guardar contraseñas ajenas que se describen abajo.
 
 ## Lo que hay
 

@@ -1,7 +1,11 @@
 # Arquitectura
 
 ```
-Echo Show ──▶ Alexa ──▶ Lambda (Alexa-hosted)
+Echo Show ──▶ Alexa ──▶ Skill (Alexa-hosted) ──HTTPS + clave──▶ Servicio de datos (VPS, vps/)
+                          │        │                              ├─ calendario iCloud (CalDAV)
+                          │        └─ DynamoDB: última respuesta   ├─ tiempo (Open-Meteo)
+                          │           del VPS (caché)              ├─ tráfico (TomTom)
+                          │                                        └─ casa (Home Assistant, futuro)
                           │
                           ├─ handlers/      peticiones de Alexa (lanzamiento, intents, eventos APL)
                           ├─ screens/       arma la respuesta de cada pantalla: documento APL + datasource
@@ -20,6 +24,14 @@ Echo Show ──▶ Alexa ──▶ Lambda (Alexa-hosted)
 | `skill/lambda/test/` | Tests (Vitest). |
 | `contracts/` | Contrato entre UI y servicios. Ver `contracts/README.md`. |
 | `scripts/build.mjs` | Empaqueta todo en `build/hosted/` con la estructura de un repositorio Alexa-hosted. |
+
+## Skill y VPS (decidido el 18 oct 2026, se implementa en la Fase 3)
+
+- **La skill no guarda credenciales ni llama a APIs externas.** Pide a `vps/` el JSON de cada pantalla, que ya cumple el contrato.
+- **Caché en la skill.** Cada respuesta buena del VPS se guarda en DynamoDB. Si el VPS no contesta en un tiempo corto (del orden de 1–2 s), la skill pinta lo guardado y cada bloque lo indica ("sin conexión · actualizado a las hh:mm"). El aviso de salida no se muestra con datos de tráfico viejos.
+- **Caché en el VPS.** El VPS guarda el último dato bueno de cada fuente; si una API falla, lo sirve marcado como no actualizado.
+- **Acciones.** Los botones de casa llegan al VPS como peticiones; si el VPS no responde, la skill avisa en pantalla de que no se pudo hacer.
+- Hasta la Fase 3, `MockDashboardData` sustituye al VPS.
 
 ## Decisiones
 
