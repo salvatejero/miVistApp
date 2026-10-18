@@ -48,6 +48,11 @@ const MAX_PLACES = 500;
  * último dato) a tiempo y los demás llegan bien. La consulta lenta sigue y deja el dato para el siguiente refresco.
  */
 export const SECTION_BUDGET_MS = 3500;
+/**
+ * Si TomTom no responde, el aviso usa el último trayecto conocido marcado como estimado, pero solo si
+ * tiene menos de esto: con un tráfico de hace horas es mejor no avisar.
+ */
+const MAX_ESTIMATED_ROUTE_MS = 60 * 60_000;
 /** Tiempo para geocodificar y calcular el trayecto del aviso, dentro del plazo de la agenda. */
 const DEPARTURE_BUDGET_MS = 1500;
 
@@ -287,8 +292,8 @@ export class VpsDashboard implements DashboardData {
         const destination = await this.geocode(next.location!, home);
         if (!destination) continue;
         const fetched = await this.routes.get(`event:${next.id}`, () => tomtom.route(home, destination));
-        // Con un trayecto viejo no se avisa: podría hacer salir tarde.
-        if (fetched.staleSince) return { alert: null };
+        // Si TomTom no responde, se avisa con el último trayecto marcado como estimado; si es de hace más de una hora, no.
+        if (fetched.staleSince && now.getTime() - fetched.staleSince.getTime() > MAX_ESTIMATED_ROUTE_MS) return { alert: null };
         const route = fetched.value;
         // Un trayecto de horas no es una cita a la que se va desde casa (lugar mal situado).
         if (route.travelMinutes > MAX_TRAVEL_MINUTES) continue;
@@ -300,7 +305,12 @@ export class VpsDashboard implements DashboardData {
           placeLabel: placeLabel(next.location!),
         };
         const rule = { ...this.config.departure, timeZone: this.config.timeZone };
-        const alert = departureAlert(event, { travelMinutes: route.travelMinutes, trafficLabel: trafficLabel(route.trafficDelayMinutes) }, now, rule);
+        const travel = {
+          travelMinutes: route.travelMinutes,
+          trafficLabel: trafficLabel(route.trafficDelayMinutes),
+          ...(fetched.staleSince ? { estimatedAt: fetched.staleSince } : {}),
+        };
+        const alert = departureAlert(event, travel, now, rule);
         const leave = leaveTime(next.start, route.travelMinutes, this.config.departure.bufferMinutes);
         return {
           departure: { eventId: next.id, info: { placeLabel: event.placeLabel, travelMinutes: route.travelMinutes, leaveAt: hhmm(leave, this.config.timeZone) } },

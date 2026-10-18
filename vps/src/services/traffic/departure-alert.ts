@@ -42,7 +42,7 @@ export function departureState(minutesToLeave: number, rule: DepartureRule): Dep
 /** Aviso de salida para un evento con su trayecto, o null si no toca mostrarlo. Función pura. */
 export function departureAlert(
   event: UpcomingEvent,
-  travel: { travelMinutes: number; trafficLabel?: string },
+  travel: { travelMinutes: number; trafficLabel?: string; estimatedAt?: Date },
   now: Date,
   rule: DepartureRule,
 ): DepartureAlert | null {
@@ -64,5 +64,6 @@ export function departureAlert(
     leaveAt: hhmm(leaveAt, rule.timeZone),
     minutesToLeave: Math.max(0, minutesToLeave),
     arriveAt: hhmm(arrival, rule.timeZone),
+    ...(travel.estimatedAt ? { estimatedAt: hhmm(travel.estimatedAt, rule.timeZone) } : {}),
   };
 }

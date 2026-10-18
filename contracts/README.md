@@ -8,7 +8,7 @@ Lo que necesita cada pantalla, en JSON Schema (2020-12). La UI (APL) solo lee es
 | `schemas/calendar.schema.json` | `calendar` | `calendar.json`, `calendar-sin-eventos.json`, `calendar-error.json` |
 | `schemas/weather.schema.json` | `weather` | `weather.json`, `weather-error.json` |
 | `schemas/house.schema.json` | `house` | `house.json`, `house-vacio.json` |
-| `schemas/departure-alert.schema.json` | dentro de `home.departureAlert` | `departure-alert-appear.json`, `-soon.json`, `-leave-now.json` |
+| `schemas/departure-alert.schema.json` | dentro de `home.departureAlert` | `departure-alert-appear.json`, `-soon.json`, `-leave-now.json`, `-estimado.json` |
 | `schemas/common.schema.json` | tipos compartidos | — |
 
 ## Reglas

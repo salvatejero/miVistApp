@@ -29,7 +29,7 @@ Umbrales (30, 10, 0) y colchón (10 min por defecto) viven en la configuración,
 - Origen por defecto: casa. Decisión abierta: usar otro origen según la hora del día o la ubicación del dispositivo. No cambiarlo sin confirmarlo.
 - Servicio de rutas con tráfico en vivo: TomTom Routing API (decidido). El modo por defecto es en coche.
 - Recalcular cada pocos minutos solo cuando el evento esté cerca de entrar en la ventana de aviso; fuera de ella, con baja frecuencia, para controlar el coste.
-- Si la API falla: mantener el último trayecto conocido y marcarlo como estimado.
+- Si la API falla: mantener el último trayecto conocido y marcarlo como estimado (`estimatedAt`, la tarjeta dice "estimado (hh:mm)"), solo si tiene menos de una hora. Con el VPS caído no hay aviso.
 
 ## Tarjeta de tráfico al trabajo
 Pieza aparte del aviso: ruta habitual, estado del tráfico, minutos de trayecto y hora de salir. Mismo servicio de rutas, con el destino de trabajo configurado.

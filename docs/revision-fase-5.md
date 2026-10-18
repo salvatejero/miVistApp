@@ -45,7 +45,7 @@ Revisión del agente `revisor`; cada hallazgo se comprobó en el código antes d
 | G2 | Grave | Botón de casa con el VPS caído: 5 s de la acción + 5 s para volver a pintar > 8 s de Alexa | **Arreglado.** Si la acción falla, la pantalla se pinta con lo guardado sin volver a esperar al VPS, y Alexa dice que no ha podido conectar |
 | M1 | Media | El refresco se encadenaba de documento en documento: una respuesta perdida lo paraba para siempre, y un error hacía hablar a Alexa sin que nadie preguntara | **Arreglado.** El refresco usa `handleTick` (se repite mientras el documento esté en pantalla). Los refrescos que fallan no hablan, y los errores que informa el dispositivo solo se registran |
 | M2 | Media | "Reunión de Microsoft Teams", "Zoom"… sin enlace contaban como lugar físico; la geocodificación aceptaba cualquier resultado | **Arreglado.** Se detectan también por nombre. La geocodificación busca a menos de 100 km de casa con confianza mínima, y se descartan trayectos de más de 3 h |
-| M3 | Media | (a) Si TomTom falla, el aviso se oculta en vez de mostrarse como estimado (la skill `departure-alert` dice lo segundo). (b) Solo se probaba el primer evento con ubicación | (b) **Arreglado:** se prueban hasta 3 eventos. (a) **Pendiente de decidir** (ver abajo) |
+| M3 | Media | (a) Si TomTom falla, el aviso se oculta en vez de mostrarse como estimado (la skill `departure-alert` dice lo segundo). (b) Solo se probaba el primer evento con ubicación | **Arreglado.** (a) Decisión del usuario: se muestra con el último trayecto y "estimado (hh:mm)", si tiene menos de una hora. (b) Se prueban hasta 3 eventos |
 | M4 | Media | Un evento diario creado hace años perdía sus ocurrencias de este mes | **Arreglado.** El límite solo cuenta ocurrencias dentro del rango |
 | M5 | Media | DynamoDB sin tiempos máximos podía hacer que una respuesta buena superara los 8 s | **Arreglado.** Tiempos cortos en el cliente y 1 s como máximo por lectura o escritura |
 | M6 | Media | La caché vieja de la skill mostraba la fecha y el "Hoy" del día en que se guardó | **Arreglado.** La cabecera lleva siempre la fecha de hoy; si lo guardado es de otro día, la agenda dice que no hay conexión |
@@ -59,14 +59,9 @@ Revisión del agente `revisor`; cada hallazgo se comprobó en el código antes d
 | m8 | Menor | Con error en otro mes, el título del calendario no dice qué mes | **Pendiente.** Menor; se deja para más adelante |
 | m9 | Menor | La memoria del VPS crecía con claves de días pasados | **Arreglado.** Se borran las entradas de más de 48 h y la caché de lugares tiene un máximo |
 
-### Decisión pendiente (M3a)
+### Decisión M3a (18 oct 2026)
 
-Cuando TomTom no responde y el último trayecto conocido tiene más de unos minutos, hay dos opciones:
-
-1. **Ocultar el aviso** (como está ahora): nunca se avisa con un tráfico que puede haber cambiado.
-2. **Mostrarlo como estimado** (lo que dice la skill `departure-alert`): se avisa con el último trayecto y la etiqueta "Estimado · hh:mm".
-
-La caché de la skill (VPS caído) lo oculta siempre; esta decisión es solo para cuando falla TomTom con el VPS funcionando.
+Si TomTom no responde con el VPS funcionando, el aviso se muestra con el último trayecto conocido y la tarjeta añade "estimado (hh:mm)" en sus tres estados. Si ese trayecto tiene más de una hora, no se avisa. Con el VPS caído (caché de la skill) el aviso sigue sin mostrarse: la skill no puede recalcular la cuenta atrás.
 
 ## Tiempos de respuesta
 

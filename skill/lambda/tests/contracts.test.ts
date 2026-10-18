@@ -22,7 +22,7 @@ describe('contrato de datos', () => {
     const states = fixtures
       .filter((f) => f.startsWith('departure-alert'))
       .map((f) => (readJson(join(contractsDir, 'fixtures', f)) as { state: string }).state);
-    expect(states.sort()).toEqual(['appear', 'leave_now', 'soon']);
+    expect([...new Set(states)].sort()).toEqual(['appear', 'leave_now', 'soon']);
   });
 
   it('cada pantalla tiene fixtures normal y de error o vacío', () => {

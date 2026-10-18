@@ -176,6 +176,26 @@ describe('pantallas desde el VPS', () => {
     expect((await data.getHome()).departureAlert?.eventId).toBe('salud');
   });
 
+  it('si TomTom cae, avisa con el último trayecto marcado como estimado (hasta una hora)', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    let now = new Date('2026-10-15T06:05:00Z'); // 08:05: el aviso aún no toca, pero se mide el trayecto
+    let down = false;
+    const fetchFn = fakeFetch((url) => {
+      if (down) return { status: 503, body: {} };
+      if (url.includes('/geocode/')) return { body: { results: [{ position: { lat: 40.2, lon: -3.2 } }] } };
+      return { body: { routes: [{ summary: { travelTimeInSeconds: 1200, trafficDelayInSeconds: 60 } }] } };
+    });
+    const data = new VpsDashboard(testConfig(), { tomtom: new TomTom(fetchFn, 'clave'), calendar: calendarOf(EVENTS), house: new MockHouse(), now: () => now });
+    await data.getHome();
+    down = true;
+    now = new Date('2026-10-15T06:20:00Z'); // 08:20, faltan 10 min para salir
+    const home = await data.getHome();
+    expect(home.departureAlert).toMatchObject({ state: 'soon', estimatedAt: '08:05', leaveAt: '08:30' });
+    expect(contractErrors('home', home)).toEqual([]);
+    now = new Date('2026-10-15T07:10:00Z'); // más de una hora después: ya no se avisa (además el evento empezó)
+    expect((await data.getHome()).departureAlert).toBeNull();
+  });
+
   it('descarta trayectos de horas (lugar mal situado)', async () => {
     const fetchFn = fakeFetch((url) =>
       url.includes('/geocode/')

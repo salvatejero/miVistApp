@@ -60,6 +60,8 @@ export interface DepartureAlert {
   leaveAt: Time;
   minutesToLeave: number;
   arriveAt: Time;
+  /** Trayecto estimado: el último conocido, medido a esta hora, porque TomTom no responde. */
+  estimatedAt?: Time;
 }
 
 export interface Device {

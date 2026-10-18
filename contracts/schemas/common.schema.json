@@ -250,6 +250,10 @@
         },
         "arriveAt": {
           "$ref": "#/$defs/time"
+        },
+        "estimatedAt": {
+          "$ref": "#/$defs/time",
+          "description": "Presente si TomTom no responde y el trayecto es el último conocido, medido a esta hora. La UI lo marca como estimado."
         }
       }
     },

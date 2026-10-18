@@ -24,6 +24,7 @@ const VARIANTS: Array<[name: string, screen: ScreenId, data: () => unknown]> = [
   ['inicio-aviso-aparece', 'inicio', () => withAlert('appear')],
   ['inicio-aviso-falta-poco', 'inicio', () => withAlert('soon')],
   ['inicio-aviso-sal-ya', 'inicio', () => withAlert('leave-now')],
+  ['inicio-aviso-estimado', 'inicio', () => withAlert('estimado')],
   ['inicio-errores', 'inicio', () => fixture('home-errores')],
   ['inicio-textos-largos', 'inicio', () => fixture('home-textos-largos')],
   ['inicio-cargando', 'inicio', loading('inicio')],

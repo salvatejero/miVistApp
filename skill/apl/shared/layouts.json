@@ -439,7 +439,7 @@
                 {
                   "type": "Text",
                   "style": "texto",
-                  "text": "${soon ? alert.placeLabel + ' · ' + alert.travelMinutes + ' min' + (alert.trafficLabel ? ' · ' + alert.trafficLabel : '') : alert.placeLabel + ' · ' + alert.travelMinutes + ' min de trayecto'}",
+                  "text": "${(soon ? alert.placeLabel + ' · ' + alert.travelMinutes + ' min' + (alert.trafficLabel && !alert.estimatedAt ? ' · ' + alert.trafficLabel : '') : alert.placeLabel + ' · ' + alert.travelMinutes + ' min de trayecto') + (alert.estimatedAt ? ' · estimado (' + alert.estimatedAt + ')' : '')}",
                   "spacing": "10dp",
                   "grow": 1,
                   "shrink": 1,
