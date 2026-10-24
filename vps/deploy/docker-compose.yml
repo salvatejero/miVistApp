@@ -1,0 +1,31 @@
+# Servicio de datos de Mi VistApp en la Raspberry compartida (ver docs/raspberry.md).
+# En la Pi vive en /home/cagodromo/mivistapp/ junto a server.cjs; no hace falta el repo.
+#
+#   docker compose up -d
+#
+# Nunca con --remove-orphans: el resto de proyectos de la Pi no son huérfanos de este.
+name: mivistapp
+
+services:
+  mivistapp:
+    image: node:22-alpine
+    restart: unless-stopped
+    user: node
+    command: node --max-old-space-size=96 /app/server.cjs
+    volumes:
+      - ./server.cjs:/app/server.cjs:ro
+    # Lo lee el CLI de Compose como el usuario que lo lanza: cagodromo, permisos 600.
+    env_file: /etc/mivistapp/vps.env
+    environment:
+      # Dentro del contenedor tiene que escuchar fuera de 127.0.0.1 para que llegue Nginx.
+      HOST: 0.0.0.0
+      PORT: 8787
+    # Sin puertos publicados: solo lo alcanza el Nginx de cagodromo por red-publica.
+    networks:
+      - red-publica
+    read_only: true
+    mem_limit: 128m
+
+networks:
+  red-publica:
+    external: true

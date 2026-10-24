@@ -1,6 +1,6 @@
 # Desplegar la skill y probarla (Fase 6)
 
-La skill vive en **Alexa-hosted** (gratis, en servidores de Amazon) y queda en modo desarrollo: solo la ve tu cuenta. Antes, la Raspberry tiene que estar funcionando y publicada con Funnel (`docs/raspberry.md`).
+La skill vive en **Alexa-hosted** (gratis, en servidores de Amazon) y queda en modo desarrollo: solo la ve tu cuenta. Antes, la Raspberry tiene que estar funcionando y publicada en su subdominio (`docs/raspberry.md`).
 
 ## 1. Crear la skill en la consola
 
@@ -19,7 +19,7 @@ En tu ordenador, con el repo:
 ```bash
 cp skill/lambda/.env.example skill/lambda/.env.local
 # Edita skill/lambda/.env.local:
-#   VISTAPP_VPS_URL=https://<nombre>.<tu-red>.ts.net
+#   VISTAPP_VPS_URL=https://<subdominio>
 #   VISTAPP_API_KEY=<la misma clave que en /etc/mivistapp/vps.env>
 npm run build      # debe decir "Skill conectada al VPS"
 ```
@@ -70,9 +70,9 @@ El simulador no siempre deja tocar los botones ni simula el paso del tiempo: la 
 | Qué pasa | Dónde mirar |
 |---|---|
 | "Ha habido un problema con la respuesta de la skill" | Consola → **Code** → **CloudWatch Logs**: el registro dice qué falló (sin datos personales) |
-| Todos los bloques dicen "Sin conexión con el servidor" | La skill no llega a la Raspberry: comprueba `curl https://<nombre>.<tu-red>.ts.net/healthz` desde fuera de casa y `tailscale funnel status` |
+| Todos los bloques dicen "Sin conexión con el servidor" | La skill no llega a la Raspberry: comprueba `curl https://<subdominio>/healthz` desde fuera de casa; si da 502, el contenedor está parado (`docker compose ps` en `~/mivistapp`) |
 | En los registros de la skill aparece `HTTP 401` | La clave de `skill/lambda/.env.local` no es la de `/etc/mivistapp/vps.env` |
-| Un bloque dice "Tiempo sin configurar", "Tráfico sin configurar"… | Falta esa parte en `/etc/mivistapp/vps.env`; reinicia el servicio tras cambiarlo |
-| Un bloque dice "Sin conexión con el calendario" | `journalctl -u mivistapp`: suele ser la contraseña de app de iCloud o un nombre en `ICLOUD_CALENDARS` que no existe |
+| Un bloque dice "Tiempo sin configurar", "Tráfico sin configurar"… | Falta esa parte en `/etc/mivistapp/vps.env`; recrea el contenedor tras cambiarlo (`docker compose up -d --force-recreate`) |
+| Un bloque dice "Sin conexión con el calendario" | `docker compose logs` en `~/mivistapp`: suele ser la contraseña de app de iCloud o un nombre en `ICLOUD_CALENDARS` que no existe |
 | Alexa no entiende "mi vistapp" | Consola → **Invocations**: si rechaza el nombre de invocación, cámbialo (por ejemplo, "mi panel") en `es-ES.json` y vuelve a desplegar |
 | La pantalla se apaga | Normal hasta medirlo: anota cuándo en `docs/siempre-visible.md` y configura la rutina |
