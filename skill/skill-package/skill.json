@@ -7,7 +7,7 @@
           "name": "Mi VistApp",
           "summary": "Tu día de un vistazo en el Echo Show: hora, tiempo, agenda y tráfico.",
           "description": "Mi VistApp convierte tu Echo Show en un panel siempre visible con la hora, el tiempo, la lluvia de las próximas horas, tu agenda de hoy y mañana y el tráfico al trabajo, con un aviso de cuándo salir hacia tus citas.",
-          "examplePhrases": ["Alexa, abre mi panel"],
+          "examplePhrases": ["Alexa, abre mi tablero"],
           "keywords": ["panel", "agenda", "tiempo", "tráfico", "echo show"]
         }
       },

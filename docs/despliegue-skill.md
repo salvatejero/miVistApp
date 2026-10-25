@@ -42,6 +42,8 @@ cd ../mi-vistapp && git add -A && git commit -m "Mi VistApp" && git push
 
 Al hacer `git push`, Alexa-hosted despliega el código y construye el modelo de voz (tarda uno o dos minutos; en la consola, pestaña **Code**, se ve el estado). `npm run deploy:hosted` conserva el endpoint de la Lambda que Amazon guarda en `skill.json`; no copies ese fichero a mano.
 
+El push no siempre compila el modelo de voz. Si `ask smapi get-skill-status -s <skill id> --resource interactionModel` no devuelve nada para `es-ES`, Alexa no reconoce el nombre de invocación: compílalo con `ask smapi set-interaction-model -s <skill id> -g development -l es-ES --interaction-model file:skill-package/interactionModels/custom/es-ES.json` desde el repositorio de la skill, o con **Build Model** en la consola.
+
 Para actualizar más adelante: `npm run build`, `npm run deploy:hosted -- ../mi-vistapp`, commit y push.
 
 ### A mano, desde la consola (sin instalar nada)
@@ -54,14 +56,14 @@ Para actualizar más adelante: `npm run build`, `npm run deploy:hosted -- ../mi-
 
 En la consola, pestaña **Test**, cambia "Off" por **Development**:
 
-1. Escribe `abre mi panel`: a la derecha se ve la pantalla. Cambia el dispositivo de la vista previa entre Echo Show 8 y Echo Show 15.
+1. Escribe `abre mi tablero`: a la derecha se ve la pantalla. Cambia el dispositivo de la vista previa entre Echo Show 8 y Echo Show 15.
 2. Prueba `muéstrame el calendario`, `pon el tiempo`, `ve a la casa` y `ayuda`.
 
 El simulador no siempre deja tocar los botones ni simula el paso del tiempo: la navegación táctil y el refresco se prueban en el dispositivo.
 
 ## 5. Probar en el Echo Show
 
-1. Di **"Alexa, abre mi panel"**.
+1. Di **"Alexa, abre mi tablero"**.
 2. Sigue la lista de la skill `device-testing` y la prueba de pantalla siempre visible de `docs/siempre-visible.md`, y apunta los resultados en su tabla.
 3. Crea la rutina que la reabre (pasos en `docs/siempre-visible.md`).
 
@@ -74,5 +76,5 @@ El simulador no siempre deja tocar los botones ni simula el paso del tiempo: la 
 | En los registros de la skill aparece `HTTP 401` | La clave de `skill/lambda/.env.local` no es la de `/etc/mivistapp/vps.env` |
 | Un bloque dice "Tiempo sin configurar", "Tráfico sin configurar"… | Falta esa parte en `/etc/mivistapp/vps.env`; recrea el contenedor tras cambiarlo (`docker compose up -d --force-recreate`) |
 | Un bloque dice "Sin conexión con el calendario" | `docker compose logs` en `~/mivistapp`: suele ser la contraseña de app de iCloud o un nombre en `ICLOUD_CALENDARS` que no existe |
-| Alexa no entiende "mi panel" o abre otra cosa | El nombre de invocación se cambia en `es-ES.json` y se vuelve a desplegar, nunca solo en la consola (el siguiente despliegue lo pisaría). "mi vistapp" se descartó porque Alexa lo oía como "mi lista" |
+| Alexa no entiende "mi tablero" o abre otra cosa | El nombre de invocación se cambia en `es-ES.json` y se vuelve a desplegar, nunca solo en la consola (el siguiente despliegue lo pisaría). "mi vistapp" se descartó porque Alexa lo oía como "mi lista", y "mi panel" porque el Echo lo toma como un panel propio |
 | La pantalla se apaga | Normal hasta medirlo: anota cuándo en `docs/siempre-visible.md` y configura la rutina |

@@ -37,7 +37,7 @@ En la app de Alexa: **Más → Rutinas → +**.
 2. **Cuándo:** elige una (o crea varias rutinas):
    - **Movimiento** (detección de presencia del Echo Show, si tu modelo lo ofrece, o un sensor de movimiento vinculado a Alexa): reabre la skill al pasar por delante.
    - **Programación:** cada día a la hora en que te levantas, para tenerla puesta por la mañana.
-3. **Acción:** **Personalizado** → escribe `abre mi panel`.
+3. **Acción:** **Personalizado** → escribe `abre mi tablero`.
 4. **Desde:** el Echo Show donde quieres verla.
 5. Guarda y prueba la rutina desde la app (botón de reproducir).
 
