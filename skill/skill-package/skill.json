@@ -14,7 +14,7 @@
       "isAvailableWorldwide": false,
       "distributionCountries": ["ES"],
       "testingInstructions": "Requiere un dispositivo con pantalla (Echo Show 8, 10 o 15).",
-      "category": "PRODUCTIVITY"
+      "category": "ORGANIZERS_AND_ASSISTANTS"
     },
     "apis": {
       "custom": {
