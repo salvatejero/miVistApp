@@ -10,7 +10,7 @@ import {
   systemErrorHandler,
   unknownEventHandler,
 } from './handlers/builtins';
-import { calendarMonthHandler } from './handlers/calendar';
+import { calendarDayHandler, calendarMonthHandler } from './handlers/calendar';
 import { houseHandler } from './handlers/house';
 import { launchHandler } from './handlers/launch';
 import { navigationHandler } from './handlers/navigation';
@@ -55,6 +55,7 @@ export function buildSkill(dataFor: DashboardDataFactory = defaultFactory()): Sk
       navigationHandler(dataFor),
       refreshHandler(dataFor),
       calendarMonthHandler(dataFor),
+      calendarDayHandler(dataFor),
       houseHandler(dataFor),
       helpHandler,
       stopHandler,

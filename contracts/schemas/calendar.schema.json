@@ -35,6 +35,7 @@
           "day",
           "inMonth",
           "isToday",
+          "isSelected",
           "hasEvents"
         ],
         "additionalProperties": false,
@@ -49,6 +50,10 @@
           },
           "isToday": {
             "type": "boolean"
+          },
+          "isSelected": {
+            "type": "boolean",
+            "description": "Día cuyos eventos muestra el panel lateral."
           },
           "hasEvents": {
             "type": "boolean"

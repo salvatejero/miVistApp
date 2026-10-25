@@ -140,8 +140,9 @@ export class CachedDashboardData implements DashboardData {
     );
   }
 
-  getCalendar(monthOffset: number): Promise<CalendarScreen> {
-    return this.load(`calendar:${monthOffset}`, () => this.remote.getCalendar(monthOffset), withNotice, offline);
+  getCalendar(monthOffset: number, day?: number): Promise<CalendarScreen> {
+    const key = day === undefined ? `calendar:${monthOffset}` : `calendar:${monthOffset}:${day}`;
+    return this.load(key, () => this.remote.getCalendar(monthOffset, day), withNotice, offline);
   }
 
   getWeather(): Promise<WeatherScreen> {

@@ -81,6 +81,8 @@ export interface HomeScreen {
     conditionLabel: string;
     icon: WeatherIcon;
     rainAlertLabel?: string;
+    /** Próximos días empezando por hoy (franja de previsión de Inicio). */
+    forecast?: WeatherDay[];
   }>;
   rainForecast: RainForecast;
   commute: Section<{ routeLabel: string; trafficLabel: string; durationMinutes: number; leaveAt: Time }>;
@@ -93,6 +95,8 @@ export interface CalendarCell {
   day: number;
   inMonth: boolean;
   isToday: boolean;
+  /** Día cuyos eventos muestra el panel lateral. */
+  isSelected: boolean;
   hasEvents: boolean;
 }
 
@@ -125,7 +129,8 @@ export type HouseScreen = Section<{ summary: string; devices: Device[] }>;
 export interface DashboardData {
   getHome(): Promise<HomeScreen>;
   /** `monthOffset`: 0 es el mes actual, -1 el anterior, 1 el siguiente… */
-  getCalendar(monthOffset: number): Promise<CalendarScreen>;
+  /** `day`: día del mes cuyos eventos se muestran; por defecto, hoy en el mes actual y el 1 en los demás. */
+  getCalendar(monthOffset: number, day?: number): Promise<CalendarScreen>;
   getWeather(): Promise<WeatherScreen>;
   getHouse(): Promise<HouseScreen>;
   toggleDevice(id: string): Promise<void>;

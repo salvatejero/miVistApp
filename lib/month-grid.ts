@@ -20,20 +20,28 @@ export function addMonths(year: number, month: number, offset: number): { year: 
  * Celdas del mes en semanas completas de lunes a domingo, con los días del mes anterior y
  * siguiente que las completan (35 o 42 celdas; 28 si febrero empieza en lunes y no es bisiesto).
  */
-export function buildMonthGrid(year: number, month: number, today: CivilDate, eventDays: ReadonlySet<number>): CalendarCell[] {
+export function buildMonthGrid(
+  year: number,
+  month: number,
+  today: CivilDate,
+  eventDays: ReadonlySet<number>,
+  selectedDay?: number,
+): CalendarCell[] {
   const cells: CalendarCell[] = [];
   const leading = weekdayIndex(year, month, 1);
   const previous = addMonths(year, month, -1);
   const previousDays = daysInMonth(previous.year, previous.month);
   for (let i = leading; i > 0; i--) {
-    cells.push({ day: previousDays - i + 1, inMonth: false, isToday: false, hasEvents: false });
+    cells.push({ day: previousDays - i + 1, inMonth: false, isToday: false, isSelected: false, hasEvents: false });
   }
   const isCurrentMonth = today.year === year && today.month === month;
   for (let day = 1; day <= daysInMonth(year, month); day++) {
-    cells.push({ day, inMonth: true, isToday: isCurrentMonth && today.day === day, hasEvents: eventDays.has(day) });
+    const isToday = isCurrentMonth && today.day === day;
+    const isSelected = selectedDay === undefined ? isToday : selectedDay === day;
+    cells.push({ day, inMonth: true, isToday, isSelected, hasEvents: eventDays.has(day) });
   }
   for (let day = 1; cells.length % 7 !== 0; day++) {
-    cells.push({ day, inMonth: false, isToday: false, hasEvents: false });
+    cells.push({ day, inMonth: false, isToday: false, isSelected: false, hasEvents: false });
   }
   return cells;
 }

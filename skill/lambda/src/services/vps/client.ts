@@ -32,8 +32,8 @@ export class VpsClient implements DashboardData {
     return this.request('/v1/home') as Promise<HomeScreen>;
   }
 
-  getCalendar(monthOffset: number): Promise<CalendarScreen> {
-    return this.request(`/v1/calendar?offset=${monthOffset}`) as Promise<CalendarScreen>;
+  getCalendar(monthOffset: number, day?: number): Promise<CalendarScreen> {
+    return this.request(`/v1/calendar?offset=${monthOffset}${day === undefined ? '' : `&day=${day}`}`) as Promise<CalendarScreen>;
   }
 
   getWeather(): Promise<WeatherScreen> {

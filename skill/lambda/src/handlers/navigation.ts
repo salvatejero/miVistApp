@@ -26,7 +26,10 @@ export const navigationHandler = (dataFor: DashboardDataFactory): RequestHandler
         .reprompt('¿Qué pantalla quieres ver?')
         .getResponse();
     }
-    if (screen === 'calendario') sessionAttributes(handlerInput).calendarOffset = 0;
+    if (screen === 'calendario') {
+      sessionAttributes(handlerInput).calendarOffset = 0;
+      delete sessionAttributes(handlerInput).calendarDay;
+    }
     return respondWithScreen(handlerInput, dataFor(handlerInput), screen, { progressive: true });
   },
 });

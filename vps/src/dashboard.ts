@@ -39,6 +39,8 @@ const MAX_TRAVEL_MINUTES = 180;
 /** Eventos con ubicación que se prueban si los primeros no se pueden geocodificar. */
 const MAX_DEPARTURE_CANDIDATES = 3;
 const HOME_RAIN_HOURS = 8;
+/** Días de la franja de previsión de Inicio, empezando por hoy. */
+const HOME_FORECAST_DAYS = 5;
 const WEATHER_RAIN_HOURS = 12;
 const HOME_DEVICES = 4;
 const MAX_PLACES = 500;
@@ -124,7 +126,7 @@ export class VpsDashboard implements DashboardData {
     };
   }
 
-  async getCalendar(monthOffset: number): Promise<CalendarScreen> {
+  async getCalendar(monthOffset: number, day?: number): Promise<CalendarScreen> {
     const calendar = this.sources.calendar;
     if (!calendar) return { status: 'empty', message: 'Calendario sin configurar' };
     const today = this.today();
@@ -136,7 +138,7 @@ export class VpsDashboard implements DashboardData {
     };
     try {
       const fetched = await deadline(this.events.get(`month:${year}-${month}`, () => calendar.events(range)), this.budgetMs);
-      return { status: 'ok', ...monthView(year, month, today, fetched.value, this.config.timeZone), ...this.notice(fetched) };
+      return { status: 'ok', ...monthView(year, month, today, fetched.value, this.config.timeZone, day), ...this.notice(fetched) };
     } catch (error) {
       logFailure('calendario', error);
       return { status: 'error', message: 'Sin conexión con el calendario' };
@@ -195,7 +197,9 @@ export class VpsDashboard implements DashboardData {
     try {
       const fetched = await deadline(this.forecasts.get('forecast', () => weather.forecast()), this.budgetMs);
       const forecast = fetched.value;
-      const rain = rainOutlook(hoursFrom(forecast, zoned(this.now(), this.config.timeZone)), HOME_RAIN_HOURS);
+      const now = zoned(this.now(), this.config.timeZone);
+      const rain = rainOutlook(hoursFrom(forecast, now), HOME_RAIN_HOURS);
+      const days = weekFrom(forecast, now)?.slice(0, HOME_FORECAST_DAYS);
       const notice = this.notice(fetched);
       return {
         weather: {
@@ -205,6 +209,7 @@ export class VpsDashboard implements DashboardData {
           conditionLabel: forecast.conditionLabel,
           icon: forecast.icon,
           ...(rain.alertLabel ? { rainAlertLabel: rain.alertLabel } : {}),
+          ...(days ? { forecast: days } : {}),
           ...notice,
         },
         rain: { status: 'ok', summary: rain.summary, bars: rain.bars, ...notice },

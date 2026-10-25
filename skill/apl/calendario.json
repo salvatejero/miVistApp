@@ -59,30 +59,24 @@
                           "type": "BotonRedondo",
                           "label": "Mes anterior",
                           "icon": "iconChevronLeft",
-                          "event": [
-                            "calendar.month",
-                            -1
-                          ]
+                          "action": "calendar.month",
+                          "value": -1
                         },
                         {
                           "type": "BotonPildora",
                           "label": "Hoy",
-                          "event": [
-                            "calendar.month",
-                            0
-                          ],
                           "accent": true,
-                          "spacing": "@itemPaddingX"
+                          "spacing": "@itemPaddingX",
+                          "action": "calendar.month",
+                          "value": 0
                         },
                         {
                           "type": "BotonRedondo",
                           "label": "Mes siguiente",
                           "icon": "iconChevronRight",
-                          "event": [
-                            "calendar.month",
-                            1
-                          ],
-                          "spacing": "@itemPaddingX"
+                          "spacing": "@itemPaddingX",
+                          "action": "calendar.month",
+                          "value": 1
                         }
                       ]
                     }
@@ -173,36 +167,56 @@
                                 "paddingBottom": "3dp",
                                 "items": [
                                   {
-                                    "type": "Frame",
+                                    "type": "TouchWrapper",
                                     "grow": 1,
-                                    "borderRadius": "@radiusItem",
-                                    "paddingLeft": "10dp",
-                                    "paddingRight": "10dp",
-                                    "paddingTop": "8dp",
-                                    "paddingBottom": "8dp",
-                                    "backgroundColor": "${data.isToday ? @colorAccent : data.inMonth ? @colorItem : @colorOtherMonth}",
+                                    "role": "button",
+                                    "accessibilityLabel": "Día ${data.day}",
+                                    "disabled": "${!data.inMonth}",
+                                    "onPress": [
+                                      {
+                                        "type": "SendEvent",
+                                        "arguments": [
+                                          "calendar.day",
+                                          "${data.day}"
+                                        ]
+                                      }
+                                    ],
                                     "item": {
-                                      "type": "Container",
+                                      "type": "Frame",
+                                      "borderRadius": "@radiusItem",
+                                      "paddingLeft": "10dp",
+                                      "paddingRight": "10dp",
+                                      "paddingTop": "8dp",
+                                      "paddingBottom": "8dp",
+                                      "backgroundColor": "${data.isToday ? @colorAccent : data.inMonth ? @colorItem : @colorOtherMonth}",
+                                      "item": {
+                                        "type": "Container",
+                                        "height": "100%",
+                                        "justifyContent": "spaceBetween",
+                                        "items": [
+                                          {
+                                            "type": "Text",
+                                            "style": "texto",
+                                            "text": "${data.day}",
+                                            "fontSize": "@textCalendarDay",
+                                            "fontWeight": "800",
+                                            "maxLines": 1,
+                                            "color": "${data.isToday ? @colorOnAccent : data.inMonth ? @colorText : @colorTextMuted}"
+                                          },
+                                          {
+                                            "type": "Frame",
+                                            "width": "@eventDot",
+                                            "height": "@eventDot",
+                                            "borderRadius": "@eventDot",
+                                            "backgroundColor": "${data.hasEvents ? (data.isToday ? @colorOnAccent : @colorAccent) : 'transparent'}"
+                                          }
+                                        ],
+                                        "width": "100%"
+                                      },
+                                      "width": "100%",
                                       "height": "100%",
-                                      "justifyContent": "spaceBetween",
-                                      "items": [
-                                        {
-                                          "type": "Text",
-                                          "style": "texto",
-                                          "text": "${data.day}",
-                                          "fontSize": "@textCalendarDay",
-                                          "fontWeight": "800",
-                                          "maxLines": 1,
-                                          "color": "${data.isToday ? @colorOnAccent : data.inMonth ? @colorText : @colorTextMuted}"
-                                        },
-                                        {
-                                          "type": "Frame",
-                                          "width": "@eventDot",
-                                          "height": "@eventDot",
-                                          "borderRadius": "@eventDot",
-                                          "backgroundColor": "${data.hasEvents ? (data.isToday ? @colorOnAccent : @colorAccent) : 'transparent'}"
-                                        }
-                                      ]
+                                      "borderColor": "@colorAccent",
+                                      "borderWidth": "${data.isSelected && !data.isToday ? @borderThin : 0}"
                                     }
                                   }
                                 ]

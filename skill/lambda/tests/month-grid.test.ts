@@ -11,7 +11,8 @@ describe('rejilla del mes', () => {
     expect(cells.slice(0, 3).map((c) => [c.day, c.inMonth])).toEqual([[28, false], [29, false], [30, false]]);
     expect(cells.filter((c) => c.isToday).map((c) => c.day)).toEqual([15]);
     expect(cells.filter((c) => c.hasEvents).map((c) => c.day)).toEqual([15, 20]);
-    expect(cells.at(-1)).toEqual({ day: 1, inMonth: false, isToday: false, hasEvents: false });
+    expect(cells.filter((c) => c.isSelected).map((c) => c.day)).toEqual([15]);
+    expect(cells.at(-1)).toEqual({ day: 1, inMonth: false, isToday: false, isSelected: false, hasEvents: false });
   });
 
   it('febrero de 2027 cabe en 4 semanas justas', () => {
@@ -25,6 +26,11 @@ describe('rejilla del mes', () => {
   it('cuenta el 29 de febrero en años bisiestos', () => {
     const cells = buildMonthGrid(2028, 2, today, new Set());
     expect(cells.filter((c) => c.inMonth)).toHaveLength(29);
+  });
+
+  it('marca el día pulsado solo dentro del mes', () => {
+    const cells = buildMonthGrid(2026, 10, today, new Set(), 1);
+    expect(cells.filter((c) => c.isSelected).map((c) => [c.day, c.inMonth])).toEqual([[1, true]]);
   });
 
   it('solo marca hoy en el mes de hoy', () => {

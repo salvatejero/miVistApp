@@ -164,14 +164,16 @@
                           "type": "TarjetaAviso",
                           "when": "${home.departureAlert != null}",
                           "alert": "${home.departureAlert}",
-                          "grow": 1
+                          "grow": 1,
+                          "height": 0
                         },
                         {
                           "type": "TarjetaLluvia",
                           "when": "${home.departureAlert == null}",
                           "rain": "${home.rainForecast}",
                           "title": "Lluvia próximas horas",
-                          "grow": 1
+                          "grow": 1,
+                          "height": 0
                         },
                         {
                           "type": "Frame",
@@ -360,27 +362,95 @@
                 },
                 {
                   "type": "Container",
-                  "when": "${home.house.status == 'ok'}",
                   "direction": "row",
                   "spacing": "@gap",
-                  "data": "${home.house.devices}",
+                  "when": "${home.weather.status == 'ok' && home.weather.forecast}",
+                  "data": "${home.weather.forecast}",
                   "items": [
                     {
-                      "type": "BotonCasa",
-                      "device": "${data}",
-                      "origin": "inicio",
+                      "type": "Frame",
                       "width": 0,
                       "grow": 1,
-                      "spacing": "@gap"
+                      "height": "@houseTileHeight",
+                      "backgroundColor": "@colorCard",
+                      "borderRadius": "@radiusItem",
+                      "borderColor": "@colorAccent",
+                      "borderWidth": "${data.isToday ? @borderThin : 0}",
+                      "paddingLeft": "@gapMedium",
+                      "paddingRight": "@gapMedium",
+                      "item": {
+                        "type": "Container",
+                        "width": "100%",
+                        "height": "100%",
+                        "direction": "row",
+                        "alignItems": "center",
+                        "justifyContent": "spaceBetween",
+                        "items": [
+                          {
+                            "type": "Container",
+                            "shrink": 1,
+                            "items": [
+                              {
+                                "type": "Text",
+                                "style": "texto",
+                                "text": "${data.name}",
+                                "fontSize": "@textBody",
+                                "fontWeight": "800",
+                                "color": "${data.isToday ? @colorAccent : @colorText}",
+                                "maxLines": 1
+                              },
+                              {
+                                "type": "Text",
+                                "style": "textoSecundario",
+                                "text": "${data.dateLabel}",
+                                "fontSize": "@textCaption",
+                                "maxLines": 1
+                              }
+                            ]
+                          },
+                          {
+                            "type": "VectorGraphic",
+                            "source": "${'weather-' + data.icon}",
+                            "width": "@houseIcon",
+                            "height": "@houseIcon",
+                            "scale": "fill",
+                            "strokeWidth": 1.6,
+                            "color": "${data.icon == 'rain' || data.icon == 'storm' ? @colorRain : data.icon == 'sun' ? @colorAccent : @colorIconNeutral}"
+                          },
+                          {
+                            "type": "Container",
+                            "alignItems": "end",
+                            "items": [
+                              {
+                                "type": "Text",
+                                "style": "texto",
+                                "text": "${Math.round(data.maxTemp)}°",
+                                "fontSize": "@textHouseLarge",
+                                "fontWeight": "800",
+                                "maxLines": 1
+                              },
+                              {
+                                "type": "Text",
+                                "style": "textoSecundario",
+                                "text": "${Math.round(data.minTemp)}° · ${data.rainProbability}%",
+                                "fontSize": "@textCaption",
+                                "maxLines": 1
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      "spacing": "@gapMedium"
                     }
                   ]
                 },
                 {
                   "type": "Container",
-                  "when": "${home.house.status == 'loading'}",
                   "direction": "row",
                   "spacing": "@gap",
+                  "when": "${home.weather.status == 'loading'}",
                   "data": [
+                    0,
                     1,
                     2,
                     3,
@@ -390,27 +460,11 @@
                     {
                       "type": "Hueso",
                       "width": 0,
-                      "grow": 1,
                       "height": "@houseTileHeight",
-                      "radius": "@radiusCard",
-                      "spacing": "@gap"
+                      "grow": 1,
+                      "spacing": "@gapMedium"
                     }
                   ]
-                },
-                {
-                  "type": "Frame",
-                  "when": "${home.house.status == 'empty' || home.house.status == 'error'}",
-                  "spacing": "@gap",
-                  "backgroundColor": "@colorCard",
-                  "borderRadius": "@radiusCard",
-                  "paddingLeft": "@cardPaddingX",
-                  "paddingRight": "@cardPaddingX",
-                  "paddingTop": "@cardPaddingYCompact",
-                  "paddingBottom": "@cardPaddingYCompact",
-                  "item": {
-                    "type": "MensajeEstado",
-                    "text": "${home.house.message}"
-                  }
                 }
               ]
             }

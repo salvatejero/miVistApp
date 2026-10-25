@@ -100,6 +100,18 @@ describe('calendario', () => {
     expect(month(envelope)).toBe('Octubre 2026');
   });
 
+  it('al pulsar un día muestra ese día, y al cambiar de mes vuelve al día por defecto', async () => {
+    const selected = (envelope: ResponseEnvelope) => datasource<CalendarScreen>(envelope, 'calendar') as Extract<CalendarScreen, { status: 'ok' }>;
+    let envelope = await tap(['navigate', 'calendario']);
+    // El Echo Show puede mandar el número como texto.
+    envelope = await tap(['calendar.day', '20'], envelope.sessionAttributes);
+    expect(selected(envelope).selectedDay.title).toBe('20 oct');
+    expect(selected(envelope).cells.filter((c) => c.isSelected).map((c) => c.day)).toEqual([20]);
+    expect(contractErrors('calendar', selected(envelope))).toEqual([]);
+    envelope = await tap(['calendar.month', '1'], envelope.sessionAttributes);
+    expect(selected(envelope).selectedDay.title).toBe('1 nov');
+  });
+
   it('vuelve al mes actual al entrar desde el menú', async () => {
     const envelope = await tap(['navigate', 'calendario'], { calendarOffset: 5 });
     expect(month(envelope)).toBe('Octubre 2026');

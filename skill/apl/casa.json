@@ -68,10 +68,8 @@
                       "type": "BotonPildora",
                       "when": "${house.status == 'ok'}",
                       "label": "Apagar todo",
-                      "event": [
-                        "house.allOff",
-                        "casa"
-                      ]
+                      "action": "house.allOff",
+                      "value": "casa"
                     }
                   ]
                 },
