@@ -18,7 +18,7 @@ Skill de Alexa (APL) con un dashboard siempre visible para Echo Show. Plan compl
 ## Comandos
 - `npm install` y luego `npm run check` (typecheck, lint, tests y build). Detalle en `docs/desarrollo.md`.
 - Estructura y decisiones técnicas: `docs/arquitectura.md`. Contrato: `contracts/README.md`. Servidor de datos: `docs/raspberry.md`. Despliegue de la skill: `docs/despliegue-skill.md`.
-- `npm run build` genera la skill (`build/hosted/`) y el servicio de datos (`build/vps/server.cjs`). La URL del servidor y la clave de la skill van en `skill/lambda/.env.local`, que nunca se sube. `npm run deploy:hosted -- <repo de Alexa-hosted>` copia la skill conservando su endpoint.
+- `npm run build` genera la skill (`build/hosted/`) y el servicio de datos (`build/vps/server.cjs`). La URL del servidor y la clave de la skill van en `skill/lambda/.env.local`, que nunca se sube. `npm run deploy:hosted -- <repo de Alexa-hosted>` copia la skill conservando su endpoint, la sube y compila el modelo de voz.
 
 ## Decisiones tomadas
 <!-- Respuestas a §2 de PLAN.md -->

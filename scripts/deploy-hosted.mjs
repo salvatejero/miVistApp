@@ -1,9 +1,12 @@
 // Copia la skill empaquetada (build/hosted) al repositorio de Alexa-hosted clonado con
-// `ask init --hosted-skill-id …`, conservando el endpoint de su Lambda. Después: git commit y git push.
+// `ask init --hosted-skill-id …`, conservando el endpoint de su Lambda; lo sube (git push) y compila el
+// modelo de voz, porque el push no siempre lo hace y sin modelo Alexa no reconoce el nombre de invocación.
 //
 //   npm run build
 //   npm run deploy:hosted -- ../mi-vistapp-hosted
-import { cp, readFile, rm, writeFile } from 'node:fs/promises';
+import { execFileSync } from 'node:child_process';
+import { cp, readdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { setTimeout as sleep } from 'node:timers/promises';
 import { existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { mergeManifest } from './hosted-manifest.mjs';
@@ -39,5 +42,33 @@ await cp('build/hosted/lambda', join(repo, 'lambda'), { recursive: true });
 await cp('build/hosted/skill-package/interactionModels', join(repo, 'skill-package', 'interactionModels'), { recursive: true });
 await writeFile(hostedManifestPath, JSON.stringify(merged, null, 2) + '\n');
 
-console.log(`Copiado a ${repo}. Revisa con "git status" y publica con:
-  cd ${target} && git add -A && git commit -m "Mi VistApp" && git push`);
+const run = (cmd, args) => execFileSync(cmd, args, { cwd: repo, encoding: 'utf8', stdio: ['ignore', 'pipe', 'inherit'] });
+
+run('git', ['add', '-A']);
+if (run('git', ['status', '--porcelain']).trim()) {
+  run('git', ['commit', '-m', 'Mi VistApp']);
+  run('git', ['push']);
+  console.log('Subido a Alexa-hosted: despliega la Lambda en uno o dos minutos.');
+} else {
+  console.log('Sin cambios en el código: no hay nada que subir.');
+}
+
+const skillId = JSON.parse(await readFile(join(repo, '.ask', 'ask-states.json'), 'utf8')).profiles.default.skillId;
+const modelsDir = join(repo, 'skill-package', 'interactionModels', 'custom');
+for (const file of await readdir(modelsDir)) {
+  const locale = file.replace(/\.json$/, '');
+  run('ask', ['smapi', 'set-interaction-model', '-s', skillId, '-g', 'development', '-l', locale, '--interaction-model', `file:${join(modelsDir, file)}`]);
+  console.log(`Compilando el modelo de voz ${locale}…`);
+  for (;;) {
+    await sleep(5000);
+    const status = JSON.parse(run('ask', ['smapi', 'get-skill-status', '-s', skillId, '--resource', 'interactionModel'])).interactionModel?.[locale]
+      ?.lastUpdateRequest?.status;
+    if (status === 'IN_PROGRESS') continue;
+    if (status !== 'SUCCEEDED') {
+      console.error(`El modelo ${locale} no se ha compilado (${status}): mira la consola, pestaña Build`);
+      process.exit(1);
+    }
+    console.log(`Modelo ${locale} compilado.`);
+    break;
+  }
+}

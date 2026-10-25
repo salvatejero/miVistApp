@@ -36,15 +36,12 @@ ask configure                                         # inicia sesión con tu cu
 cd ..
 ask init --hosted-skill-id amzn1.ask.skill.XXXX       # clona el repositorio de la skill, p. ej. en ./mi-vistapp
 cd miVistApp
-npm run deploy:hosted -- ../mi-vistapp                # copia código, modelo y manifiesto
-cd ../mi-vistapp && git add -A && git commit -m "Mi VistApp" && git push
+npm run deploy:hosted -- ../mi-vistapp                # copia, sube (git push) y compila el modelo de voz
 ```
 
-Al hacer `git push`, Alexa-hosted despliega el código y construye el modelo de voz (tarda uno o dos minutos; en la consola, pestaña **Code**, se ve el estado). `npm run deploy:hosted` conserva el endpoint de la Lambda que Amazon guarda en `skill.json`; no copies ese fichero a mano.
+Con el push, Alexa-hosted despliega el código (tarda uno o dos minutos; en la consola, pestaña **Code**, se ve el estado). El push no siempre compila el modelo de voz, y sin él Alexa no reconoce el nombre de invocación, así que el script lo compila con `ask smapi set-interaction-model` y espera a que termine. `npm run deploy:hosted` conserva el endpoint de la Lambda que Amazon guarda en `skill.json`; no copies ese fichero a mano.
 
-El push no siempre compila el modelo de voz. Si `ask smapi get-skill-status -s <skill id> --resource interactionModel` no devuelve nada para `es-ES`, Alexa no reconoce el nombre de invocación: compílalo con `ask smapi set-interaction-model -s <skill id> -g development -l es-ES --interaction-model file:skill-package/interactionModels/custom/es-ES.json` desde el repositorio de la skill, o con **Build Model** en la consola.
-
-Para actualizar más adelante: `npm run build`, `npm run deploy:hosted -- ../mi-vistapp`, commit y push.
+Para actualizar más adelante: `npm run build` y `npm run deploy:hosted -- ../mi-vistapp`.
 
 ### A mano, desde la consola (sin instalar nada)
 
