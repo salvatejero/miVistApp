@@ -54,14 +54,14 @@ Para actualizar más adelante: `npm run build`, `npm run deploy:hosted -- ../mi-
 
 En la consola, pestaña **Test**, cambia "Off" por **Development**:
 
-1. Escribe `abre mi vistapp`: a la derecha se ve la pantalla. Cambia el dispositivo de la vista previa entre Echo Show 8 y Echo Show 15.
+1. Escribe `abre mi panel`: a la derecha se ve la pantalla. Cambia el dispositivo de la vista previa entre Echo Show 8 y Echo Show 15.
 2. Prueba `muéstrame el calendario`, `pon el tiempo`, `ve a la casa` y `ayuda`.
 
 El simulador no siempre deja tocar los botones ni simula el paso del tiempo: la navegación táctil y el refresco se prueban en el dispositivo.
 
 ## 5. Probar en el Echo Show
 
-1. Di **"Alexa, abre mi vistapp"**.
+1. Di **"Alexa, abre mi panel"**.
 2. Sigue la lista de la skill `device-testing` y la prueba de pantalla siempre visible de `docs/siempre-visible.md`, y apunta los resultados en su tabla.
 3. Crea la rutina que la reabre (pasos en `docs/siempre-visible.md`).
 
@@ -74,5 +74,5 @@ El simulador no siempre deja tocar los botones ni simula el paso del tiempo: la 
 | En los registros de la skill aparece `HTTP 401` | La clave de `skill/lambda/.env.local` no es la de `/etc/mivistapp/vps.env` |
 | Un bloque dice "Tiempo sin configurar", "Tráfico sin configurar"… | Falta esa parte en `/etc/mivistapp/vps.env`; recrea el contenedor tras cambiarlo (`docker compose up -d --force-recreate`) |
 | Un bloque dice "Sin conexión con el calendario" | `docker compose logs` en `~/mivistapp`: suele ser la contraseña de app de iCloud o un nombre en `ICLOUD_CALENDARS` que no existe |
-| Alexa no entiende "mi vistapp" | Consola → **Invocations**: si rechaza el nombre de invocación, cámbialo (por ejemplo, "mi panel") en `es-ES.json` y vuelve a desplegar |
+| Alexa no entiende "mi panel" o abre otra cosa | El nombre de invocación se cambia en `es-ES.json` y se vuelve a desplegar, nunca solo en la consola (el siguiente despliegue lo pisaría). "mi vistapp" se descartó porque Alexa lo oía como "mi lista" |
 | La pantalla se apaga | Normal hasta medirlo: anota cuándo en `docs/siempre-visible.md` y configura la rutina |

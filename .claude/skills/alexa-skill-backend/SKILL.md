@@ -26,7 +26,7 @@ vps/              # servicio de datos (Fase 3): weather, calendar, traffic, home
 - Registros sin datos personales (direcciones, tokens, títulos de eventos).
 
 ## Modelo de interacción
-- Idioma `es-ES`. Nombre de invocación propuesto: "mi vistapp". Alexa aplica reglas a estos nombres (por ejemplo no incluir la palabra "alexa", longitud y caracteres permitidos); comprobarlas al configurar y ajustar si se rechaza.
+- Idioma `es-ES`. Nombre de invocación: "mi panel" ("mi vistapp" se oía como "mi lista"). Alexa aplica reglas a estos nombres (por ejemplo no incluir la palabra "alexa", longitud y caracteres permitidos); comprobarlas al configurar y ajustar si se rechaza.
 - Frases de ejemplo: abrir, mostrar calendario, mostrar el tiempo, mostrar la casa, ayuda, salir.
 - Respuestas de voz cortas; lo importante va en pantalla.
 

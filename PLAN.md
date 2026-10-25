@@ -5,7 +5,7 @@ Estado: plan para ejecutar más adelante en Claude Code (nube). Nada de esto est
 
 ## 1. Qué es
 
-Dashboard siempre visible para Echo Show, como skill de Alexa con APL. Se invoca con "Alexa, abre mi VistApp".
+Dashboard siempre visible para Echo Show, como skill de Alexa con APL. Se invoca con "Alexa, abre mi panel".
 
 Pantallas (ya diseñadas, ver `design/`):
 
@@ -81,7 +81,7 @@ Fase 0 (persona) ─▶ Fase 1 (arquitecto) ─▶ ┌ Fase 2a UI-APL ┐
 
 ### Fase 2 — Skill con datos de ejemplo (3 agentes en paralelo)
 - **`ui-apl`:** convierte las 4 pantallas y la tarjeta de aviso a documentos APL, con el menú lateral compartido y el tema oscuro.
-- **`skill-backend`:** handlers de lanzamiento, navegación entre pantallas desde el menú, modelo de interacción es-ES y nombre de invocación "mi vistapp".
+- **`skill-backend`:** handlers de lanzamiento, navegación entre pantallas desde el menú, modelo de interacción es-ES y nombre de invocación "mi panel".
 - **`datos-mock`:** servicio que devuelve los datos de ejemplo según el contrato, incluidos los tres estados del aviso de salida.
 
 **Hecho cuando:** en el simulador y en tu Echo Show se ven las cuatro pantallas con datos de ejemplo y el menú cambia de pantalla.
@@ -172,7 +172,7 @@ Cada agente de §5 debería nombrar en su cabecera las skills que usa. Las skill
 
 - **Siempre en pantalla:** Amazon no ofrece una opción oficial. La Fase 4 es un apaño (inactividad larga, sesión abierta y rutina) y puede fallar o cambiar con actualizaciones del Echo Show. Probar pronto en el dispositivo.
 - **Domótica:** una skill propia no necesariamente puede controlar otros dispositivos de la casa. Puede requerir la API de Smart Home, o una pasarela (Home Assistant u otra). Investigar antes de prometer los botones de Casa.
-- **Nombre de invocación:** "mi vistapp" debe cumplir las reglas de Alexa; se valida al configurar la skill.
+- **Nombre de invocación:** "mi panel". "mi vistapp" se descartó porque Alexa lo confundía con "mi lista" (de la compra).
 - **Vinculación de cuenta:** el calendario necesita OAuth con Alexa; añade un paso de configuración.
 - **Privacidad:** direcciones de casa y trabajo y tokens como secretos del entorno, nunca en el repo.
 - **Costes:** las APIs de tráfico y rutas pueden tener coste por consulta; limitar la frecuencia de refresco.
@@ -182,7 +182,7 @@ Cada agente de §5 debería nombrar en su cabecera las skills que usa. Las skill
 
 ## 7. Definición de "hecho" para la v1
 
-1. "Alexa, abre mi VistApp" muestra Inicio en el Echo Show.
+1. "Alexa, abre mi panel" muestra Inicio en el Echo Show.
 2. El menú lateral cambia entre Inicio, Calendario, Tiempo y Casa.
 3. Tiempo, agenda y tráfico salen de fuentes reales.
 4. Un evento con ubicación cercana muestra el aviso en sus tres estados.
