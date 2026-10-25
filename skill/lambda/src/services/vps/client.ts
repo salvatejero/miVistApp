@@ -1,3 +1,4 @@
+import { nodeFetch } from './node-fetch';
 import type { CalendarScreen, DashboardData, HomeScreen, HouseScreen, WeatherScreen } from '../../contracts';
 
 export class VpsError extends Error {
@@ -12,7 +13,7 @@ export class VpsClient implements DashboardData {
     baseUrl: string,
     private readonly apiKey: string,
     private readonly timeoutMs: number,
-    private readonly fetchFn: typeof fetch = fetch,
+    private readonly fetchFn: typeof fetch = globalThis.fetch ?? nodeFetch,
   ) {
     this.baseUrl = baseUrl.replace(/\/+$/, '');
   }

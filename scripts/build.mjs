@@ -39,8 +39,8 @@ await build({
   outfile: `${out}/lambda/index.js`,
   bundle: true,
   platform: 'node',
-  // Alexa-hosted puede usar Node.js 18; el código solo necesita fetch y AbortSignal.timeout.
-  target: 'node18',
+  // Alexa-hosted corre en Node.js 16: sin fetch (ver node-fetch.ts) ni structuredClone.
+  target: 'node16',
   format: 'cjs',
   sourcemap: true,
   logLevel: 'info',

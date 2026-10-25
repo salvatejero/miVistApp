@@ -38,7 +38,8 @@ export interface MockOptions {
   alert?: DepartureAlertState;
 }
 
-const clone = <T>(value: unknown): T => structuredClone(value) as T;
+// JSON y no structuredClone: Node.js 16 (Alexa-hosted) no lo trae y los fixtures son JSON.
+const clone = <T>(value: unknown): T => JSON.parse(JSON.stringify(value)) as T;
 
 /** Datos de ejemplo de contracts/fixtures. Se sustituirán fuente a fuente en la Fase 3. */
 export class MockDashboardData implements DashboardData {
