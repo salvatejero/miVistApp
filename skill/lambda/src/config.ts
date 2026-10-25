@@ -23,10 +23,11 @@ export const config = {
   /** Con un aviso de salida en pantalla, cada minuto: la cuenta atrás tiene que moverse. */
   alertRefreshMinutes: 1,
   /**
-   * Inactividad que se pide al Echo Show antes de cerrar la skill. Es una sugerencia: el dispositivo
-   * puede aplicar un máximo propio. El refresco periódico también cuenta como actividad.
+   * Sin toques ni órdenes de voz durante este tiempo, la skill se cierra sola y sin hablar en el siguiente
+   * refresco (los refrescos no cuentan como uso). También es la inactividad que se pide al Echo Show,
+   * como respaldo si un refresco no llega.
    */
-  idleTimeoutMs: 24 * 60 * 60 * 1000,
+  idleTimeoutMs: 15 * 60 * 1000,
   /** Zona horaria para "actualizado a las hh:mm"; la misma que VISTAPP_TIMEZONE en el VPS. */
   timeZone:
     injected(typeof __VISTAPP_TIMEZONE__ === 'undefined' ? process.env.VISTAPP_TIMEZONE : __VISTAPP_TIMEZONE__) ?? 'Europe/Madrid',

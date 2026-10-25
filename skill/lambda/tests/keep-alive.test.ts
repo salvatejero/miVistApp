@@ -69,6 +69,22 @@ describe('pantalla siempre visible', () => {
     expect(envelope.sessionAttributes?.calendarOffset).toBe(1);
   });
 
+  it('a los 15 min sin uso, el refresco cierra la skill sin hablar', async () => {
+    const envelope = await tap(['refresh', 'inicio'], { lastUseAt: Date.now() - config.idleTimeoutMs });
+    expect(envelope.response.shouldEndSession).toBe(true);
+    expect(envelope.response.outputSpeech).toBeUndefined();
+    expect(envelope.response.directives).toBeUndefined();
+  });
+
+  it('el refresco no cuenta como uso; tocar la pantalla sí', async () => {
+    const lastUseAt = Date.now() - 60_000;
+    const refreshed = await tap(['refresh', 'inicio'], { lastUseAt });
+    expect(directive(refreshed).token).toBe('vistapp-inicio');
+    expect(refreshed.sessionAttributes?.lastUseAt).toBe(lastUseAt);
+    const touched = await tap(['navigate', 'tiempo'], { lastUseAt });
+    expect(touched.sessionAttributes?.lastUseAt).toBeGreaterThan(lastUseAt);
+  });
+
   it('un refresco de pantalla desconocida vuelve a Inicio', async () => {
     expect(directive(await tap(['refresh', 'nada'])).token).toBe('vistapp-inicio');
   });
