@@ -116,7 +116,7 @@ Cada agente respeta el contrato de `contracts/` y deja pruebas con respuestas si
 **Hecho cuando:** los tests pasan en local y la revisión no deja hallazgos graves abiertos.
 
 ### Fase 6 — Despliegue y prueba real (tú + `arquitecto`)
-- Desplegar el servicio de datos como contenedor en la Raspberry Pi compartida, tras su Nginx con Let's Encrypt (`docs/raspberry.md`) y la skill en Alexa-hosted (`docs/despliegue-skill.md`).
+- Desplegar el servicio de datos como contenedor en la Raspberry Pi compartida, tras su Nginx con Let's Encrypt (`docs/servidor-datos.md`) y la skill en Alexa-hosted (`docs/despliegue-skill.md`).
 - Publicar en la etapa de desarrollo de la skill, probar en el Echo Show y recoger ajustes.
 - La skill se queda en modo desarrollo para uso personal. No se publica en la tienda.
 
@@ -176,7 +176,7 @@ Cada agente de §5 debería nombrar en su cabecera las skills que usa. Las skill
 - **Vinculación de cuenta:** el calendario necesita OAuth con Alexa; añade un paso de configuración.
 - **Privacidad:** direcciones de casa y trabajo y tokens como secretos del entorno, nunca en el repo.
 - **Costes:** las APIs de tráfico y rutas pueden tener coste por consulta; limitar la frecuencia de refresco.
-- **Servidor (Raspberry Pi):** HTTPS válido con el Nginx y Let's Encrypt de la Pi compartida, RAM repartida con otras webs, actualizaciones de seguridad, cortes de luz y desgaste de la microSD (ver `docs/raspberry.md`). Su API queda expuesta a internet: solo responde con la clave compartida, y nunca devuelve credenciales.
+- **Servidor (Raspberry Pi):** HTTPS válido con el Nginx y Let's Encrypt de la Pi compartida, RAM repartida con otras webs, actualizaciones de seguridad, cortes de luz y desgaste de la microSD (ver `docs/servidor-datos.md`). Su API queda expuesta a internet: solo responde con la clave compartida, y nunca devuelve credenciales.
 - **Caché de la skill:** si el VPS cae, la skill muestra datos que pueden tener horas; la marca de "actualizado a las hh:mm" es obligatoria para no engañar (sobre todo en el aviso de salida, que no se muestra con datos viejos de tráfico).
 - **Modelos de Echo Show:** el diseño asume 1280×800; otros modelos exigen ajustes.
 
