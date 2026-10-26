@@ -1,0 +1,951 @@
+{
+  "description": "Componentes compartidos de Mi VistApp. Los datos llegan como parámetros con la forma de contracts/.",
+  "layouts": {
+    "MenuLateral": {
+      "description": "Menú lateral. `current` es la pantalla activa. Casa está oculta hasta tener Home Assistant (#2).",
+      "parameters": [
+        {
+          "name": "current",
+          "type": "string"
+        }
+      ],
+      "item": {
+        "type": "Frame",
+        "width": "@menuWidth",
+        "height": "100%",
+        "backgroundColor": "@colorMenu",
+        "borderColor": "@colorMenuBorder",
+        "borderWidth": "1dp",
+        "item": {
+          "type": "Container",
+          "width": "100%",
+          "height": "100%",
+          "paddingTop": "@menuPaddingY",
+          "paddingLeft": "@menuPaddingX",
+          "paddingRight": "@menuPaddingX",
+          "items": [
+            {
+              "type": "BotonMenu",
+              "screen": "inicio",
+              "label": "Inicio",
+              "icon": "iconInicio",
+              "current": "${current}"
+            },
+            {
+              "type": "BotonMenu",
+              "screen": "calendario",
+              "label": "Calendario",
+              "icon": "iconCalendario",
+              "current": "${current}",
+              "spacing": "@menuGap"
+            },
+            {
+              "type": "BotonMenu",
+              "screen": "tiempo",
+              "label": "Tiempo",
+              "icon": "iconTiempo",
+              "current": "${current}",
+              "spacing": "@menuGap"
+            }
+          ]
+        }
+      }
+    },
+    "BotonMenu": {
+      "parameters": [
+        {
+          "name": "screen",
+          "type": "string"
+        },
+        {
+          "name": "label",
+          "type": "string"
+        },
+        {
+          "name": "icon",
+          "type": "string"
+        },
+        {
+          "name": "current",
+          "type": "string"
+        }
+      ],
+      "item": {
+        "type": "TouchWrapper",
+        "role": "button",
+        "accessibilityLabel": "${label}",
+        "onPress": [
+          {
+            "type": "SendEvent",
+            "arguments": [
+              "navigate",
+              "${screen}"
+            ]
+          }
+        ],
+        "item": {
+          "type": "Frame",
+          "height": "@menuButtonHeight",
+          "borderRadius": "@radiusMenuButton",
+          "backgroundColor": "${current == screen ? @colorAccentBackground : 'transparent'}",
+          "item": {
+            "type": "Container",
+            "width": "100%",
+            "height": "100%",
+            "paddingLeft": "@gapSmall",
+            "alignItems": "start",
+            "justifyContent": "center",
+            "items": [
+              {
+                "type": "VectorGraphic",
+                "source": "${icon}",
+                "width": "@menuIcon",
+                "height": "@menuIcon",
+                "scale": "fill",
+                "color": "${current == screen ? @colorAccent : @colorTextSecondary}"
+              },
+              {
+                "type": "Text",
+                "style": "texto",
+                "text": "${label}",
+                "maxLines": 1,
+                "spacing": "@gapSmall",
+                "fontSize": "@textMenu",
+                "fontWeight": "600",
+                "color": "${current == screen ? @colorAccent : @colorTextSecondary}"
+              }
+            ]
+          },
+          "width": "100%"
+        },
+        "width": "100%"
+      }
+    },
+    "MensajeEstado": {
+      "description": "Texto que sustituye a un bloque vacío o con error.",
+      "parameters": [
+        {
+          "name": "text",
+          "type": "string"
+        }
+      ],
+      "item": {
+        "type": "Text",
+        "style": "textoSecundario",
+        "text": "${text}",
+        "fontSize": "@textBody",
+        "maxLines": 3
+      }
+    },
+    "FilaAgenda": {
+      "description": "Evento o recordatorio. Con `stacked`, la hora va encima del título (panel del calendario).",
+      "parameters": [
+        {
+          "name": "entry",
+          "type": "object"
+        },
+        {
+          "name": "stacked",
+          "type": "boolean",
+          "default": false
+        }
+      ],
+      "item": {
+        "type": "Frame",
+        "borderRadius": "@radiusItem",
+        "paddingLeft": "@itemPaddingX",
+        "paddingRight": "@itemPaddingX",
+        "paddingTop": "${stacked ? @itemPaddingYStacked : @itemPaddingY}",
+        "paddingBottom": "${stacked ? @itemPaddingYStacked : @itemPaddingY}",
+        "backgroundColor": "${entry.kind == 'reminder' ? 'transparent' : @colorItem}",
+        "borderWidth": "${entry.departure || entry.kind == 'reminder' ? @borderThin : 0}",
+        "borderColor": "${entry.departure ? @colorAccent : @colorBorder}",
+        "item": {
+          "type": "Container",
+          "items": [
+            {
+              "type": "Container",
+              "when": "${entry.kind == 'event' && !stacked}",
+              "direction": "row",
+              "alignItems": "center",
+              "items": [
+                {
+                  "type": "Text",
+                  "style": "texto",
+                  "text": "${entry.timeLabel}",
+                  "width": "@timeColumn",
+                  "fontSize": "@textSmall",
+                  "fontWeight": "800",
+                  "color": "@colorAccent",
+                  "maxLines": 1
+                },
+                {
+                  "type": "Text",
+                  "style": "texto",
+                  "text": "${entry.title}",
+                  "spacing": "@itemPaddingX",
+                  "grow": 1,
+                  "shrink": 1,
+                  "fontSize": "@textBody",
+                  "maxLines": 1
+                }
+              ]
+            },
+            {
+              "type": "Container",
+              "when": "${entry.kind == 'event' && stacked}",
+              "items": [
+                {
+                  "type": "Text",
+                  "style": "texto",
+                  "text": "${entry.timeLabel}",
+                  "fontSize": "@textSmall",
+                  "fontWeight": "800",
+                  "color": "@colorAccent",
+                  "maxLines": 1
+                },
+                {
+                  "type": "Text",
+                  "style": "texto",
+                  "text": "${entry.title}",
+                  "spacing": "2dp",
+                  "fontSize": "@textBody",
+                  "maxLines": 2
+                }
+              ]
+            },
+            {
+              "type": "Container",
+              "when": "${entry.kind == 'reminder'}",
+              "direction": "row",
+              "alignItems": "center",
+              "items": [
+                {
+                  "type": "Frame",
+                  "width": "@reminderDot",
+                  "height": "@reminderDot",
+                  "borderRadius": "@reminderDot",
+                  "borderWidth": "3dp",
+                  "borderColor": "@colorAccent"
+                },
+                {
+                  "type": "Text",
+                  "style": "texto",
+                  "text": "${entry.title}",
+                  "spacing": "@itemPaddingX",
+                  "grow": 1,
+                  "shrink": 1,
+                  "fontSize": "@textBody",
+                  "maxLines": 1
+                }
+              ]
+            },
+            {
+              "type": "Container",
+              "when": "${entry.departure}",
+              "direction": "row",
+              "alignItems": "center",
+              "spacing": "4dp",
+              "items": [
+                {
+                  "type": "VectorGraphic",
+                  "source": "iconCar",
+                  "width": "@smallIcon",
+                  "height": "@smallIcon",
+                  "scale": "fill",
+                  "color": "@colorAccent",
+                  "strokeWidth": 2
+                },
+                {
+                  "type": "Text",
+                  "style": "texto",
+                  "text": "${entry.departure.placeLabel} · ${entry.departure.travelMinutes} min · Sal ${entry.departure.leaveAt}",
+                  "spacing": "@gapSmall",
+                  "grow": 1,
+                  "shrink": 1,
+                  "fontSize": "@textCaption",
+                  "fontWeight": "600",
+                  "color": "@colorAccent",
+                  "maxLines": 1
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "DiaAgenda": {
+      "description": "Columna de un día: cabecera, línea y lista de eventos.",
+      "parameters": [
+        {
+          "name": "day",
+          "type": "object"
+        },
+        {
+          "name": "highlight",
+          "type": "boolean",
+          "default": false
+        },
+        {
+          "name": "stacked",
+          "type": "boolean",
+          "default": false
+        }
+      ],
+      "item": {
+        "type": "Container",
+        "items": [
+          {
+            "type": "Container",
+            "direction": "row",
+            "alignItems": "baseline",
+            "items": [
+              {
+                "type": "Text",
+                "style": "texto",
+                "text": "${day.title}",
+                "fontSize": "@textDayTitle",
+                "fontWeight": "800",
+                "maxLines": 1
+              },
+              {
+                "type": "Text",
+                "style": "textoSecundario",
+                "text": "${day.dateLabel}",
+                "spacing": "10dp",
+                "fontSize": "@textSmall",
+                "maxLines": 1
+              }
+            ]
+          },
+          {
+            "type": "Frame",
+            "spacing": "@gapSmall",
+            "height": "@borderThin",
+            "backgroundColor": "${highlight ? @colorAccent : @colorBorder}"
+          },
+          {
+            "type": "Text",
+            "style": "textoSecundario",
+            "when": "${day.items.length == 0}",
+            "spacing": "@gapSmall",
+            "text": "Sin eventos",
+            "fontSize": "@textBody"
+          },
+          {
+            "type": "Sequence",
+            "when": "${day.items.length > 0}",
+            "spacing": "@gapSmall",
+            "grow": 1,
+            "shrink": 1,
+            "data": "${day.items}",
+            "items": [
+              {
+                "type": "FilaAgenda",
+                "entry": "${data}",
+                "stacked": "${stacked}",
+                "spacing": "@gapSmall"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "TarjetaAviso": {
+      "description": "Aviso de salida en sus 3 estados: appear (borde fino), soon (fondo ámbar oscuro y cuenta atrás), leave_now (ámbar sólido).",
+      "parameters": [
+        {
+          "name": "alert",
+          "type": "object"
+        }
+      ],
+      "item": {
+        "type": "Frame",
+        "bind": [
+          {
+            "name": "soon",
+            "value": "${alert.state == 'soon'}"
+          },
+          {
+            "name": "leave",
+            "value": "${alert.state == 'leave_now'}"
+          },
+          {
+            "name": "fg",
+            "value": "${alert.state == 'leave_now' ? @colorOnAccent : @colorText}"
+          },
+          {
+            "name": "accentFg",
+            "value": "${alert.state == 'leave_now' ? @colorOnAccent : @colorAccent}"
+          }
+        ],
+        "borderRadius": "@radiusCard",
+        "backgroundColor": "${leave ? @colorAccent : soon ? @colorAccentBackground : @colorItem}",
+        "borderColor": "@colorAccent",
+        "borderWidth": "${leave ? 0 : soon ? @borderThick : @borderThin}",
+        "paddingLeft": "@alertPaddingX",
+        "paddingRight": "@alertPaddingX",
+        "paddingTop": "@alertPaddingY",
+        "paddingBottom": "@alertPaddingY",
+        "item": {
+          "type": "Container",
+          "height": "100%",
+          "justifyContent": "spaceBetween",
+          "items": [
+            {
+              "type": "Container",
+              "direction": "row",
+              "alignItems": "center",
+              "items": [
+                {
+                  "type": "Text",
+                  "style": "texto",
+                  "text": "${alert.eventTimeLabel}",
+                  "fontSize": "@textBody",
+                  "fontWeight": "800",
+                  "color": "${accentFg}",
+                  "maxLines": 1
+                },
+                {
+                  "type": "Text",
+                  "style": "texto",
+                  "text": "${alert.title}",
+                  "spacing": "@itemPaddingX",
+                  "grow": 1,
+                  "shrink": 1,
+                  "fontSize": "@textEventLarge",
+                  "fontWeight": "${leave ? '600' : 'normal'}",
+                  "color": "${fg}",
+                  "maxLines": 1
+                }
+              ]
+            },
+            {
+              "type": "Container",
+              "direction": "row",
+              "alignItems": "center",
+              "items": [
+                {
+                  "type": "VectorGraphic",
+                  "source": "iconCar",
+                  "width": "@pillIcon",
+                  "height": "@pillIcon",
+                  "scale": "fill",
+                  "strokeWidth": 2,
+                  "color": "${leave ? @colorOnAccent : soon ? @colorAccent : @colorTextSecondary}"
+                },
+                {
+                  "type": "Text",
+                  "style": "texto",
+                  "text": "${(soon ? alert.placeLabel + ' · ' + alert.travelMinutes + ' min' + (alert.trafficLabel && !alert.estimatedAt ? ' · ' + alert.trafficLabel : '') : alert.placeLabel + ' · ' + alert.travelMinutes + ' min de trayecto') + (alert.estimatedAt ? ' · estimado (' + alert.estimatedAt + ')' : '')}",
+                  "spacing": "10dp",
+                  "grow": 1,
+                  "shrink": 1,
+                  "fontSize": "@textBody",
+                  "fontWeight": "${leave ? '600' : 'normal'}",
+                  "color": "${leave || soon ? fg : @colorTextSecondary}",
+                  "maxLines": 2
+                }
+              ]
+            },
+            {
+              "type": "Container",
+              "when": "${alert.state == 'appear'}",
+              "items": [
+                {
+                  "type": "Text",
+                  "style": "texto",
+                  "text": "Sal a las ${alert.leaveAt}",
+                  "fontSize": "@textAlertTime",
+                  "fontWeight": "800",
+                  "maxLines": 1
+                },
+                {
+                  "type": "Text",
+                  "style": "textoSecundario",
+                  "text": "Faltan ${alert.minutesToLeave} min para salir",
+                  "spacing": "6dp",
+                  "fontSize": "@textBody",
+                  "maxLines": 1
+                }
+              ]
+            },
+            {
+              "type": "Container",
+              "when": "${soon}",
+              "items": [
+                {
+                  "type": "Text",
+                  "style": "texto",
+                  "text": "${alert.minutesToLeave} min",
+                  "fontSize": "@textCountdown",
+                  "fontWeight": "800",
+                  "color": "@colorAccent",
+                  "maxLines": 1
+                },
+                {
+                  "type": "Text",
+                  "style": "texto",
+                  "text": "para salir · ${alert.leaveAt}",
+                  "spacing": "6dp",
+                  "fontSize": "@textCardTitle",
+                  "maxLines": 1
+                }
+              ]
+            },
+            {
+              "type": "Container",
+              "when": "${leave}",
+              "items": [
+                {
+                  "type": "Text",
+                  "style": "texto",
+                  "text": "¡Sal ya!",
+                  "fontSize": "@textLeaveNow",
+                  "fontWeight": "800",
+                  "color": "@colorOnAccent",
+                  "maxLines": 1
+                },
+                {
+                  "type": "Text",
+                  "style": "texto",
+                  "text": "Llegas a las ${alert.arriveAt}",
+                  "spacing": "6dp",
+                  "fontSize": "@textCardTitle",
+                  "fontWeight": "600",
+                  "color": "@colorOnAccent",
+                  "maxLines": 1
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "TarjetaLluvia": {
+      "description": "Barras de lluvia por horas. Con `inline`, título y resumen en la misma línea (pantalla Tiempo).",
+      "parameters": [
+        {
+          "name": "rain",
+          "type": "object"
+        },
+        {
+          "name": "title",
+          "type": "string"
+        },
+        {
+          "name": "inline",
+          "type": "boolean",
+          "default": false
+        }
+      ],
+      "item": {
+        "type": "Frame",
+        "backgroundColor": "@colorCard",
+        "borderRadius": "@radiusCard",
+        "paddingLeft": "${inline ? @gap : @cardPaddingX}",
+        "paddingRight": "${inline ? @gap : @cardPaddingX}",
+        "paddingTop": "${inline ? @cardPaddingYCompact : @cardPaddingY}",
+        "paddingBottom": "${inline ? @cardPaddingYCompact : @cardPaddingY}",
+        "item": {
+          "type": "Container",
+          "height": "100%",
+          "items": [
+            {
+              "type": "Container",
+              "direction": "${inline ? 'row' : 'column'}",
+              "justifyContent": "${inline ? 'spaceBetween' : 'start'}",
+              "alignItems": "${inline ? 'end' : 'stretch'}",
+              "items": [
+                {
+                  "type": "Text",
+                  "style": "textoSecundario",
+                  "text": "${title}",
+                  "fontSize": "@textCardTitle",
+                  "fontWeight": "600",
+                  "maxLines": 1
+                },
+                {
+                  "type": "Text",
+                  "style": "texto",
+                  "when": "${rain.status == 'ok'}",
+                  "text": "${rain.summary}",
+                  "spacing": "4dp",
+                  "shrink": 1,
+                  "fontSize": "@textBody",
+                  "maxLines": 2
+                }
+              ]
+            },
+            {
+              "type": "Text",
+              "style": "textoSecundario",
+              "when": "${rain.notice}",
+              "text": "${rain.notice}",
+              "spacing": "4dp",
+              "fontSize": "@textCaption",
+              "maxLines": 1
+            },
+            {
+              "type": "MensajeEstado",
+              "when": "${rain.status == 'empty' || rain.status == 'error'}",
+              "text": "${rain.message}",
+              "spacing": "@gapMedium"
+            },
+            {
+              "type": "Container",
+              "when": "${rain.status == 'ok'}",
+              "direction": "row",
+              "grow": 1,
+              "spacing": "@gapMedium",
+              "data": "${rain.bars}",
+              "items": [
+                {
+                  "type": "Container",
+                  "width": "${100 / length}%",
+                  "paddingLeft": "4dp",
+                  "paddingRight": "4dp",
+                  "items": [
+                    {
+                      "type": "Container",
+                      "grow": 1,
+                      "justifyContent": "end",
+                      "items": [
+                        {
+                          "type": "Frame",
+                          "height": "${Math.max(2, data.intensity * 100)}%",
+                          "backgroundColor": "@colorRain",
+                          "borderRadius": "@rainBarRadius"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Text",
+                      "style": "textoSecundario",
+                      "text": "${data.label}",
+                      "spacing": "@gapSmall",
+                      "textAlign": "center",
+                      "fontSize": "@textCaption",
+                      "maxLines": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "Hueso",
+              "when": "${rain.status == 'loading'}",
+              "width": "70%",
+              "height": "@textBody",
+              "spacing": "@gapSmall"
+            },
+            {
+              "type": "Container",
+              "when": "${rain.status == 'loading'}",
+              "direction": "row",
+              "grow": 1,
+              "spacing": "@gapMedium",
+              "alignItems": "end",
+              "data": [
+                0.35,
+                0.55,
+                0.8,
+                0.6,
+                0.45,
+                0.7,
+                0.4,
+                0.25
+              ],
+              "items": [
+                {
+                  "type": "Container",
+                  "width": "12.5%",
+                  "height": "100%",
+                  "paddingLeft": "4dp",
+                  "paddingRight": "4dp",
+                  "justifyContent": "end",
+                  "items": [
+                    {
+                      "type": "Hueso",
+                      "height": "${data * 100}%",
+                      "radius": "@rainBarRadius"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "BotonCasa": {
+      "description": "Dispositivo que se enciende o apaga al tocarlo. `large` para la pantalla Casa; `origin` es la pantalla que se vuelve a pintar.",
+      "parameters": [
+        {
+          "name": "device",
+          "type": "object"
+        },
+        {
+          "name": "origin",
+          "type": "string"
+        },
+        {
+          "name": "large",
+          "type": "boolean",
+          "default": false
+        }
+      ],
+      "item": {
+        "type": "TouchWrapper",
+        "role": "button",
+        "accessibilityLabel": "${device.name}: ${device.stateLabel}",
+        "onPress": [
+          {
+            "type": "SendEvent",
+            "arguments": [
+              "house.toggle",
+              "${device.id}",
+              "${origin}"
+            ]
+          }
+        ],
+        "item": {
+          "type": "Frame",
+          "bind": [
+            {
+              "name": "fg",
+              "value": "${device.on ? @colorOnAccent : @colorText}"
+            }
+          ],
+          "height": "${large ? '100%' : @houseTileHeight}",
+          "borderRadius": "@radiusCard",
+          "borderWidth": "@borderThin",
+          "borderColor": "${device.on ? @colorAccent : @colorBorder}",
+          "backgroundColor": "${device.on ? @colorAccent : @colorCard}",
+          "paddingLeft": "${large ? @houseTilePadding : @houseTilePaddingSmall}",
+          "paddingRight": "${large ? @houseTilePadding : @houseTilePaddingSmall}",
+          "paddingTop": "${large ? @houseTilePadding : 0}",
+          "paddingBottom": "${large ? @houseTilePadding : 0}",
+          "item": {
+            "type": "Container",
+            "height": "100%",
+            "direction": "${large ? 'column' : 'row'}",
+            "alignItems": "${large ? 'start' : 'center'}",
+            "justifyContent": "${large ? 'spaceBetween' : 'start'}",
+            "items": [
+              {
+                "type": "VectorGraphic",
+                "source": "${device.kind == 'light' ? 'iconLight' : device.kind == 'plug' ? 'iconPlug' : 'iconBlind'}",
+                "width": "${large ? @houseIconLarge : @houseIcon}",
+                "height": "${large ? @houseIconLarge : @houseIcon}",
+                "scale": "fill",
+                "color": "${fg}"
+              },
+              {
+                "type": "Container",
+                "spacing": "${large ? 0 : @gapMedium}",
+                "shrink": 1,
+                "items": [
+                  {
+                    "type": "Text",
+                    "style": "texto",
+                    "text": "${device.name}",
+                    "fontSize": "${large ? @textHouseLarge : @textHouseName}",
+                    "fontWeight": "800",
+                    "color": "${fg}",
+                    "maxLines": 2
+                  },
+                  {
+                    "type": "Text",
+                    "style": "texto",
+                    "text": "${device.stateLabel}",
+                    "spacing": "2dp",
+                    "fontSize": "@textSmall",
+                    "fontWeight": "600",
+                    "color": "${fg}",
+                    "opacity": 0.8,
+                    "maxLines": 1
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      }
+    },
+    "BotonPildora": {
+      "description": "Botón de texto redondeado (Hoy, Apagar todo).",
+      "parameters": [
+        {
+          "name": "label",
+          "type": "string"
+        },
+        {
+          "name": "accent",
+          "type": "boolean",
+          "default": false
+        },
+        {
+          "name": "action",
+          "type": "string"
+        },
+        {
+          "name": "value",
+          "type": "any"
+        }
+      ],
+      "item": {
+        "type": "TouchWrapper",
+        "role": "button",
+        "accessibilityLabel": "${label}",
+        "onPress": [
+          {
+            "type": "SendEvent",
+            "arguments": [
+              "${action}",
+              "${value}"
+            ]
+          }
+        ],
+        "item": {
+          "type": "Frame",
+          "height": "@navButton",
+          "borderRadius": "@radiusPill",
+          "borderWidth": "@borderThin",
+          "borderColor": "${accent ? @colorAccent : @colorBorder}",
+          "backgroundColor": "${accent ? 'transparent' : @colorCard}",
+          "paddingLeft": "@pillPaddingX",
+          "paddingRight": "@pillPaddingX",
+          "item": {
+            "type": "Text",
+            "style": "texto",
+            "text": "${label}",
+            "height": "100%",
+            "textAlignVertical": "center",
+            "fontSize": "@textBody",
+            "fontWeight": "800",
+            "color": "${accent ? @colorAccent : @colorText}"
+          }
+        }
+      }
+    },
+    "BotonRedondo": {
+      "description": "Botón circular con icono (mes anterior y siguiente).",
+      "parameters": [
+        {
+          "name": "label",
+          "type": "string"
+        },
+        {
+          "name": "icon",
+          "type": "string"
+        },
+        {
+          "name": "action",
+          "type": "string"
+        },
+        {
+          "name": "value",
+          "type": "any"
+        }
+      ],
+      "item": {
+        "type": "TouchWrapper",
+        "role": "button",
+        "accessibilityLabel": "${label}",
+        "onPress": [
+          {
+            "type": "SendEvent",
+            "arguments": [
+              "${action}",
+              "${value}"
+            ]
+          }
+        ],
+        "item": {
+          "type": "Frame",
+          "width": "@navButton",
+          "height": "@navButton",
+          "borderRadius": "@navButton",
+          "borderWidth": "@borderThin",
+          "borderColor": "@colorBorder",
+          "backgroundColor": "@colorCard",
+          "item": {
+            "type": "Container",
+            "height": "100%",
+            "alignItems": "center",
+            "justifyContent": "center",
+            "items": [
+              {
+                "type": "VectorGraphic",
+                "source": "${icon}",
+                "width": "@navIcon",
+                "height": "@navIcon",
+                "scale": "fill",
+                "strokeWidth": 2,
+                "color": "@colorText"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "Hueso": {
+      "description": "Bloque de esqueleto: ocupa el sitio de un dato mientras carga.",
+      "parameters": [
+        {
+          "name": "radius",
+          "type": "dimension",
+          "default": "@radiusItem"
+        }
+      ],
+      "item": {
+        "type": "Frame",
+        "backgroundColor": "@colorSkeleton",
+        "borderRadius": "${radius}"
+      }
+    },
+    "FilasEsqueleto": {
+      "description": "Cuatro filas de agenda en esqueleto.",
+      "item": {
+        "type": "Container",
+        "data": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "items": [
+          {
+            "type": "Hueso",
+            "height": "44dp",
+            "spacing": "@gapSmall"
+          }
+        ]
+      }
+    },
+    "DiaEsqueleto": {
+      "description": "Columna de un día de la agenda en esqueleto.",
+      "item": {
+        "type": "Container",
+        "items": [
+          {
+            "type": "Hueso",
+            "width": "45%",
+            "height": "@textDayTitle"
+          },
+          {
+            "type": "Frame",
+            "spacing": "@gapSmall",
+            "height": "@borderThin",
+            "backgroundColor": "@colorBorder"
+          },
+          {
+            "type": "FilasEsqueleto",
+            "spacing": "@gapSmall"
+          }
+        ]
+      }
+    }
+  }
+}

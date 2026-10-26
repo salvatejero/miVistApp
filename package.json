@@ -1,0 +1,40 @@
+{
+  "name": "mivistapp",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Skill de Alexa con APL: dashboard siempre visible para Echo Show",
+  "license": "UNLICENSED",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "check": "npm run typecheck && npm run lint && npm test && npm run build",
+    "preview": "node scripts/preview.mjs",
+    "deploy:hosted": "node scripts/deploy-hosted.mjs"
+  },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "3.1139.0",
+    "@aws-sdk/lib-dynamodb": "3.1139.0",
+    "ask-sdk-core": "^2.14.0",
+    "ask-sdk-model": "^1.86.0",
+    "ical.js": "2.2.1",
+    "tsdav": "2.3.5"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^22.20.5",
+    "ajv": "^8.20.0",
+    "ajv-formats": "^3.0.1",
+    "apl-suggester": "^2024.2.0",
+    "esbuild": "^0.28.2",
+    "eslint": "^10.12.0",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.71.2",
+    "vitest": "^5.0.5"
+  }
+}

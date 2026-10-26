@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mivistapp.local/contracts/weather.schema.json",
+  "title": "Pantalla Tiempo (datasource `weather`)",
+  "type": "object",
+  "allOf": [
+    {
+      "$ref": "common.schema.json#/$defs/section"
+    }
+  ],
+  "properties": {
+    "status": true,
+    "message": true,
+    "notice": true,
+    "city": {
+      "type": "string"
+    },
+    "days": {
+      "type": "array",
+      "minItems": 7,
+      "maxItems": 7,
+      "items": {
+        "$ref": "common.schema.json#/$defs/weatherDay"
+      }
+    },
+    "hourlyRain": {
+      "$ref": "common.schema.json#/$defs/rainForecast"
+    }
+  },
+  "if": {
+    "type": "object",
+    "properties": {
+      "status": {
+        "const": "ok"
+      }
+    }
+  },
+  "then": {
+    "required": [
+      "city",
+      "days",
+      "hourlyRain"
+    ]
+  },
+  "unevaluatedProperties": false
+}

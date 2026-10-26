@@ -1,0 +1,246 @@
+{
+  "type": "APL",
+  "version": "2023.3",
+  "theme": "dark",
+  "description": "Tiempo: semana en 7 columnas y lluvia de hoy por horas. Datasource `weather` (contracts/schemas/weather.schema.json).",
+  "mainTemplate": {
+    "parameters": [
+      "weather"
+    ],
+    "items": [
+      {
+        "type": "Frame",
+        "width": "100vw",
+        "height": "100vh",
+        "backgroundColor": "@colorBackground",
+        "item": {
+          "type": "Container",
+          "direction": "row",
+          "width": "100%",
+          "height": "100%",
+          "items": [
+            {
+              "type": "MenuLateral",
+              "current": "tiempo"
+            },
+            {
+              "type": "Container",
+              "id": "contenido",
+              "width": 0,
+              "grow": 1,
+              "shrink": 1,
+              "height": "100%",
+              "paddingLeft": "@screenPaddingX",
+              "paddingRight": "@screenPaddingX",
+              "paddingTop": "@screenPaddingY",
+              "paddingBottom": "@screenPaddingY",
+              "items": [
+                {
+                  "type": "Container",
+                  "direction": "row",
+                  "alignItems": "baseline",
+                  "justifyContent": "spaceBetween",
+                  "items": [
+                    {
+                      "type": "Text",
+                      "style": "texto",
+                      "text": "Tiempo de la semana",
+                      "fontSize": "@textScreenTitle",
+                      "fontWeight": "800",
+                      "maxLines": 1,
+                      "shrink": 1
+                    },
+                    {
+                      "type": "Text",
+                      "style": "textoSecundario",
+                      "when": "${weather.status == 'ok'}",
+                      "text": "${weather.notice ?? weather.city}",
+                      "fontSize": "@textCity",
+                      "maxLines": 1
+                    }
+                  ]
+                },
+                {
+                  "type": "Frame",
+                  "backgroundColor": "@colorCard",
+                  "borderRadius": "@radiusCard",
+                  "paddingLeft": "@cardPaddingX",
+                  "paddingRight": "@cardPaddingX",
+                  "paddingTop": "@cardPaddingY",
+                  "paddingBottom": "@cardPaddingY",
+                  "when": "${weather.status == 'empty' || weather.status == 'error'}",
+                  "spacing": "20dp",
+                  "grow": 1,
+                  "item": {
+                    "type": "MensajeEstado",
+                    "text": "${weather.message}"
+                  }
+                },
+                {
+                  "type": "Container",
+                  "when": "${weather.status == 'ok'}",
+                  "direction": "row",
+                  "grow": 1,
+                  "shrink": 1,
+                  "spacing": "20dp",
+                  "data": "${weather.days}",
+                  "items": [
+                    {
+                      "type": "Frame",
+                      "width": 0,
+                      "grow": 1,
+                      "spacing": "@itemPaddingX",
+                      "borderRadius": "@radiusCard",
+                      "backgroundColor": "@colorCard",
+                      "borderWidth": "@borderThin",
+                      "borderColor": "${data.isToday ? @colorAccent : @colorCard}",
+                      "paddingLeft": "8dp",
+                      "paddingRight": "8dp",
+                      "paddingTop": "18dp",
+                      "paddingBottom": "18dp",
+                      "item": {
+                        "type": "Container",
+                        "height": "100%",
+                        "alignItems": "center",
+                        "justifyContent": "spaceBetween",
+                        "items": [
+                          {
+                            "type": "Container",
+                            "alignItems": "center",
+                            "items": [
+                              {
+                                "type": "Text",
+                                "style": "texto",
+                                "text": "${data.name}",
+                                "fontSize": "@textCity",
+                                "fontWeight": "800",
+                                "maxLines": 1,
+                                "color": "${data.isToday ? @colorAccent : @colorText}"
+                              },
+                              {
+                                "type": "Text",
+                                "style": "textoSecundario",
+                                "text": "${data.dateLabel}",
+                                "spacing": "2dp",
+                                "fontSize": "@textCaption",
+                                "maxLines": 1
+                              }
+                            ]
+                          },
+                          {
+                            "type": "VectorGraphic",
+                            "source": "${'weather-' + data.icon}",
+                            "width": "@weatherIcon",
+                            "height": "@weatherIcon",
+                            "scale": "fill",
+                            "strokeWidth": 1.6,
+                            "color": "${data.icon == 'rain' || data.icon == 'storm' ? @colorRain : data.icon == 'sun' ? @colorAccent : @colorIconNeutral}"
+                          },
+                          {
+                            "type": "Container",
+                            "alignItems": "center",
+                            "items": [
+                              {
+                                "type": "Text",
+                                "style": "texto",
+                                "text": "${Math.round(data.maxTemp) + '°'}",
+                                "fontSize": "@textWeekTemp",
+                                "fontWeight": "800",
+                                "maxLines": 1
+                              },
+                              {
+                                "type": "Text",
+                                "style": "textoSecundario",
+                                "text": "${Math.round(data.minTemp) + '°'}",
+                                "spacing": "4dp",
+                                "fontSize": "@textBody",
+                                "maxLines": 1
+                              }
+                            ]
+                          },
+                          {
+                            "type": "Container",
+                            "alignSelf": "stretch",
+                            "paddingLeft": "8dp",
+                            "paddingRight": "8dp",
+                            "items": [
+                              {
+                                "type": "Frame",
+                                "height": "@rainTrack",
+                                "borderRadius": "@rainTrack",
+                                "backgroundColor": "@colorBorder",
+                                "item": {
+                                  "type": "Frame",
+                                  "width": "${data.rainProbability}%",
+                                  "height": "100%",
+                                  "borderRadius": "@rainTrack",
+                                  "backgroundColor": "@colorRain"
+                                }
+                              },
+                              {
+                                "type": "Text",
+                                "style": "texto",
+                                "text": "${data.rainProbability}% lluvia",
+                                "spacing": "6dp",
+                                "textAlign": "center",
+                                "fontSize": "@textCaption",
+                                "color": "@colorRainText",
+                                "maxLines": 1
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "TarjetaLluvia",
+                  "when": "${weather.status == 'ok'}",
+                  "rain": "${weather.hourlyRain}",
+                  "title": "Lluvia hoy por horas",
+                  "inline": true,
+                  "height": "@hourlyCardHeight",
+                  "spacing": "20dp"
+                },
+                {
+                  "type": "Container",
+                  "when": "${weather.status == 'loading'}",
+                  "direction": "row",
+                  "grow": 1,
+                  "shrink": 1,
+                  "spacing": "20dp",
+                  "data": [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6
+                  ],
+                  "items": [
+                    {
+                      "type": "Hueso",
+                      "width": 0,
+                      "grow": 1,
+                      "radius": "@radiusCard",
+                      "spacing": "@itemPaddingX"
+                    }
+                  ]
+                },
+                {
+                  "type": "Hueso",
+                  "when": "${weather.status == 'loading'}",
+                  "height": "@hourlyCardHeight",
+                  "radius": "@radiusCard",
+                  "spacing": "20dp"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

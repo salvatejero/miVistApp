@@ -1,0 +1,350 @@
+{
+  "type": "APL",
+  "version": "2023.3",
+  "theme": "dark",
+  "description": "Calendario: mes en rejilla y detalle del día. Datasource `calendar` (contracts/schemas/calendar.schema.json). Los botones piden el mes anterior (-1), el actual (0) o el siguiente (1).",
+  "mainTemplate": {
+    "parameters": [
+      "calendar"
+    ],
+    "items": [
+      {
+        "type": "Frame",
+        "width": "100vw",
+        "height": "100vh",
+        "backgroundColor": "@colorBackground",
+        "item": {
+          "type": "Container",
+          "direction": "row",
+          "width": "100%",
+          "height": "100%",
+          "items": [
+            {
+              "type": "MenuLateral",
+              "current": "calendario"
+            },
+            {
+              "type": "Container",
+              "id": "contenido",
+              "width": 0,
+              "grow": 1,
+              "shrink": 1,
+              "height": "100%",
+              "paddingLeft": "@screenPaddingX",
+              "paddingRight": "@screenPaddingX",
+              "paddingTop": "@screenPaddingY",
+              "paddingBottom": "@screenPaddingY",
+              "items": [
+                {
+                  "type": "Container",
+                  "direction": "row",
+                  "alignItems": "center",
+                  "justifyContent": "spaceBetween",
+                  "items": [
+                    {
+                      "type": "Text",
+                      "style": "texto",
+                      "text": "${calendar.monthLabel ?? 'Calendario'}",
+                      "fontSize": "@textScreenTitle",
+                      "fontWeight": "800",
+                      "maxLines": 1,
+                      "shrink": 1
+                    },
+                    {
+                      "type": "Container",
+                      "direction": "row",
+                      "alignItems": "center",
+                      "items": [
+                        {
+                          "type": "BotonRedondo",
+                          "label": "Mes anterior",
+                          "icon": "iconChevronLeft",
+                          "action": "calendar.month",
+                          "value": -1
+                        },
+                        {
+                          "type": "BotonPildora",
+                          "label": "Hoy",
+                          "accent": true,
+                          "spacing": "@itemPaddingX",
+                          "action": "calendar.month",
+                          "value": 0
+                        },
+                        {
+                          "type": "BotonRedondo",
+                          "label": "Mes siguiente",
+                          "icon": "iconChevronRight",
+                          "spacing": "@itemPaddingX",
+                          "action": "calendar.month",
+                          "value": 1
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "Text",
+                  "style": "textoSecundario",
+                  "when": "${calendar.notice}",
+                  "text": "${calendar.notice}",
+                  "spacing": "@gapSmall",
+                  "fontSize": "@textCaption",
+                  "maxLines": 1
+                },
+                {
+                  "type": "Frame",
+                  "backgroundColor": "@colorCard",
+                  "borderRadius": "@radiusCard",
+                  "paddingLeft": "@cardPaddingX",
+                  "paddingRight": "@cardPaddingX",
+                  "paddingTop": "@cardPaddingY",
+                  "paddingBottom": "@cardPaddingY",
+                  "when": "${calendar.status == 'empty' || calendar.status == 'error'}",
+                  "spacing": "@gap",
+                  "grow": 1,
+                  "item": {
+                    "type": "MensajeEstado",
+                    "text": "${calendar.message}"
+                  }
+                },
+                {
+                  "type": "Container",
+                  "when": "${calendar.status == 'ok'}",
+                  "direction": "row",
+                  "grow": 1,
+                  "shrink": 1,
+                  "spacing": "20dp",
+                  "items": [
+                    {
+                      "type": "Frame",
+                      "backgroundColor": "@colorCard",
+                      "borderRadius": "@radiusCard",
+                      "paddingLeft": "20dp",
+                      "paddingRight": "20dp",
+                      "paddingTop": "18dp",
+                      "paddingBottom": "18dp",
+                      "grow": 1,
+                      "shrink": 1,
+                      "width": 0,
+                      "item": {
+                        "type": "Container",
+                        "height": "100%",
+                        "items": [
+                          {
+                            "type": "Container",
+                            "direction": "row",
+                            "data": "${calendar.weekdayLabels}",
+                            "items": [
+                              {
+                                "type": "Text",
+                                "style": "textoSecundario",
+                                "text": "${data}",
+                                "width": 0,
+                                "grow": 1,
+                                "textAlign": "center",
+                                "fontSize": "@textCaption",
+                                "fontWeight": "600",
+                                "maxLines": 1
+                              }
+                            ]
+                          },
+                          {
+                            "type": "Container",
+                            "direction": "row",
+                            "wrap": "wrap",
+                            "grow": 1,
+                            "shrink": 1,
+                            "spacing": "5dp",
+                            "data": "${calendar.cells}",
+                            "items": [
+                              {
+                                "type": "Container",
+                                "width": "14.2857%",
+                                "height": "${100 / Math.ceil(length / 7)}%",
+                                "paddingLeft": "3dp",
+                                "paddingRight": "3dp",
+                                "paddingTop": "3dp",
+                                "paddingBottom": "3dp",
+                                "items": [
+                                  {
+                                    "type": "TouchWrapper",
+                                    "grow": 1,
+                                    "role": "button",
+                                    "accessibilityLabel": "Día ${data.day}",
+                                    "disabled": "${!data.inMonth}",
+                                    "onPress": [
+                                      {
+                                        "type": "SendEvent",
+                                        "arguments": [
+                                          "calendar.day",
+                                          "${data.day}"
+                                        ]
+                                      }
+                                    ],
+                                    "item": {
+                                      "type": "Frame",
+                                      "borderRadius": "@radiusItem",
+                                      "paddingLeft": "10dp",
+                                      "paddingRight": "10dp",
+                                      "paddingTop": "8dp",
+                                      "paddingBottom": "8dp",
+                                      "backgroundColor": "${data.isToday ? @colorAccent : data.inMonth ? @colorItem : @colorOtherMonth}",
+                                      "item": {
+                                        "type": "Container",
+                                        "height": "100%",
+                                        "justifyContent": "spaceBetween",
+                                        "items": [
+                                          {
+                                            "type": "Text",
+                                            "style": "texto",
+                                            "text": "${data.day}",
+                                            "fontSize": "@textCalendarDay",
+                                            "fontWeight": "800",
+                                            "maxLines": 1,
+                                            "color": "${data.isToday ? @colorOnAccent : data.inMonth ? @colorText : @colorTextMuted}"
+                                          },
+                                          {
+                                            "type": "Frame",
+                                            "width": "@eventDot",
+                                            "height": "@eventDot",
+                                            "borderRadius": "@eventDot",
+                                            "backgroundColor": "${data.hasEvents ? (data.isToday ? @colorOnAccent : @colorAccent) : 'transparent'}"
+                                          }
+                                        ],
+                                        "width": "100%"
+                                      },
+                                      "width": "100%",
+                                      "height": "100%",
+                                      "borderColor": "@colorAccent",
+                                      "borderWidth": "${data.isSelected && !data.isToday ? @borderThin : 0}"
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "type": "Frame",
+                      "backgroundColor": "@colorCard",
+                      "borderRadius": "@radiusCard",
+                      "paddingLeft": "22dp",
+                      "paddingRight": "22dp",
+                      "paddingTop": "22dp",
+                      "paddingBottom": "22dp",
+                      "width": "@dayPanelWidth",
+                      "item": {
+                        "type": "DiaAgenda",
+                        "day": "${calendar.selectedDay}",
+                        "highlight": true,
+                        "stacked": true,
+                        "height": "100%"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "Container",
+                  "when": "${calendar.status == 'loading'}",
+                  "direction": "row",
+                  "grow": 1,
+                  "shrink": 1,
+                  "spacing": "20dp",
+                  "items": [
+                    {
+                      "type": "Frame",
+                      "grow": 1,
+                      "shrink": 1,
+                      "width": 0,
+                      "backgroundColor": "@colorCard",
+                      "borderRadius": "@radiusCard",
+                      "paddingLeft": "20dp",
+                      "paddingRight": "20dp",
+                      "paddingTop": "18dp",
+                      "paddingBottom": "18dp",
+                      "item": {
+                        "type": "Container",
+                        "height": "100%",
+                        "direction": "row",
+                        "wrap": "wrap",
+                        "data": [
+                          0,
+                          1,
+                          2,
+                          3,
+                          4,
+                          5,
+                          6,
+                          7,
+                          8,
+                          9,
+                          10,
+                          11,
+                          12,
+                          13,
+                          14,
+                          15,
+                          16,
+                          17,
+                          18,
+                          19,
+                          20,
+                          21,
+                          22,
+                          23,
+                          24,
+                          25,
+                          26,
+                          27,
+                          28,
+                          29,
+                          30,
+                          31,
+                          32,
+                          33,
+                          34
+                        ],
+                        "items": [
+                          {
+                            "type": "Container",
+                            "width": "14.2857%",
+                            "height": "20%",
+                            "paddingLeft": "3dp",
+                            "paddingRight": "3dp",
+                            "paddingTop": "3dp",
+                            "paddingBottom": "3dp",
+                            "items": [
+                              {
+                                "type": "Hueso",
+                                "grow": 1
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "type": "Frame",
+                      "width": "@dayPanelWidth",
+                      "backgroundColor": "@colorCard",
+                      "borderRadius": "@radiusCard",
+                      "paddingLeft": "22dp",
+                      "paddingRight": "22dp",
+                      "paddingTop": "22dp",
+                      "paddingBottom": "22dp",
+                      "item": {
+                        "type": "DiaEsqueleto"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

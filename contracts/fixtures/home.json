@@ -1,0 +1,119 @@
+{
+  "generatedAt": "2026-10-15T08:30:00+02:00",
+  "header": { "dateLabel": "Jueves, 15 de octubre" },
+  "weather": {
+    "status": "ok",
+    "city": "Ciudad de ejemplo",
+    "temperature": 19,
+    "conditionLabel": "Nublado",
+    "icon": "cloud",
+    "rainAlertLabel": "Aviso de lluvia · 11:00",
+    "forecast": [
+      {
+        "name": "Hoy",
+        "dateLabel": "Jue 15",
+        "isToday": true,
+        "icon": "cloud",
+        "maxTemp": 21,
+        "minTemp": 13,
+        "rainProbability": 30
+      },
+      {
+        "name": "Vie",
+        "dateLabel": "16",
+        "isToday": false,
+        "icon": "rain",
+        "maxTemp": 18,
+        "minTemp": 12,
+        "rainProbability": 80
+      },
+      {
+        "name": "Sáb",
+        "dateLabel": "17",
+        "isToday": false,
+        "icon": "rain",
+        "maxTemp": 17,
+        "minTemp": 11,
+        "rainProbability": 60
+      },
+      {
+        "name": "Dom",
+        "dateLabel": "18",
+        "isToday": false,
+        "icon": "partly-cloudy",
+        "maxTemp": 20,
+        "minTemp": 12,
+        "rainProbability": 25
+      },
+      {
+        "name": "Lun",
+        "dateLabel": "19",
+        "isToday": false,
+        "icon": "sun",
+        "maxTemp": 23,
+        "minTemp": 13,
+        "rainProbability": 5
+      }
+    ]
+  },
+  "rainForecast": {
+    "status": "ok",
+    "summary": "Lluvia desde las 10:00 durante unas 4 horas",
+    "bars": [
+      { "label": "Ahora", "intensity": 0.18 },
+      { "label": "+1h", "intensity": 0.3 },
+      { "label": "+2h", "intensity": 0.62 },
+      { "label": "+3h", "intensity": 0.9 },
+      { "label": "+4h", "intensity": 0.7 },
+      { "label": "+5h", "intensity": 0.4 },
+      { "label": "+6h", "intensity": 0.22 },
+      { "label": "+7h", "intensity": 0.1 }
+    ]
+  },
+  "commute": {
+    "status": "ok",
+    "routeLabel": "Ruta de ejemplo",
+    "trafficLabel": "Tráfico denso",
+    "durationMinutes": 28,
+    "leaveAt": "08:52"
+  },
+  "agenda": {
+    "status": "ok",
+    "today": {
+      "title": "Hoy",
+      "dateLabel": "Jue 15 oct",
+      "items": [
+        {
+          "id": "ev-1",
+          "kind": "event",
+          "title": "Revisión médica",
+          "timeLabel": "10:00",
+          "departure": { "placeLabel": "Centro de salud", "travelMinutes": 18, "leaveAt": "09:32" }
+        },
+        { "id": "ev-2", "kind": "event", "title": "Reunión de equipo", "timeLabel": "12:30" },
+        { "id": "ev-3", "kind": "event", "title": "Clase de inglés", "timeLabel": "18:00" },
+        { "id": "rem-1", "kind": "reminder", "title": "Comprar pan" }
+      ]
+    },
+    "tomorrow": {
+      "title": "Mañana",
+      "dateLabel": "Vie 16 oct",
+      "items": [
+        { "id": "ev-4", "kind": "event", "title": "Entrega del informe", "timeLabel": "09:00" },
+        { "id": "ev-5", "kind": "event", "title": "Comida familiar", "timeLabel": "14:00" },
+        { "id": "ev-6", "kind": "event", "title": "Cine", "timeLabel": "21:00" },
+        { "id": "rem-2", "kind": "reminder", "title": "Regar las plantas" }
+      ]
+    }
+  },
+  "house": {
+    "status": "ok",
+    "devices": [
+      { "id": "salon", "name": "Luz salón", "kind": "light", "on": true, "stateLabel": "Encendido" },
+      { "id": "cocina", "name": "Luz cocina", "kind": "light", "on": false, "stateLabel": "Apagado" },
+      { "id": "escritorio", "name": "Enchufe escritorio", "kind": "plug", "on": true, "stateLabel": "Encendido" },
+      { "id": "persiana-salon", "name": "Persiana", "kind": "blind", "on": false, "stateLabel": "Cerrada" }
+    ]
+  },
+  "departureAlert": null
+}

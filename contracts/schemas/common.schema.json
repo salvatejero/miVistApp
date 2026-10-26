@@ -1,0 +1,333 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mivistapp.local/contracts/common.schema.json",
+  "title": "Tipos comunes del contrato de Mi VistApp",
+  "$defs": {
+    "time": {
+      "description": "Hora local en formato 24 h, HH:mm.",
+      "type": "string",
+      "pattern": "^([01][0-9]|2[0-3]):[0-5][0-9]$"
+    },
+    "section": {
+      "description": "Estado de un bloque de pantalla. `loading`: aún sin datos, la UI pinta su esqueleto. Si la fuente falla (`error`) o no hay nada (`empty`), la pantalla muestra `message` en lugar de quedarse vacía.",
+      "type": "object",
+      "required": [
+        "status"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "ok",
+            "loading",
+            "empty",
+            "error"
+          ]
+        },
+        "message": {
+          "type": "string",
+          "minLength": 1
+        },
+        "notice": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Aviso de datos que no son de ahora, p. ej. «Sin conexión · actualizado a las 08:30»."
+        }
+      },
+      "if": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "enum": [
+              "empty",
+              "error"
+            ]
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "message"
+        ]
+      }
+    },
+    "weatherIcon": {
+      "enum": [
+        "sun",
+        "partly-cloudy",
+        "cloud",
+        "rain",
+        "storm",
+        "snow",
+        "fog"
+      ]
+    },
+    "rainBar": {
+      "type": "object",
+      "required": [
+        "label",
+        "intensity"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Ahora, +1h, +2h…"
+        },
+        "intensity": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Altura relativa de la barra (0–1)."
+        }
+      }
+    },
+    "rainForecast": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/$defs/section"
+        }
+      ],
+      "properties": {
+        "status": true,
+        "message": true,
+        "notice": true,
+        "summary": {
+          "type": "string",
+          "description": "Resumen: cuándo empieza y cuánto dura."
+        },
+        "bars": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/rainBar"
+          },
+          "maxItems": 24
+        }
+      },
+      "if": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "const": "ok"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "summary",
+          "bars"
+        ]
+      },
+      "unevaluatedProperties": false
+    },
+    "departure": {
+      "description": "Datos de salida de un evento con ubicación.",
+      "type": "object",
+      "required": [
+        "placeLabel",
+        "travelMinutes",
+        "leaveAt"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "placeLabel": {
+          "type": "string"
+        },
+        "travelMinutes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "leaveAt": {
+          "$ref": "#/$defs/time"
+        }
+      }
+    },
+    "agendaItem": {
+      "type": "object",
+      "required": [
+        "id",
+        "kind",
+        "title"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "event",
+            "reminder"
+          ]
+        },
+        "title": {
+          "type": "string"
+        },
+        "timeLabel": {
+          "type": "string",
+          "description": "Hora (09:30) o «Todo el día». Ausente en recordatorios sin hora."
+        },
+        "departure": {
+          "$ref": "#/$defs/departure",
+          "description": "Solo en eventos con ubicación; la UI los resalta."
+        }
+      }
+    },
+    "agendaDay": {
+      "type": "object",
+      "required": [
+        "title",
+        "dateLabel",
+        "items"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Hoy, Mañana…"
+        },
+        "dateLabel": {
+          "type": "string",
+          "description": "Jue 15 oct"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/agendaItem"
+          }
+        }
+      }
+    },
+    "departureAlert": {
+      "description": "Tarjeta de aviso de salida. Hora de salir = inicio − trayecto con tráfico − colchón.",
+      "type": "object",
+      "required": [
+        "eventId",
+        "state",
+        "eventTimeLabel",
+        "title",
+        "placeLabel",
+        "travelMinutes",
+        "leaveAt",
+        "minutesToLeave",
+        "arriveAt"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "eventId": {
+          "type": "string"
+        },
+        "state": {
+          "enum": [
+            "appear",
+            "soon",
+            "leave_now"
+          ],
+          "description": "appear: aparece; soon: falta poco; leave_now: sal ya."
+        },
+        "eventTimeLabel": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "placeLabel": {
+          "type": "string"
+        },
+        "travelMinutes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "trafficLabel": {
+          "type": "string"
+        },
+        "leaveAt": {
+          "$ref": "#/$defs/time"
+        },
+        "minutesToLeave": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "arriveAt": {
+          "$ref": "#/$defs/time"
+        },
+        "estimatedAt": {
+          "$ref": "#/$defs/time",
+          "description": "Presente si TomTom no responde y el trayecto es el último conocido, medido a esta hora. La UI lo marca como estimado."
+        }
+      }
+    },
+    "device": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "kind",
+        "on",
+        "stateLabel"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "light",
+            "plug",
+            "blind"
+          ]
+        },
+        "on": {
+          "type": "boolean"
+        },
+        "stateLabel": {
+          "type": "string",
+          "description": "Encendido, Apagado, Abierta…"
+        }
+      }
+    },
+    "weatherDay": {
+      "type": "object",
+      "required": [
+        "name",
+        "dateLabel",
+        "isToday",
+        "icon",
+        "maxTemp",
+        "minTemp",
+        "rainProbability"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Hoy, Vie, Sáb…"
+        },
+        "dateLabel": {
+          "type": "string"
+        },
+        "isToday": {
+          "type": "boolean"
+        },
+        "icon": {
+          "$ref": "common.schema.json#/$defs/weatherIcon"
+        },
+        "maxTemp": {
+          "type": "number"
+        },
+        "minTemp": {
+          "type": "number"
+        },
+        "rainProbability": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        }
+      }
+    }
+  }
+}

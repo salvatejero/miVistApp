@@ -1,0 +1,42 @@
+{
+  "interactionModel": {
+    "languageModel": {
+      "invocationName": "mi tablero",
+      "intents": [
+        { "name": "AMAZON.CancelIntent", "samples": [] },
+        { "name": "AMAZON.HelpIntent", "samples": [] },
+        { "name": "AMAZON.StopIntent", "samples": [] },
+        { "name": "AMAZON.NavigateHomeIntent", "samples": [] },
+        { "name": "AMAZON.FallbackIntent", "samples": [] },
+        {
+          "name": "ShowScreenIntent",
+          "slots": [{ "name": "pantalla", "type": "PANTALLA" }],
+          "samples": [
+            "abre {pantalla}",
+            "muestra {pantalla}",
+            "muéstrame {pantalla}",
+            "enséñame {pantalla}",
+            "ve a {pantalla}",
+            "vete a {pantalla}",
+            "pon {pantalla}",
+            "ponme {pantalla}",
+            "quiero ver {pantalla}",
+            "cambia a {pantalla}",
+            "{pantalla}"
+          ]
+        }
+      ],
+      "types": [
+        {
+          "name": "PANTALLA",
+          "values": [
+            { "id": "inicio", "name": { "value": "inicio", "synonyms": ["el inicio", "la pantalla principal", "el panel", "el principal", "la portada"] } },
+            { "id": "calendario", "name": { "value": "calendario", "synonyms": ["el calendario", "mi calendario", "la agenda", "mi agenda", "el mes"] } },
+            { "id": "tiempo", "name": { "value": "tiempo", "synonyms": ["el tiempo", "la previsión", "el clima", "el pronóstico", "la lluvia"] } },
+            { "id": "casa", "name": { "value": "casa", "synonyms": ["la casa", "mi casa", "los dispositivos", "las luces", "la domótica"] } }
+          ]
+        }
+      ]
+    }
+  }
+}

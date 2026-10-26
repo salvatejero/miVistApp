@@ -1,0 +1,166 @@
+{
+  "type": "APL",
+  "version": "2023.3",
+  "theme": "dark",
+  "description": "Casa: luces, enchufes y persianas con \"Apagar todo\". Datasource `house` (contracts/schemas/house.schema.json).",
+  "mainTemplate": {
+    "parameters": [
+      "house"
+    ],
+    "items": [
+      {
+        "type": "Frame",
+        "width": "100vw",
+        "height": "100vh",
+        "backgroundColor": "@colorBackground",
+        "item": {
+          "type": "Container",
+          "direction": "row",
+          "width": "100%",
+          "height": "100%",
+          "items": [
+            {
+              "type": "MenuLateral",
+              "current": "casa"
+            },
+            {
+              "type": "Container",
+              "id": "contenido",
+              "width": 0,
+              "grow": 1,
+              "shrink": 1,
+              "height": "100%",
+              "paddingLeft": "@screenPaddingX",
+              "paddingRight": "@screenPaddingX",
+              "paddingTop": "@screenPaddingY",
+              "paddingBottom": "@screenPaddingY",
+              "items": [
+                {
+                  "type": "Container",
+                  "direction": "row",
+                  "alignItems": "center",
+                  "justifyContent": "spaceBetween",
+                  "items": [
+                    {
+                      "type": "Container",
+                      "shrink": 1,
+                      "items": [
+                        {
+                          "type": "Text",
+                          "style": "texto",
+                          "text": "Casa",
+                          "fontSize": "@textScreenTitle",
+                          "fontWeight": "800",
+                          "maxLines": 1
+                        },
+                        {
+                          "type": "Text",
+                          "style": "textoSecundario",
+                          "when": "${house.status == 'ok'}",
+                          "text": "${house.notice ? house.summary + ' · ' + house.notice : house.summary}",
+                          "spacing": "2dp",
+                          "fontSize": "@textCardTitle",
+                          "maxLines": 1
+                        }
+                      ]
+                    },
+                    {
+                      "type": "BotonPildora",
+                      "when": "${house.status == 'ok'}",
+                      "label": "Apagar todo",
+                      "action": "house.allOff",
+                      "value": "casa"
+                    }
+                  ]
+                },
+                {
+                  "type": "Frame",
+                  "backgroundColor": "@colorCard",
+                  "borderRadius": "@radiusCard",
+                  "paddingLeft": "@cardPaddingX",
+                  "paddingRight": "@cardPaddingX",
+                  "paddingTop": "@cardPaddingY",
+                  "paddingBottom": "@cardPaddingY",
+                  "when": "${house.status == 'empty' || house.status == 'error'}",
+                  "spacing": "20dp",
+                  "grow": 1,
+                  "item": {
+                    "type": "MensajeEstado",
+                    "text": "${house.message}"
+                  }
+                },
+                {
+                  "type": "Container",
+                  "when": "${house.status == 'ok'}",
+                  "direction": "row",
+                  "wrap": "wrap",
+                  "grow": 1,
+                  "shrink": 1,
+                  "spacing": "12dp",
+                  "data": "${house.devices}",
+                  "items": [
+                    {
+                      "type": "Container",
+                      "width": "25%",
+                      "height": "${length > 8 ? 33.33 : 50}%",
+                      "paddingLeft": "8dp",
+                      "paddingRight": "8dp",
+                      "paddingTop": "8dp",
+                      "paddingBottom": "8dp",
+                      "items": [
+                        {
+                          "type": "BotonCasa",
+                          "device": "${data}",
+                          "origin": "casa",
+                          "large": true,
+                          "grow": 1
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "Container",
+                  "when": "${house.status == 'loading'}",
+                  "direction": "row",
+                  "wrap": "wrap",
+                  "grow": 1,
+                  "shrink": 1,
+                  "spacing": "12dp",
+                  "data": [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7
+                  ],
+                  "items": [
+                    {
+                      "type": "Container",
+                      "width": "25%",
+                      "height": "50%",
+                      "paddingLeft": "8dp",
+                      "paddingRight": "8dp",
+                      "paddingTop": "8dp",
+                      "paddingBottom": "8dp",
+                      "items": [
+                        {
+                          "type": "Hueso",
+                          "grow": 1,
+                          "radius": "@radiusCard"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

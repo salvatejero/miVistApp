@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mivistapp.local/contracts/house.schema.json",
+  "title": "Pantalla Casa (datasource `house`)",
+  "type": "object",
+  "allOf": [
+    {
+      "$ref": "common.schema.json#/$defs/section"
+    }
+  ],
+  "properties": {
+    "status": true,
+    "message": true,
+    "notice": true,
+    "summary": {
+      "type": "string",
+      "description": "3 de 8 encendidos"
+    },
+    "devices": {
+      "type": "array",
+      "items": {
+        "$ref": "common.schema.json#/$defs/device"
+      },
+      "maxItems": 12
+    }
+  },
+  "if": {
+    "type": "object",
+    "properties": {
+      "status": {
+        "const": "ok"
+      }
+    }
+  },
+  "then": {
+    "required": [
+      "summary",
+      "devices"
+    ]
+  },
+  "unevaluatedProperties": false
+}

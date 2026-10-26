@@ -5,7 +5,7 @@ Estado: plan para ejecutar más adelante en Claude Code (nube). Nada de esto est
 
 ## 1. Qué es
 
-Dashboard siempre visible para Echo Show, como skill de Alexa con APL. Se invoca con "Alexa, abre mi VistApp".
+Dashboard siempre visible para Echo Show, como skill de Alexa con APL. Se invoca con "Alexa, abre mi tablero".
 
 Pantallas (ya diseñadas, ver `design/`):
 
@@ -18,7 +18,11 @@ Pantallas (ya diseñadas, ver `design/`):
 
 Regla del aviso: `hora de salir = inicio del evento − trayecto con tráfico − colchón`. Aparece unos 30 min antes de esa hora; umbrales iniciales 30 / 10 / 0 min; colchón por defecto 10 min.
 
+**Uso personal (18 oct 2026):** la skill es solo para el usuario y no se publica en la tienda. Los datos los sirve un servidor propio (la Raspberry Pi de casa que ya sirve otras webs, tras su Nginx compartido; en el código, «VPS»); la skill, en Alexa-hosted, guarda en caché lo último que recibió para seguir funcionando si el servidor cae. Ver §3 y `docs/arquitectura.md`.
+
 ## 2. Decisiones abiertas (confirmar antes de la Fase 1)
+
+Resueltas entre el 15 y el 18 de octubre de 2026; las respuestas están en `CLAUDE.md` → "Decisiones tomadas". La tabla se conserva como registro de lo que se preguntó.
 
 | Tema | Propuesta por defecto | Confirmar |
 |---|---|---|
@@ -46,7 +50,8 @@ miVistApp/
 │  ├─ interactionModels/custom/es-ES.json
 │  ├─ apl/                   # documentos APL (inicio, calendario, tiempo, casa)
 │  └─ lambda/                # handlers, servicios, tests
-├─ contracts/                # esquema JSON de los datasources + fixtures de ejemplo
+├─ vps/                      # servicio de datos en el VPS: fuentes reales, credenciales y caché propia
+├─ contracts/                # esquema JSON de los datasources + fixtures de ejemplo (idioma común de skill y VPS)
 └─ docs/
 ```
 
@@ -76,20 +81,25 @@ Fase 0 (persona) ─▶ Fase 1 (arquitecto) ─▶ ┌ Fase 2a UI-APL ┐
 
 ### Fase 2 — Skill con datos de ejemplo (3 agentes en paralelo)
 - **`ui-apl`:** convierte las 4 pantallas y la tarjeta de aviso a documentos APL, con el menú lateral compartido y el tema oscuro.
-- **`skill-backend`:** handlers de lanzamiento, navegación entre pantallas desde el menú, modelo de interacción es-ES y nombre de invocación "mi vistapp".
+- **`skill-backend`:** handlers de lanzamiento, navegación entre pantallas desde el menú, modelo de interacción es-ES y nombre de invocación "mi tablero".
 - **`datos-mock`:** servicio que devuelve los datos de ejemplo según el contrato, incluidos los tres estados del aviso de salida.
 
 **Hecho cuando:** en el simulador y en tu Echo Show se ven las cuatro pantallas con datos de ejemplo y el menú cambia de pantalla.
 
-### Fase 3 — Datos reales (agentes en paralelo, uno por fuente)
-- **`datos-tiempo`:** tiempo semanal y lluvia por horas.
-- **`datos-calendario`:** hoy y mañana, vista mensual, vinculación de cuenta (OAuth).
-- **`datos-trafico`:** trayecto al trabajo con tráfico en vivo, y regla del aviso de salida con sus umbrales.
-- **`datos-casa`:** estado y control de dispositivos (ver riesgos).
+### Fase 3 — Datos reales
+Primero, el agente `arquitecto` monta las dos piezas comunes:
+- **Servicio de datos en `vps/`:** una API HTTPS con un endpoint por pantalla que devuelve el JSON del contrato, protegida con una clave compartida. Guarda el último dato bueno de cada fuente y lo sirve marcado como no actualizado si la fuente falla.
+- **Cliente en la skill:** pide los datos al VPS con un tiempo máximo corto y guarda la última respuesta en DynamoDB. Si el VPS no responde, pinta lo guardado con el aviso "sin conexión · actualizado a las hh:mm".
+
+Después, un agente por fuente, en paralelo, dentro de `vps/`:
+- **`datos-tiempo`:** tiempo semanal y lluvia por horas (Open-Meteo).
+- **`datos-calendario`:** hoy y mañana y vista mensual desde iCloud por CalDAV, con la contraseña de app guardada solo en el VPS.
+- **`datos-trafico`:** trayecto al trabajo con tráfico en vivo (TomTom), y regla del aviso de salida con sus umbrales.
+- **`datos-casa`:** estado y control de dispositivos a través de Home Assistant, cuando exista (ver riesgos).
 
 Cada agente respeta el contrato de `contracts/` y deja pruebas con respuestas simuladas de la API.
 
-**Hecho cuando:** cada fuente sustituye a su dato de ejemplo sin cambiar la UI, y falla con elegancia (mensaje en pantalla, no pantalla vacía) si la API no responde.
+**Hecho cuando:** cada fuente sustituye a su dato de ejemplo sin cambiar la UI, y falla con elegancia (mensaje en pantalla, no pantalla vacía) si la API no responde. Con el VPS apagado, la skill se abre y navega con los últimos datos guardados.
 
 ### Fase 4 — Siempre en pantalla (agente `siempre-visible`)
 - Tiempo de inactividad largo en APL y sesión que se mantiene abierta.
@@ -106,8 +116,9 @@ Cada agente respeta el contrato de `contracts/` y deja pruebas con respuestas si
 **Hecho cuando:** los tests pasan en local y la revisión no deja hallazgos graves abiertos.
 
 ### Fase 6 — Despliegue y prueba real (tú + `arquitecto`)
+- Desplegar el servicio de datos como contenedor en la Raspberry Pi compartida, tras su Nginx con Let's Encrypt (`docs/raspberry.md`) y la skill en Alexa-hosted (`docs/despliegue-skill.md`).
 - Publicar en la etapa de desarrollo de la skill, probar en el Echo Show y recoger ajustes.
-- La skill se queda en modo desarrollo para uso personal. No hace falta publicarla en la tienda.
+- La skill se queda en modo desarrollo para uso personal. No se publica en la tienda.
 
 ## 5. Subagentes
 
@@ -119,10 +130,10 @@ Se definen como ficheros en `.claude/agents/<nombre>.md`. Plantilla común: rol,
 | `ui-apl` | Documentos APL a partir de `design/` | `skill/apl/` | Respeta colores, tamaños y estados del diseño; solo lee datos del contrato |
 | `skill-backend` | Handlers, navegación, modelo de interacción | `skill/lambda/`, `skill/interactionModels/` | Sin llamadas a APIs externas; pide los datos a los servicios |
 | `datos-mock` | Datos de ejemplo según el contrato | `skill/lambda/services/mock`, `contracts/fixtures` | Debe cubrir los 3 estados del aviso |
-| `datos-tiempo` | Tiempo y lluvia | `skill/lambda/services/weather` | Respuestas simuladas en tests |
-| `datos-calendario` | Calendario y OAuth | `skill/lambda/services/calendar` | Nunca guardar tokens en el repo |
-| `datos-trafico` | Trayecto y regla de salida | `skill/lambda/services/traffic` | Umbrales configurables, no fijos en código |
-| `datos-casa` | Dispositivos | `skill/lambda/services/home` | Investigar viabilidad antes de implementar |
+| `datos-tiempo` | Tiempo y lluvia | `vps/src/services/weather` | Respuestas simuladas en tests |
+| `datos-calendario` | Calendario de Apple (CalDAV) | `vps/src/services/calendar` | Credenciales solo en el entorno del VPS |
+| `datos-trafico` | Trayecto y regla de salida | `vps/src/services/traffic` | Umbrales configurables, no fijos en código |
+| `datos-casa` | Dispositivos vía Home Assistant | `vps/src/services/home` | Solo cuando exista Home Assistant |
 | `siempre-visible` | Inactividad y refresco | `skill/apl/`, `docs/` | Documentar lo que no sea código |
 | `revisor` | Revisión y calidad | solo comentarios y tests | Solo lectura sobre código ajeno |
 
@@ -161,15 +172,17 @@ Cada agente de §5 debería nombrar en su cabecera las skills que usa. Las skill
 
 - **Siempre en pantalla:** Amazon no ofrece una opción oficial. La Fase 4 es un apaño (inactividad larga, sesión abierta y rutina) y puede fallar o cambiar con actualizaciones del Echo Show. Probar pronto en el dispositivo.
 - **Domótica:** una skill propia no necesariamente puede controlar otros dispositivos de la casa. Puede requerir la API de Smart Home, o una pasarela (Home Assistant u otra). Investigar antes de prometer los botones de Casa.
-- **Nombre de invocación:** "mi vistapp" debe cumplir las reglas de Alexa; se valida al configurar la skill.
+- **Nombre de invocación:** "mi tablero". Descartados: "mi vistapp" (Alexa lo confundía con "mi lista" de la compra) y "mi panel" (el Echo lo toma como un panel propio).
 - **Vinculación de cuenta:** el calendario necesita OAuth con Alexa; añade un paso de configuración.
 - **Privacidad:** direcciones de casa y trabajo y tokens como secretos del entorno, nunca en el repo.
 - **Costes:** las APIs de tráfico y rutas pueden tener coste por consulta; limitar la frecuencia de refresco.
+- **Servidor (Raspberry Pi):** HTTPS válido con el Nginx y Let's Encrypt de la Pi compartida, RAM repartida con otras webs, actualizaciones de seguridad, cortes de luz y desgaste de la microSD (ver `docs/raspberry.md`). Su API queda expuesta a internet: solo responde con la clave compartida, y nunca devuelve credenciales.
+- **Caché de la skill:** si el VPS cae, la skill muestra datos que pueden tener horas; la marca de "actualizado a las hh:mm" es obligatoria para no engañar (sobre todo en el aviso de salida, que no se muestra con datos viejos de tráfico).
 - **Modelos de Echo Show:** el diseño asume 1280×800; otros modelos exigen ajustes.
 
 ## 7. Definición de "hecho" para la v1
 
-1. "Alexa, abre mi VistApp" muestra Inicio en el Echo Show.
+1. "Alexa, abre mi tablero" muestra Inicio en el Echo Show.
 2. El menú lateral cambia entre Inicio, Calendario, Tiempo y Casa.
 3. Tiempo, agenda y tráfico salen de fuentes reales.
 4. Un evento con ubicación cercana muestra el aviso en sus tres estados.
