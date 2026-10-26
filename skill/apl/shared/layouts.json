@@ -90,8 +90,10 @@
           "backgroundColor": "${current == screen ? @colorAccentBackground : 'transparent'}",
           "item": {
             "type": "Container",
+            "width": "100%",
             "height": "100%",
-            "alignItems": "center",
+            "paddingLeft": "@gapSmall",
+            "alignItems": "start",
             "justifyContent": "center",
             "items": [
               {
@@ -106,6 +108,7 @@
                 "type": "Text",
                 "style": "texto",
                 "text": "${label}",
+                "maxLines": 1,
                 "spacing": "@gapSmall",
                 "fontSize": "@textMenu",
                 "fontWeight": "600",
