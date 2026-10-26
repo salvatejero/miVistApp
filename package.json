@@ -1,6 +1,6 @@
 {
   "name": "mivistapp",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "description": "Skill de Alexa con APL: dashboard siempre visible para Echo Show",
   "license": "UNLICENSED",
