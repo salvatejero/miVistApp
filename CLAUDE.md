@@ -4,8 +4,8 @@ Skill de Alexa (APL) con un dashboard siempre visible para Echo Show. Plan compl
 
 ## Git
 - Este repositorio es **público**. Nunca subir claves, tokens, direcciones ni datos personales. Aplica la skill `secrets-privacy` antes de cada commit.
-- La rama de trabajo es `develop`. Crea ramas cortas desde `develop` (`feat/…`, `fix/…`, `docs/…`) y fusiónalas en `develop`.
-- **Nunca** hagas push a `main`, ni force-push, ni borres ramas protegidas. `main` solo recibe cambios por pull request desde `develop`.
+- La rama de trabajo es `develop`. Crea ramas cortas desde `develop` (`feat/…`, `fix/…`, `docs/…`) y llévalas a `develop` por pull request.
+- **Nunca** hagas push a `main` ni a `develop`, ni force-push, ni borres ramas protegidas. Un ruleset de GitHub lo impide: ambas solo reciben cambios por pull request, y `main` solo desde `develop`.
 - Commits pequeños con prefijo: `feat:`, `fix:`, `docs:`, `test:`, `chore:`.
 - Si un commit con datos sensibles llega a subirse, avisa al usuario: hay que rotar la clave.
 
