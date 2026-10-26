@@ -99,6 +99,7 @@
               {
                 "type": "VectorGraphic",
                 "source": "${icon}",
+                "alignSelf": "center",
                 "width": "@menuIcon",
                 "height": "@menuIcon",
                 "scale": "fill",
