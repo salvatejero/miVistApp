@@ -289,6 +289,45 @@
           "description": "Encendido, Apagado, Abierta…"
         }
       }
+    },
+    "weatherDay": {
+      "type": "object",
+      "required": [
+        "name",
+        "dateLabel",
+        "isToday",
+        "icon",
+        "maxTemp",
+        "minTemp",
+        "rainProbability"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Hoy, Vie, Sáb…"
+        },
+        "dateLabel": {
+          "type": "string"
+        },
+        "isToday": {
+          "type": "boolean"
+        },
+        "icon": {
+          "$ref": "common.schema.json#/$defs/weatherIcon"
+        },
+        "maxTemp": {
+          "type": "number"
+        },
+        "minTemp": {
+          "type": "number"
+        },
+        "rainProbability": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        }
+      }
     }
   }
 }

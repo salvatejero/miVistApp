@@ -13,6 +13,8 @@ export const isScreenId = (value: unknown): value is ScreenId => SCREEN_IDS.incl
 export interface ScreenOptions {
   /** Meses desde el actual en la pantalla Calendario. */
   calendarOffset?: number;
+  /** Día del mes pulsado en Calendario; sin él, hoy (o el día 1 en otros meses). */
+  calendarDay?: number;
 }
 
 interface ScreenDefinition {
@@ -29,8 +31,9 @@ export const SCREENS: Record<ScreenId, ScreenDefinition> = {
   calendario: {
     document: calendario,
     datasource: 'calendar',
-    load: (data, options) => data.getCalendar(options.calendarOffset ?? 0),
-    cacheKey: (options) => `calendar:${options.calendarOffset ?? 0}`,
+    load: (data, options) => data.getCalendar(options.calendarOffset ?? 0, options.calendarDay),
+    cacheKey: (options) =>
+      options.calendarDay === undefined ? `calendar:${options.calendarOffset ?? 0}` : `calendar:${options.calendarOffset ?? 0}:${options.calendarDay}`,
   },
   tiempo: { document: tiempo, datasource: 'weather', load: (data) => data.getWeather(), cacheKey: () => 'weather' },
   casa: { document: casa, datasource: 'house', load: (data) => data.getHouse(), cacheKey: () => 'house' },

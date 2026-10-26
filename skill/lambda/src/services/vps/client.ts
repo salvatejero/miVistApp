@@ -1,3 +1,4 @@
+import { nodeFetch } from './node-fetch';
 import type { CalendarScreen, DashboardData, HomeScreen, HouseScreen, WeatherScreen } from '../../contracts';
 
 export class VpsError extends Error {
@@ -12,7 +13,7 @@ export class VpsClient implements DashboardData {
     baseUrl: string,
     private readonly apiKey: string,
     private readonly timeoutMs: number,
-    private readonly fetchFn: typeof fetch = fetch,
+    private readonly fetchFn: typeof fetch = globalThis.fetch ?? nodeFetch,
   ) {
     this.baseUrl = baseUrl.replace(/\/+$/, '');
   }
@@ -31,8 +32,8 @@ export class VpsClient implements DashboardData {
     return this.request('/v1/home') as Promise<HomeScreen>;
   }
 
-  getCalendar(monthOffset: number): Promise<CalendarScreen> {
-    return this.request(`/v1/calendar?offset=${monthOffset}`) as Promise<CalendarScreen>;
+  getCalendar(monthOffset: number, day?: number): Promise<CalendarScreen> {
+    return this.request(`/v1/calendar?offset=${monthOffset}${day === undefined ? '' : `&day=${day}`}`) as Promise<CalendarScreen>;
   }
 
   getWeather(): Promise<WeatherScreen> {

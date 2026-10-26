@@ -32,7 +32,7 @@ async function readJson(request: IncomingMessage): Promise<Record<string, unknow
 
 /**
  * API del servicio de datos. Todas las rutas salvo /healthz exigen `Authorization: Bearer <clave>`.
- *   GET  /v1/home · /v1/calendar?offset=N · /v1/weather · /v1/house
+ *   GET  /v1/home · /v1/calendar?offset=N[&day=D] · /v1/weather · /v1/house
  *   POST /v1/house/toggle {"id": "..."} · /v1/house/all-off
  */
 export function createApi(dashboard: DashboardData, apiKey: string) {
@@ -48,7 +48,9 @@ export function createApi(dashboard: DashboardData, apiKey: string) {
         case 'GET /v1/calendar': {
           const offset = Number(url.searchParams.get('offset') ?? 0);
           if (!Number.isInteger(offset) || Math.abs(offset) > 120) return send(response, 400, { error: 'offset' });
-          return send(response, 200, await dashboard.getCalendar(offset));
+          const day = url.searchParams.has('day') ? Number(url.searchParams.get('day')) : undefined;
+          if (day !== undefined && !(Number.isInteger(day) && day >= 1 && day <= 31)) return send(response, 400, { error: 'day' });
+          return send(response, 200, await dashboard.getCalendar(offset, day));
         }
         case 'GET /v1/weather':
           return send(response, 200, await dashboard.getWeather());

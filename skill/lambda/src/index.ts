@@ -1,3 +1,4 @@
+import './node16';
 import type { RequestEnvelope, ResponseEnvelope } from 'ask-sdk-model';
 import { buildSkill } from './skill';
 

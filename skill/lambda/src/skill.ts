@@ -10,12 +10,12 @@ import {
   systemErrorHandler,
   unknownEventHandler,
 } from './handlers/builtins';
-import { calendarMonthHandler } from './handlers/calendar';
+import { calendarDayHandler, calendarMonthHandler } from './handlers/calendar';
 import { houseHandler } from './handlers/house';
 import { launchHandler } from './handlers/launch';
 import { navigationHandler } from './handlers/navigation';
 import { refreshHandler } from './handlers/refresh';
-import { sessionAttributes } from './handlers/util';
+import { isUserEvent, sessionAttributes } from './handlers/util';
 import { config } from './config';
 import type { DashboardDataFactory } from './services/dashboard';
 import type { MockHouseState } from './services/mock';
@@ -55,6 +55,7 @@ export function buildSkill(dataFor: DashboardDataFactory = defaultFactory()): Sk
       navigationHandler(dataFor),
       refreshHandler(dataFor),
       calendarMonthHandler(dataFor),
+      calendarDayHandler(dataFor),
       houseHandler(dataFor),
       helpHandler,
       stopHandler,
@@ -63,6 +64,11 @@ export function buildSkill(dataFor: DashboardDataFactory = defaultFactory()): Sk
       systemErrorHandler,
       sessionEndedHandler,
     )
+    // Hora del último uso (toque u orden de voz); los refrescos automáticos no cuentan.
+    .addRequestInterceptors((handlerInput) => {
+      const attributes = sessionAttributes(handlerInput);
+      if (!isUserEvent(handlerInput, 'refresh') || typeof attributes.lastUseAt !== 'number') attributes.lastUseAt = Date.now();
+    })
     .addErrorHandlers(errorHandler)
     .withCustomUserAgent('mivistapp/0.2')
     .create();

@@ -4,7 +4,7 @@ import { respondWithScreen } from '../apl/respond';
 import type { DashboardDataFactory } from '../services/dashboard';
 import { isIntent } from './util';
 
-/** "Alexa, abre mi vistapp" y "vuelve al inicio": siempre abre Inicio. */
+/** "Alexa, abre mi tablero" y "vuelve al inicio": siempre abre Inicio. */
 export const launchHandler = (dataFor: DashboardDataFactory): RequestHandler => ({
   canHandle: (handlerInput) =>
     getRequestType(handlerInput.requestEnvelope) === 'LaunchRequest' ||

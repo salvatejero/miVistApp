@@ -4,7 +4,7 @@ Amazon no tiene una opción oficial para dejar una skill fija en pantalla. Mi Vi
 
 ## Cómo funciona
 
-1. **Inactividad larga.** Cada pantalla pide al Echo Show 24 horas de inactividad antes de cerrarse (`settings.idleTimeout` en el documento APL). Es una sugerencia: el dispositivo puede imponer un máximo menor.
+1. **Cierre a los 15 minutos sin uso.** Si en 15 minutos no se toca la pantalla ni se le habla, el siguiente refresco cierra la skill sin hablar (`idleTimeoutMs` en `skill/lambda/src/config.ts`). Los refrescos automáticos no cuentan como uso. Así la cierra la skill y no el Echo, que al dar la sesión por caducada lo anuncia en voz. Cada pantalla pide además al Echo Show esos 15 minutos de inactividad (`settings.idleTimeout` en el documento APL) como respaldo.
 2. **Refresco periódico.** Mientras está en pantalla, cada documento manda un evento `refresh` cada pocos minutos (`handleTick` de APL). El backend lo contesta pintando la misma pantalla con datos nuevos. Si una respuesta se pierde o falla, el siguiente tick vuelve a intentarlo, y un refresco fallido nunca hace hablar a Alexa. Además de traer datos frescos, cuenta como actividad y mantiene la sesión abierta.
 3. **Rutina de Alexa que la reabre.** Si la skill se cierra (otra skill toma la pantalla, un reinicio, el límite del dispositivo), una rutina la vuelve a abrir. Esto se configura en la app de Alexa, no en código (ver abajo).
 
@@ -37,7 +37,7 @@ En la app de Alexa: **Más → Rutinas → +**.
 2. **Cuándo:** elige una (o crea varias rutinas):
    - **Movimiento** (detección de presencia del Echo Show, si tu modelo lo ofrece, o un sensor de movimiento vinculado a Alexa): reabre la skill al pasar por delante.
    - **Programación:** cada día a la hora en que te levantas, para tenerla puesta por la mañana.
-3. **Acción:** **Personalizado** → escribe `abre mi vistapp`.
+3. **Acción:** **Personalizado** → escribe `abre mi tablero`.
 4. **Desde:** el Echo Show donde quieres verla.
 5. Guarda y prueba la rutina desde la app (botón de reproducir).
 
@@ -52,7 +52,7 @@ Si la rutina por movimiento salta muy a menudo, añade en **Cuándo** una franja
 
 Sigue la lista de la skill `device-testing` y apunta aquí los resultados (modelo, versión del software del Echo y fecha).
 
-1. Abre la skill y no toques nada: anota si sigue a los 10 min, a los 30 min y a la hora.
+1. Abre la skill y no toques nada: anota si sigue a los 10 min, si se cierra hacia los 15 min y si Alexa dice algo al cerrarla.
 2. Comprueba que los datos cambian solos (por ejemplo, la hora de "actualizado" o la lluvia).
 3. Habla con Alexa para otra cosa y anota si Mi VistApp se cierra.
 4. Prueba la rutina: cierra la skill, provoca el disparador y mide cuánto tarda en volver.

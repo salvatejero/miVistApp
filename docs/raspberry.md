@@ -1,95 +1,71 @@
 # Servicio de datos en la Raspberry Pi
 
-El servicio de datos (`vps/`) corre en una **Raspberry Pi 3B+** en casa. Lee tus fuentes (iCloud, Open-Meteo, TomTom y, en el futuro, Home Assistant) y sirve a la skill el JSON de cada pantalla. Tus credenciales y direcciones no salen de ahí.
+El servicio de datos (`vps/`) corre en la **Raspberry Pi de casa que ya sirve otras webs** (Pi 3B, 1 GB, Raspberry Pi OS de 64 bits, con Docker). Lee tus fuentes (iCloud, Open-Meteo, TomTom y, en el futuro, Home Assistant) y sirve a la skill el JSON de cada pantalla. Tus credenciales y direcciones no salen de ahí.
 
-Alexa-hosted tiene que llegar a la Raspberry por **HTTPS con un certificado válido**. Para no abrir puertos en el router ni comprar un dominio, se usa **Tailscale Funnel**: publica el servicio en una dirección `https://<nombre>.<tu-red>.ts.net` con certificado incluido, y funciona aunque tu operador no te dé IP pública.
+Alexa-hosted tiene que llegar por **HTTPS con un certificado válido**. Lo pone el **Nginx que ya tiene la Pi** (multi-site, Let's Encrypt, DNS dinámico), en un subdominio propio. El servicio es un contenedor más, sin puertos publicados, en la red Docker que comparte con ese Nginx.
 
 ```
-Echo Show → Alexa → skill (Alexa-hosted) ──HTTPS + clave──▶ Tailscale Funnel ──▶ Raspberry Pi :8787 (solo local)
+Echo Show → Alexa → skill (Alexa-hosted) ──HTTPS + clave──▶ Nginx de la Pi (443) ──red-publica──▶ contenedor mivistapp :8787
 ```
+
+Las piezas de fuera de este repo: el Nginx y los certificados los lleva el repo de cagodromo; el `server` del subdominio, el repo stsc (`nginx/{sites,servidores-http,servidores-tls}/<subdominio>.conf`).
 
 ## Lo que necesitas
 
-- Raspberry Pi 3B+ con fuente de alimentación oficial y una tarjeta microSD de 16 GB o más.
-- **Raspberry Pi OS Lite (64 bits)**, grabada con Raspberry Pi Imager. En sus ajustes, activa SSH, pon usuario y contraseña y, si no va por cable, la wifi.
-- Una cuenta gratuita de **Tailscale**.
+- El subdominio dado de alta en el DynDNS de IONOS (la `updateUrl` vive en la Pi, en `/etc/cagodromo/dyndns.url`).
 - Las claves de las fuentes (ver `vps/.env.example`):
   - **TomTom:** cuenta gratuita en developer.tomtom.com y una clave con Routing y Search.
   - **iCloud:** una contraseña de app en appleid.apple.com → Inicio de sesión y seguridad → Contraseñas de app. Da acceso a correo, contactos y calendario: guárdala solo en la Raspberry y revócala si dejas de usar la skill.
   - **Open-Meteo:** no necesita clave.
 
-## 1. Preparar la Raspberry
+## 1. Instalar el servicio
 
-Por SSH (`ssh usuario@raspberrypi.local`):
-
-```bash
-sudo apt update && sudo apt full-upgrade -y
-sudo apt install -y unattended-upgrades        # actualizaciones de seguridad automáticas
-# Node.js 22 (NodeSource; la Raspberry Pi OS de 64 bits es arm64)
-curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
-sudo apt install -y nodejs
-node --version                                  # v22.x
-```
-
-La hora tiene que ser correcta (el aviso de salida depende de ella). Raspberry Pi OS la sincroniza sola; compruébalo con `timedatectl` (debe decir `System clock synchronized: yes`).
-
-## 2. Instalar el servicio
-
-1. En tu ordenador, con el repo: `npm install && npm run build`. Genera `build/vps/server.cjs`, un solo fichero con todo dentro (no hace falta el repo en la Raspberry).
-2. Cópialo junto con el servicio de systemd:
+1. En tu ordenador, con el repo: `npm install && npm run build`. Genera `build/vps/server.cjs`, un solo fichero con todo dentro.
+2. Cópialo junto con el compose:
    ```bash
-   scp build/vps/server.cjs vps/deploy/mivistapp.service usuario@raspberrypi.local:/tmp/
+   ssh <usuario>@<pi> mkdir -p mivistapp
+   scp build/vps/server.cjs vps/deploy/docker-compose.yml <usuario>@<pi>:mivistapp/
    ```
-3. En la Raspberry:
+3. En la Pi, el entorno (lo lee Compose como tu usuario, por eso no es de root):
    ```bash
-   sudo useradd --system --no-create-home mivistapp
-   sudo mkdir -p /opt/mivistapp /etc/mivistapp
-   sudo mv /tmp/server.cjs /opt/mivistapp/server.cjs
-   sudo mv /tmp/mivistapp.service /etc/systemd/system/mivistapp.service
-   sudo nano /etc/mivistapp/vps.env               # pega vps/.env.example y rellénalo
-   sudo chown root:mivistapp /etc/mivistapp/vps.env
-   sudo chmod 640 /etc/mivistapp/vps.env
-   sudo systemctl daemon-reload && sudo systemctl enable --now mivistapp
-   journalctl -u mivistapp -f                     # "escuchando en 127.0.0.1:8787 · fuentes: tiempo, tráfico, calendario"
+   sudo install -d -o $USER -m 700 /etc/mivistapp
+   install -m 600 /dev/null /etc/mivistapp/vps.env
+   nano /etc/mivistapp/vps.env                    # pega vps/.env.example y rellénalo
    ```
-   Para la clave compartida: `openssl rand -hex 32`.
-4. Prueba en local:
+   Para la clave compartida: `openssl rand -hex 32`. `HOST` y `PORT` los fija el compose.
+4. Arráncalo y pruébalo desde dentro de la red Docker:
    ```bash
-   curl http://127.0.0.1:8787/healthz                                    # {"ok":true}
-   curl -H "Authorization: Bearer TU_CLAVE" http://127.0.0.1:8787/v1/weather
+   cd ~/mivistapp && docker compose up -d       # nunca con --remove-orphans
+   docker compose logs -f                        # "escuchando en 0.0.0.0:8787 · fuentes: tiempo, tráfico, calendario"
+   docker run --rm --network red-publica curlimages/curl -s http://mivistapp:8787/healthz   # {"ok":true}
    ```
 
-## 3. Publicarlo con Tailscale Funnel
+## 2. Publicarlo en el Nginx compartido
 
-```bash
-curl -fsSL https://tailscale.com/install.sh | sh
-sudo tailscale up                       # abre el enlace que muestra e inicia sesión
-sudo tailscale funnel --bg 8787         # si pide activar HTTPS o Funnel en tu red, sigue el enlace que muestra
-tailscale funnel status                 # muestra la dirección pública: https://<nombre>.<tu-red>.ts.net
-```
-
-Funnel queda activo tras reiniciar. Comprueba desde fuera de tu red (por ejemplo, con el móvil sin wifi):
-
-```bash
-curl https://<nombre>.<tu-red>.ts.net/healthz                         # {"ok":true}
-```
+1. En el repo stsc, los tres ficheros del subdominio (copia de los de atmlebrija, con un único `location /` hacia `mivistapp:8787`). Mérgealos a `main` y haz `git pull` en su clon de la Pi.
+2. Certificado y `server` del 443 (en la Pi):
+   ```bash
+   sudo ~/cagodromo/deploy/raspserver/emitir-certificado.sh <subdominio>
+   cd ~/stsc/nginx/servidores-tls && cp <subdominio>.conf.plantilla <subdominio>.conf
+   cd ~/cagodromo/docker && docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --force-recreate nginx
+   ```
+3. Comprueba desde fuera de casa (por ejemplo, con el móvil sin wifi):
+   ```bash
+   curl https://<subdominio>/healthz                                    # {"ok":true}
+   curl -o /dev/null -w '%{http_code}\n' https://<subdominio>/v1/home    # 401
+   ```
 
 Esa dirección es la `VISTAPP_VPS_URL` de la skill (ver `docs/despliegue-skill.md`).
 
-### Alternativas
-
-- **Cloudflare Tunnel** (`cloudflared`): igual de cómodo y sin abrir puertos, pero necesita un dominio gestionado en Cloudflare.
-- **Abrir el puerto 443 en el router** con un DNS dinámico (por ejemplo, DuckDNS) y Caddy para el certificado: solo si tienes IP pública (no sirve con CGNAT) y expone la Raspberry directamente.
-
 ## Actualizar
 
-En tu ordenador: `npm run build` y `scp build/vps/server.cjs usuario@raspberrypi.local:/tmp/`. En la Raspberry: `sudo mv /tmp/server.cjs /opt/mivistapp/ && sudo systemctl restart mivistapp`.
+En tu ordenador: `npm run build && scp build/vps/server.cjs <usuario>@<pi>:mivistapp/`. En la Pi: `cd ~/mivistapp && docker compose restart`. Tras cambiar `vps.env`, `docker compose up -d --force-recreate` (un `restart` no relee el `env_file`).
 
 ## Cuidados de la Raspberry
 
-- **Cortes de luz:** el servicio arranca solo al volver la corriente. Mientras la Raspberry está apagada, la skill pinta lo último guardado con "Sin conexión".
-- **Tarjeta microSD:** el servicio no escribe en disco (todo va en memoria), solo los registros del sistema. Si quieres alargar la vida de la tarjeta, limita el diario: `SystemMaxUse=50M` en `/etc/systemd/journald.conf`.
-- **Memoria:** el servicio usa unos 60–80 MB de los 1 GB de la 3B+. Si más adelante instalas **Home Assistant**, en una 3B+ va justo: mejor en otra máquina o en una Raspberry más nueva, y que este servicio le llame por la red local.
+- **Cortes de luz:** el contenedor arranca solo al volver la corriente (`restart: unless-stopped`). Mientras la Raspberry está apagada, la skill pinta lo último guardado con "Sin conexión".
+- **Tarjeta microSD:** el servicio no escribe en disco (todo va en memoria), solo sus registros, que Docker ya limita en la Pi (10 MB × 3 por contenedor).
+- **Memoria:** el servicio usa unos 60–80 MB y el contenedor está limitado a 128 MB; la Pi la comparte con otras webs y su base de datos. Si más adelante instalas **Home Assistant**, en esta Pi no cabe: mejor en otra máquina o en una Raspberry más nueva, y que este servicio le llame por la red local.
 
 ## Qué pasa cuando algo falla
 
@@ -117,7 +93,7 @@ Todas las rutas salvo `/healthz` exigen `Authorization: Bearer <VISTAPP_API_KEY>
 
 ## Seguridad
 
-- Funnel solo publica el puerto 8787; SSH y el resto de la Raspberry no quedan expuestos a internet.
-- Todo lo que no lleve la clave recibe 401. Si la clave se filtra, genera otra, cámbiala en `/etc/mivistapp/vps.env` y en `skill/lambda/.env.local`, y vuelve a desplegar las dos partes.
+- El contenedor no publica puertos: solo lo alcanza el Nginx por la red Docker. El Nginx limita peticiones por IP.
+- Todo lo que no lleve la clave recibe 401. Si la clave se filtra, genera otra, cámbiala en `/etc/mivistapp/vps.env` y en `skill/lambda/.env.local`, recrea el contenedor y vuelve a desplegar la skill.
 - Los registros no incluyen URLs (las de TomTom llevan la clave), títulos de eventos ni direcciones.
 - Cambia la contraseña por defecto de la Raspberry y, si puedes, entra por SSH con clave en lugar de contraseña.

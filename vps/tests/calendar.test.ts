@@ -144,4 +144,11 @@ describe('agenda y mes', () => {
     expect(view.selectedDay.title).toBe('Hoy');
     expect(monthView(2026, 11, today, events, TZ).selectedDay).toMatchObject({ title: '1 nov', items: [] });
   });
+
+  it('muestra los eventos del día pulsado y descarta días que no existen en el mes', () => {
+    const view = monthView(2026, 10, today, events, TZ, 16);
+    expect(view.selectedDay.title).toBe('16 oct');
+    expect(view.cells.filter((c) => c.isSelected).map((c) => c.day)).toEqual([16]);
+    expect(monthView(2026, 11, today, events, TZ, 31).selectedDay.title).toBe('1 nov');
+  });
 });

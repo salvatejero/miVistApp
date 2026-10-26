@@ -1,7 +1,7 @@
 import type { AgendaDay, AgendaItem, CalendarCell, Departure } from '../../../../contracts/types';
 import { MONTHS, shortDateLabel, WEEKDAYS_SHORT, monthLabel } from '../../../../lib/labels';
 import type { CivilDate } from '../../../../lib/month-grid';
-import { buildMonthGrid } from '../../../../lib/month-grid';
+import { buildMonthGrid, daysInMonth } from '../../../../lib/month-grid';
 import { hhmm, nextDay, sameDay, zoned } from '../../../../lib/time';
 import type { CalendarEvent } from './ical';
 
@@ -43,19 +43,23 @@ export function agendaDay(
   return { title, dateLabel: shortDateLabel(day.year, day.month, day.day), items };
 }
 
-/** Datos de la pantalla Calendario para un mes. El día seleccionado es hoy si está en el mes, o el día 1. */
-export function monthView(year: number, month: number, today: CivilDate, events: CalendarEvent[], timeZone: string) {
+/**
+ * Datos de la pantalla Calendario para un mes. El día seleccionado es `day` si existe en el mes; si no,
+ * hoy si está en el mes, o el día 1.
+ */
+export function monthView(year: number, month: number, today: CivilDate, events: CalendarEvent[], timeZone: string, day?: number) {
   const withEvents = new Set<number>();
   for (const event of events) {
     for (const d of eventDays(event, timeZone)) if (d.year === year && d.month === month) withEvents.add(d.day);
   }
   const isCurrent = today.year === year && today.month === month;
-  const selected: CivilDate = isCurrent ? today : { year, month, day: 1 };
-  const title = isCurrent ? 'Hoy' : `1 ${MONTHS[month - 1]?.slice(0, 3)}`;
+  const valid = day !== undefined && Number.isInteger(day) && day >= 1 && day <= daysInMonth(year, month);
+  const selected: CivilDate = valid ? { year, month, day } : isCurrent ? today : { year, month, day: 1 };
+  const title = isCurrent && selected.day === today.day ? 'Hoy' : `${selected.day} ${MONTHS[month - 1]?.slice(0, 3)}`;
   return {
     monthLabel: monthLabel(year, month),
     weekdayLabels: [...WEEKDAYS_SHORT],
-    cells: buildMonthGrid(year, month, today, withEvents) as CalendarCell[],
+    cells: buildMonthGrid(year, month, today, withEvents, selected.day) as CalendarCell[],
     selectedDay: agendaDay(title, selected, events, timeZone),
   };
 }

@@ -2,7 +2,7 @@
   "description": "Componentes compartidos de Mi VistApp. Los datos llegan como parámetros con la forma de contracts/.",
   "layouts": {
     "MenuLateral": {
-      "description": "Menú lateral con los 4 botones. `current` es la pantalla activa.",
+      "description": "Menú lateral. `current` es la pantalla activa. Casa está oculta hasta tener Home Assistant (#2).",
       "parameters": [
         {
           "name": "current",
@@ -18,6 +18,7 @@
         "borderWidth": "1dp",
         "item": {
           "type": "Container",
+          "width": "100%",
           "height": "100%",
           "paddingTop": "@menuPaddingY",
           "paddingLeft": "@menuPaddingX",
@@ -43,14 +44,6 @@
               "screen": "tiempo",
               "label": "Tiempo",
               "icon": "iconTiempo",
-              "current": "${current}",
-              "spacing": "@menuGap"
-            },
-            {
-              "type": "BotonMenu",
-              "screen": "casa",
-              "label": "Casa",
-              "icon": "iconCasa",
               "current": "${current}",
               "spacing": "@menuGap"
             }
@@ -97,8 +90,10 @@
           "backgroundColor": "${current == screen ? @colorAccentBackground : 'transparent'}",
           "item": {
             "type": "Container",
+            "width": "100%",
             "height": "100%",
-            "alignItems": "center",
+            "paddingLeft": "@gapSmall",
+            "alignItems": "start",
             "justifyContent": "center",
             "items": [
               {
@@ -113,14 +108,17 @@
                 "type": "Text",
                 "style": "texto",
                 "text": "${label}",
+                "maxLines": 1,
                 "spacing": "@gapSmall",
                 "fontSize": "@textMenu",
                 "fontWeight": "600",
                 "color": "${current == screen ? @colorAccent : @colorTextSecondary}"
               }
             ]
-          }
-        }
+          },
+          "width": "100%"
+        },
+        "width": "100%"
       }
     },
     "MensajeEstado": {
@@ -783,13 +781,17 @@
           "type": "string"
         },
         {
-          "name": "event",
-          "type": "array"
-        },
-        {
           "name": "accent",
           "type": "boolean",
           "default": false
+        },
+        {
+          "name": "action",
+          "type": "string"
+        },
+        {
+          "name": "value",
+          "type": "any"
         }
       ],
       "item": {
@@ -799,7 +801,10 @@
         "onPress": [
           {
             "type": "SendEvent",
-            "arguments": "${event}"
+            "arguments": [
+              "${action}",
+              "${value}"
+            ]
           }
         ],
         "item": {
@@ -836,8 +841,12 @@
           "type": "string"
         },
         {
-          "name": "event",
-          "type": "array"
+          "name": "action",
+          "type": "string"
+        },
+        {
+          "name": "value",
+          "type": "any"
         }
       ],
       "item": {
@@ -847,7 +856,10 @@
         "onPress": [
           {
             "type": "SendEvent",
-            "arguments": "${event}"
+            "arguments": [
+              "${action}",
+              "${value}"
+            ]
           }
         ],
         "item": {

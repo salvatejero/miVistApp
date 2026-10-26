@@ -58,6 +58,14 @@
         "rainAlertLabel": {
           "type": "string",
           "description": "Texto de la píldora de lluvia; ausente si no hay aviso."
+        },
+        "forecast": {
+          "type": "array",
+          "maxItems": 7,
+          "description": "Próximos días empezando por hoy, para la franja de previsión de Inicio.",
+          "items": {
+            "$ref": "common.schema.json#/$defs/weatherDay"
+          }
         }
       },
       "if": {

@@ -7,7 +7,54 @@
     "temperature": 19,
     "conditionLabel": "Nublado",
     "icon": "cloud",
-    "rainAlertLabel": "Aviso de lluvia · 11:00"
+    "rainAlertLabel": "Aviso de lluvia · 11:00",
+    "forecast": [
+      {
+        "name": "Hoy",
+        "dateLabel": "Jue 15",
+        "isToday": true,
+        "icon": "cloud",
+        "maxTemp": 21,
+        "minTemp": 13,
+        "rainProbability": 30
+      },
+      {
+        "name": "Vie",
+        "dateLabel": "16",
+        "isToday": false,
+        "icon": "rain",
+        "maxTemp": 18,
+        "minTemp": 12,
+        "rainProbability": 80
+      },
+      {
+        "name": "Sáb",
+        "dateLabel": "17",
+        "isToday": false,
+        "icon": "rain",
+        "maxTemp": 17,
+        "minTemp": 11,
+        "rainProbability": 60
+      },
+      {
+        "name": "Dom",
+        "dateLabel": "18",
+        "isToday": false,
+        "icon": "partly-cloudy",
+        "maxTemp": 20,
+        "minTemp": 12,
+        "rainProbability": 25
+      },
+      {
+        "name": "Lun",
+        "dateLabel": "19",
+        "isToday": false,
+        "icon": "sun",
+        "maxTemp": 23,
+        "minTemp": 13,
+        "rainProbability": 5
+      }
+    ]
   },
   "rainForecast": {
     "status": "ok",

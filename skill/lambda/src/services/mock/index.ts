@@ -10,7 +10,7 @@ import type {
 import type { DashboardData } from '../dashboard';
 import { deviceStateLabel, houseSummary, monthLabel, MONTHS, shortDateLabel, WEEKDAYS_SHORT } from '../../../../../lib/labels';
 import type { CivilDate } from '../../../../../lib/month-grid';
-import { addMonths, buildMonthGrid } from '../../../../../lib/month-grid';
+import { addMonths, buildMonthGrid, daysInMonth } from '../../../../../lib/month-grid';
 import alertAppear from '../../../../../contracts/fixtures/departure-alert-appear.json';
 import alertLeaveNow from '../../../../../contracts/fixtures/departure-alert-leave-now.json';
 import alertSoon from '../../../../../contracts/fixtures/departure-alert-soon.json';
@@ -38,7 +38,8 @@ export interface MockOptions {
   alert?: DepartureAlertState;
 }
 
-const clone = <T>(value: unknown): T => structuredClone(value) as T;
+// JSON y no structuredClone: Node.js 16 (Alexa-hosted) no lo trae y los fixtures son JSON.
+const clone = <T>(value: unknown): T => JSON.parse(JSON.stringify(value)) as T;
 
 /** Datos de ejemplo de contracts/fixtures. Se sustituirán fuente a fuente en la Fase 3. */
 export class MockDashboardData implements DashboardData {
@@ -60,15 +61,22 @@ export class MockDashboardData implements DashboardData {
     return Promise.resolve(home);
   }
 
-  getCalendar(monthOffset: number): Promise<CalendarScreen> {
-    if (monthOffset === 0) return Promise.resolve(clone<CalendarScreen>(calendarFixture));
+  getCalendar(monthOffset: number, day?: number): Promise<CalendarScreen> {
+    const fixture = clone<CalendarScreen>(calendarFixture);
+    if (monthOffset === 0 && (day === undefined || day === FIXTURE_TODAY.day)) return Promise.resolve(fixture);
     const { year, month } = addMonths(FIXTURE_TODAY.year, FIXTURE_TODAY.month, monthOffset);
+    const selected = day !== undefined && day >= 1 && day <= daysInMonth(year, month) ? day : 1;
+    // Fuera de hoy, los datos de ejemplo no tienen eventos: se conservan los puntos del mes actual.
+    const cells =
+      monthOffset === 0 && fixture.status === 'ok'
+        ? fixture.cells.map((c) => ({ ...c, isSelected: c.inMonth && c.day === selected }))
+        : buildMonthGrid(year, month, FIXTURE_TODAY, new Set(), selected);
     return Promise.resolve({
       status: 'ok',
       monthLabel: monthLabel(year, month),
       weekdayLabels: [...WEEKDAYS_SHORT],
-      cells: buildMonthGrid(year, month, FIXTURE_TODAY, new Set()),
-      selectedDay: { title: `1 ${MONTHS[month - 1]?.slice(0, 3)}`, dateLabel: shortDateLabel(year, month, 1), items: [] },
+      cells,
+      selectedDay: { title: `${selected} ${MONTHS[month - 1]?.slice(0, 3)}`, dateLabel: shortDateLabel(year, month, selected), items: [] },
     });
   }
 

@@ -28,7 +28,7 @@ Echo Show ──▶ Alexa ──▶ Skill (Alexa-hosted) ──HTTPS + clave─�
 
 ## Skill y VPS (decidido el 18 oct 2026; Fase 3)
 
-«VPS» es el servidor de datos (`vps/`); hoy corre en una Raspberry Pi 3B+ en casa (`docs/raspberry.md`).
+«VPS» es el servidor de datos (`vps/`); hoy corre como contenedor en la Raspberry Pi compartida de casa (`docs/raspberry.md`).
 
 - **La skill no guarda credenciales ni llama a APIs externas.** Pide a `vps/` el JSON de cada pantalla, que ya cumple el contrato.
 - **Caché en la skill.** Cada respuesta buena del VPS se guarda en DynamoDB. Si el VPS no contesta en 5 s, la skill pinta lo guardado y cada bloque lo indica ("Sin conexión · actualizado a las hh:mm"). El aviso de salida no se muestra con datos de tráfico viejos.
