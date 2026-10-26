@@ -1,6 +1,6 @@
 # Desplegar la skill y probarla (Fase 6)
 
-La skill vive en **Alexa-hosted** (gratis, en servidores de Amazon) y queda en modo desarrollo: solo la ve tu cuenta. Antes, la Raspberry tiene que estar funcionando y publicada en su subdominio (`docs/raspberry.md`).
+La skill vive en **Alexa-hosted** (gratis, en servidores de Amazon) y queda en modo desarrollo: solo la ve tu cuenta. Antes, el servicio de datos tiene que estar funcionando y publicado en su subdominio (`docs/servidor-datos.md`).
 
 ## 1. Crear la skill en la consola
 
@@ -12,7 +12,7 @@ En developer.amazon.com, con **la misma cuenta de Amazon que usa tu Echo Show**:
 4. **Plantilla:** Start from Scratch.
 5. Cuando termine de crearse, copia el **Skill ID** (`amzn1.ask.skill.…`): en la lista de skills, "Copy Skill ID".
 
-## 2. Empaquetar con la dirección de la Raspberry
+## 2. Empaquetar con la dirección del servicio de datos
 
 En tu ordenador, con el repo:
 
@@ -69,7 +69,7 @@ El simulador no siempre deja tocar los botones ni simula el paso del tiempo: la 
 | Qué pasa | Dónde mirar |
 |---|---|
 | "Ha habido un problema con la respuesta de la skill" | Consola → **Code** → **CloudWatch Logs**: el registro dice qué falló (sin datos personales) |
-| Todos los bloques dicen "Sin conexión con el servidor" | La skill no llega a la Raspberry: comprueba `curl https://<subdominio>/healthz` desde fuera de casa; si da 502, el contenedor está parado (`docker compose ps` en `~/mivistapp`) |
+| Todos los bloques dicen "Sin conexión con el servidor" | La skill no llega al servicio de datos: comprueba `curl https://<subdominio>/healthz` desde fuera de casa; si da 502, el contenedor está parado (`docker compose ps` en `~/mivistapp`) |
 | En los registros de la skill aparece `HTTP 401` | La clave de `skill/lambda/.env.local` no es la de `/etc/mivistapp/vps.env` |
 | Un bloque dice "Tiempo sin configurar", "Tráfico sin configurar"… | Falta esa parte en `/etc/mivistapp/vps.env`; recrea el contenedor tras cambiarlo (`docker compose up -d --force-recreate`) |
 | Un bloque dice "Sin conexión con el calendario" | `docker compose logs` en `~/mivistapp`: suele ser la contraseña de app de iCloud o un nombre en `ICLOUD_CALENDARS` que no existe |
