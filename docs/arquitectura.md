@@ -1,7 +1,7 @@
 # Arquitectura
 
 ```
-Echo Show ──▶ Alexa ──▶ Skill (Alexa-hosted) ──HTTPS + clave──▶ Servicio de datos (Raspberry Pi, vps/)
+Echo Show ──▶ Alexa ──▶ Skill (Alexa-hosted) ──HTTPS + clave──▶ Servicio de datos (tu servidor, vps/)
                           │        │                              ├─ calendario iCloud (CalDAV)
                           │        └─ DynamoDB: última respuesta   ├─ tiempo (Open-Meteo)
                           │           del VPS (caché)              ├─ tráfico (TomTom)
@@ -28,14 +28,14 @@ Echo Show ──▶ Alexa ──▶ Skill (Alexa-hosted) ──HTTPS + clave─�
 
 ## Skill y VPS (decidido el 18 oct 2026; Fase 3)
 
-«VPS» es el servidor de datos (`vps/`); hoy corre como contenedor en la Raspberry Pi compartida de casa (`docs/raspberry.md`).
+«VPS» es el servidor de datos (`vps/`); corre como contenedor en tu servidor, tras un proxy inverso (`docs/servidor-datos.md`).
 
 - **La skill no guarda credenciales ni llama a APIs externas.** Pide a `vps/` el JSON de cada pantalla, que ya cumple el contrato.
 - **Caché en la skill.** Cada respuesta buena del VPS se guarda en DynamoDB. Si el VPS no contesta en 5 s, la skill pinta lo guardado y cada bloque lo indica ("Sin conexión · actualizado a las hh:mm"). El aviso de salida no se muestra con datos de tráfico viejos.
 - **Caché en el VPS.** El VPS guarda el último dato bueno de cada fuente y no vuelve a preguntar mientras es reciente (minutos configurables); si una API falla, lo sirve con "No actualizado · hh:mm".
 - **Acciones.** Los botones de casa llegan al VPS; si no responde, Alexa dice que no ha podido conectar y la pantalla se vuelve a pintar.
 - Sin `skill/lambda/.env.local` al empaquetar, la skill usa `MockDashboardData` en lugar del VPS.
-- Montaje y API del VPS: `docs/raspberry.md`.
+- Montaje y API del VPS: `docs/servidor-datos.md`.
 - Pantalla siempre visible, refresco y rutina de Alexa: `docs/siempre-visible.md`.
 
 ## Primera carga (precarga y esqueletos)

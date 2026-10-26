@@ -160,7 +160,7 @@ curl https://datos.tu-dominio.es/healthz                                   # {"o
 curl -o /dev/null -w '%{http_code}\n' https://datos.tu-dominio.es/v1/home  # 401 sin clave
 ```
 
-Si ya tienes un proxy inverso, quita el servicio `caddy`, conecta `mivistapp` a la red de tu proxy y apunta un `proxy_pass` (o equivalente) a `mivistapp:8787`.
+Si ya tienes un proxy inverso, usa [`vps/deploy/docker-compose.yml`](vps/deploy/docker-compose.yml), que se engancha a la red de tu proxy (`PROXY_NETWORK`), y apunta un `reverse_proxy` o `proxy_pass` a `mivistapp:8787`. Paso a paso, con ejemplos de Caddy y Nginx, en [`docs/servidor-datos.md`](docs/servidor-datos.md).
 
 <details>
 <summary>API del servicio</summary>
